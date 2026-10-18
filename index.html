@@ -7,325 +7,269 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: 'Segoe UI', sans-serif;
-    background: #1a1a2e;
-    color: #fff;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    background: #1a1a2e; color: #fff;
+    height: 100vh; overflow: hidden;
+    display: flex; flex-direction: column;
   }
   .header {
     background: linear-gradient(135deg, #667eea, #764ba2);
     padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: flex; justify-content: space-between; align-items: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    flex-wrap: wrap;
-    gap: 8px;
+    flex-wrap: wrap; gap: 8px;
   }
-  .logo { font-size: 20px; font-weight: bold; display: flex; align-items: baseline; gap: 6px; }
+  .logo {
+    font-size: 20px; font-weight: bold;
+    display: flex; align-items: baseline; gap: 6px;
+    cursor: pointer; user-select: none;
+    transition: transform 0.2s;
+  }
+  .logo:hover { transform: scale(1.03); }
+  .logo.spin { animation: spin 1s ease; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   .logo span { color: #ffd700; }
-  .logo small { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: normal; }
+  .logo small { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: normal; cursor: pointer; }
   .controls { display: flex; gap: 6px; flex-wrap: wrap; }
   button {
-    background: #2d2d44;
-    color: #fff;
-    border: none;
-    padding: 7px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    background: #2d2d44; color: #fff; border: none;
+    padding: 7px 12px; border-radius: 6px; cursor: pointer;
+    font-size: 12px; transition: all 0.2s;
+    display: flex; align-items: center; gap: 5px;
+    font-family: inherit;
   }
   button:hover { background: #3d3d5c; transform: translateY(-1px); }
   button.active { background: #667eea; }
-  button.danger { background: #e74c3c; }
   button.success { background: #27ae60; }
   button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  button:focus-visible { outline: 2px solid #ffd700; outline-offset: 2px; }
+
   .main { display: flex; flex: 1; overflow: hidden; }
+  .main.quake { animation: quake 0.6s ease-in-out; }
+  @keyframes quake {
+    0%, 100% { transform: translate(0, 0); }
+    10% { transform: translate(-6px, -4px) rotate(-0.3deg); }
+    20% { transform: translate(6px, 4px) rotate(0.3deg); }
+    30% { transform: translate(-6px, 4px); }
+    40% { transform: translate(6px, -4px); }
+    50% { transform: translate(-4px, -6px) rotate(-0.2deg); }
+    60% { transform: translate(4px, 6px) rotate(0.2deg); }
+    70% { transform: translate(-4px, 6px); }
+    80% { transform: translate(4px, -6px); }
+    90% { transform: translate(-2px, 2px); }
+  }
+
   .toolbar {
-    width: 70px;
-    background: #16213e;
-    padding: 10px 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: center;
+    width: 74px; background: #16213e; padding: 10px 5px;
+    display: flex; flex-direction: column; gap: 8px; align-items: center;
     overflow-y: auto;
   }
   .tool-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 10px;
-    background: #2d2d44;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    cursor: pointer;
+    width: 52px; min-height: 50px; border-radius: 10px;
+    background: #2d2d44; color: #fff;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 20px; cursor: pointer;
     transition: all 0.2s;
     border: 2px solid transparent;
     flex-shrink: 0;
+    font-family: inherit;
+    padding: 4px;
   }
   .tool-btn .label { font-size: 8px; margin-top: 2px; }
   .tool-btn:hover { background: #3d3d5c; }
   .tool-btn.active { border-color: #667eea; background: #3d3d5c; }
+  .tool-btn:focus-visible { outline: 2px solid #ffd700; outline-offset: 2px; }
+
+  .color-pair { display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; }
+  .color-pair span { font-size: 8px; color: #aaa; }
   .color-picker {
-    width: 50px;
-    height: 50px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    background: none;
-    flex-shrink: 0;
+    width: 48px; height: 36px; border: none; border-radius: 8px;
+    cursor: pointer; background: none;
   }
   .color-picker::-webkit-color-swatch-wrapper { padding: 0; }
-  .color-picker::-webkit-color-swatch { border: 2px solid #667eea; border-radius: 10px; }
-  .size-slider {
-    width: 50px;
-    writing-mode: vertical-lr;
-    direction: rtl;
-    height: 100px;
-  }
+  .color-picker::-webkit-color-swatch { border: 2px solid #667eea; border-radius: 8px; }
+
+  .size-slider { width: 48px; writing-mode: vertical-lr; direction: rtl; height: 90px; }
+
   .canvas-area {
-    flex: 1;
-    background: #0f0f1e;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
+    flex: 1; background: #0f0f1e;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    padding: 20px;
   }
   .canvas-wrapper {
     position: relative;
+    background: #fff;
     box-shadow: 0 0 40px rgba(102, 126, 234, 0.3);
-    background: #fff;
+    /* width/height set by JS layoutCanvas() */
   }
-  #canvas {
+  #canvas, #onionCanvas, #gridCanvas {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
     display: block;
-    cursor: crosshair;
-    background: #fff;
-    touch-action: none;
   }
-  #gridCanvas, #onionCanvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-  }
+  #onionCanvas, #gridCanvas { pointer-events: none; }
+  #canvas { cursor: crosshair; touch-action: none; }
+
   .canvas-overlay-btns {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    gap: 6px;
-    z-index: 10;
-    flex-direction: column;
+    position: absolute; top: 10px; right: 10px;
+    display: flex; gap: 6px; z-index: 10; flex-direction: column;
   }
   .canvas-overlay-btns button { padding: 6px 12px; font-size: 12px; }
+
   .timeline {
-    background: #16213e;
-    padding: 10px;
+    background: #16213e; padding: 10px;
     border-top: 2px solid #2d2d44;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: flex; align-items: center; gap: 10px;
   }
+  .fps-control {
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    padding: 0 10px; border-right: 2px solid #2d2d44;
+  }
+  .fps-control label { font-size: 11px; color: #aaa; }
+  .fps-control input {
+    width: 60px; padding: 3px;
+    background: #2d2d44; color: #fff;
+    border: 1px solid #444; border-radius: 4px;
+    text-align: center; font-family: inherit;
+  }
+  .frame-actions {
+    display: flex; gap: 4px; padding: 0 10px;
+    border-right: 2px solid #2d2d44; align-items: center;
+  }
+  .frame-actions button { padding: 6px 8px; font-size: 14px; min-width: 34px; justify-content: center; }
+
   .frames-container {
-    flex: 1;
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding: 5px;
+    flex: 1; display: flex; gap: 6px;
+    overflow-x: auto; padding: 5px;
   }
   .frame {
-    min-width: 80px;
-    height: 80px;
-    background: #fff;
-    border: 3px solid #2d2d44;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.2s;
-    flex-shrink: 0;
+    min-width: 80px; height: 80px;
+    background: #fff; border: 3px solid #2d2d44; border-radius: 6px;
+    cursor: pointer; position: relative; overflow: hidden;
+    transition: all 0.2s; flex-shrink: 0;
   }
   .frame:hover { border-color: #667eea; }
   .frame.active { border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
   .frame canvas { width: 100%; height: 100%; display: block; }
   .frame .num {
-    position: absolute;
-    bottom: 2px;
-    left: 2px;
-    background: rgba(0,0,0,0.6);
-    color: #fff;
-    font-size: 10px;
-    padding: 1px 5px;
-    border-radius: 3px;
+    position: absolute; bottom: 2px; left: 2px;
+    background: rgba(0,0,0,0.6); color: #fff;
+    font-size: 10px; padding: 1px 5px; border-radius: 3px;
   }
   .frame .hold {
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    background: rgba(102, 126, 234, 0.85);
-    color: #fff;
-    font-size: 10px;
-    padding: 1px 5px;
-    border-radius: 3px;
-    cursor: pointer;
-    user-select: none;
+    position: absolute; bottom: 2px; right: 2px;
+    background: rgba(102, 126, 234, 0.85); color: #fff;
+    font-size: 10px; padding: 2px 6px; border-radius: 3px;
+    cursor: pointer; user-select: none;
     transition: background 0.2s;
   }
   .frame .hold:hover { background: rgba(102, 126, 234, 1); }
   .frame .hold.long { background: #f39c12; }
   .frame .del {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    background: #e74c3c;
-    color: #fff;
-    border: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    font-size: 12px;
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
+    position: absolute; top: 2px; right: 2px;
+    background: #e74c3c; color: #fff; border: none;
+    width: 20px; height: 20px; border-radius: 50%;
+    font-size: 12px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0; opacity: 0.35;
+    transition: opacity 0.2s;
+    touch-action: manipulation;
   }
-  .frame:hover .del { display: flex; }
+  .frame:hover .del, .frame.active .del { opacity: 1; }
   .add-frame {
-    min-width: 80px;
-    height: 80px;
+    min-width: 80px; height: 80px;
     background: #2d2d44;
-    border: 3px dashed #667eea;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 30px;
-    color: #667eea;
-    flex-shrink: 0;
-    transition: all 0.2s;
+    border: 3px dashed #667eea; border-radius: 6px;
+    cursor: pointer; font-size: 30px; color: #667eea;
+    flex-shrink: 0; transition: all 0.2s;
+    font-family: inherit;
   }
   .add-frame:hover { background: #3d3d5c; }
-  .fps-control {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    padding: 0 10px;
-    border-left: 2px solid #2d2d44;
-    border-right: 2px solid #2d2d44;
-  }
-  .fps-control label { font-size: 11px; color: #aaa; }
-  .fps-control input {
-    width: 60px;
-    padding: 3px;
-    background: #2d2d44;
-    color: #fff;
-    border: 1px solid #444;
-    border-radius: 4px;
-    text-align: center;
-  }
+
   .modal {
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: rgba(0,0,0,0.85);
-    display: none;
-    align-items: center;
-    justify-content: center;
+    display: none; align-items: center; justify-content: center;
     z-index: 100;
   }
   .modal.show { display: flex; }
   .modal-content {
-    background: #1a1a2e;
-    padding: 30px;
-    border-radius: 12px;
-    max-width: 500px;
-    text-align: center;
-    max-height: 85vh;
-    overflow-y: auto;
+    background: #1a1a2e; padding: 30px; border-radius: 12px;
+    max-width: 500px; text-align: center;
+    max-height: 85vh; overflow-y: auto;
   }
   .modal-content h2 { margin-bottom: 15px; color: #667eea; }
   .modal-content p { color: #aaa; margin-bottom: 20px; font-size: 13px; }
   .modal-content button { margin: 5px; }
+
   .status {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
+    position: absolute; bottom: 10px; left: 10px;
     background: rgba(0,0,0,0.7);
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    color: #aaa;
-    pointer-events: none;
-    z-index: 5;
+    padding: 5px 12px; border-radius: 20px;
+    font-size: 12px; color: #aaa;
+    pointer-events: none; z-index: 5;
   }
   .progress-bar {
-    width: 100%;
-    height: 8px;
-    background: #2d2d44;
-    border-radius: 4px;
-    overflow: hidden;
-    margin: 15px 0;
+    width: 100%; height: 8px;
+    background: #2d2d44; border-radius: 4px;
+    overflow: hidden; margin: 15px 0;
   }
   .progress-bar .fill {
     height: 100%;
     background: linear-gradient(90deg, #667eea, #764ba2);
-    width: 0%;
-    transition: width 0.3s;
+    width: 0%; transition: width 0.3s;
   }
+
   .playback-overlay {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    z-index: 9999;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    animation: fadeIn 0.2s ease;
+    position: fixed; inset: 0; background: #000;
+    z-index: 9999; display: none;
+    align-items: center; justify-content: center;
+    cursor: pointer; animation: fadeIn 0.2s ease;
   }
   .playback-overlay.show { display: flex; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .playback-overlay canvas {
-    max-width: 95vw;
-    max-height: 95vh;
+    max-width: 95vw; max-height: 95vh;
     object-fit: contain;
     box-shadow: 0 0 60px rgba(102, 126, 234, 0.4);
-    border-radius: 4px;
-    background: #fff;
+    border-radius: 4px; background: #fff;
   }
   .playback-hint {
-    position: absolute;
-    bottom: 24px;
-    left: 50%;
+    position: absolute; bottom: 24px; left: 50%;
     transform: translateX(-50%);
-    color: rgba(255,255,255,0.65);
-    font-size: 13px;
-    pointer-events: none;
-    background: rgba(0,0,0,0.5);
-    padding: 8px 18px;
-    border-radius: 20px;
+    color: rgba(255,255,255,0.65); font-size: 13px;
+    pointer-events: none; background: rgba(0,0,0,0.5);
+    padding: 8px 18px; border-radius: 20px;
     backdrop-filter: blur(6px);
     animation: pulse 2s ease-in-out infinite;
   }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.65; }
-    50% { opacity: 1; }
+  @keyframes pulse { 0%, 100% { opacity: 0.65; } 50% { opacity: 1; } }
+
+  .toast {
+    position: fixed; bottom: 100px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(0, 0, 0, 0.9); color: #fff;
+    padding: 12px 24px; border-radius: 8px;
+    font-size: 14px; opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none; z-index: 99998;
+    border: 2px solid #667eea;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
+    max-width: 80vw; text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.gold { border-color: #ffd700; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5); }
+
+  #confettiCanvas {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 99999;
   }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="logo">🎬 <span>WAnis</span><small>Web Animate Studio</small></div>
+  <div class="logo" id="logo">🎬 <span>WAnis</span><small id="subtitle">Web Animate Studio</small></div>
   <div class="controls">
     <button id="playBtn" class="success" title="Space">▶ Play</button>
     <button id="stopBtn">⏹ Stop</button>
@@ -338,17 +282,24 @@
   </div>
 </div>
 
-<div class="main">
+<div class="main" id="mainArea">
   <div class="toolbar">
-    <div class="tool-btn active" data-tool="pen"><span>✏️</span><span class="label">Pen</span></div>
-    <div class="tool-btn" data-tool="eraser"><span>🧽</span><span class="label">Eraser</span></div>
-    <div class="tool-btn" data-tool="line"><span>📏</span><span class="label">Line</span></div>
-    <div class="tool-btn" data-tool="rect"><span>⬜</span><span class="label">Rect</span></div>
-    <div class="tool-btn" data-tool="circle"><span>⭕</span><span class="label">Circle</span></div>
-    <div class="tool-btn" data-tool="fill"><span>🪣</span><span class="label">Fill</span></div>
-    <input type="color" id="colorPicker" class="color-picker" value="#000000" title="Brush color">
-    <input type="color" id="fillColorPicker" class="color-picker" value="#ff6b6b" title="Fill color" style="height:36px;">
-    <input type="range" id="sizeSlider" class="size-slider" min="1" max="50" value="3" title="Brush size">
+    <button type="button" class="tool-btn active" data-tool="pen" aria-pressed="true"><span>✏️</span><span class="label">Pen</span></button>
+    <button type="button" class="tool-btn" data-tool="eraser" aria-pressed="false"><span>🧽</span><span class="label">Eraser</span></button>
+    <button type="button" class="tool-btn" data-tool="line" aria-pressed="false"><span>📏</span><span class="label">Line</span></button>
+    <button type="button" class="tool-btn" data-tool="rect" aria-pressed="false"><span>⬜</span><span class="label">Rect</span></button>
+    <button type="button" class="tool-btn" data-tool="circle" aria-pressed="false"><span>⭕</span><span class="label">Circle</span></button>
+    <button type="button" class="tool-btn" data-tool="fill" aria-pressed="false"><span>🪣</span><span class="label">Fill</span></button>
+    <button type="button" class="tool-btn" data-tool="text" aria-pressed="false"><span>🔤</span><span class="label">Text</span></button>
+    <div class="color-pair">
+      <input type="color" id="colorPicker" class="color-picker" value="#000000" title="Pen / shape color" aria-label="Pen color">
+      <span>Pen</span>
+    </div>
+    <div class="color-pair">
+      <input type="color" id="fillColorPicker" class="color-picker" value="#ff6b6b" title="Bucket fill color" aria-label="Fill color">
+      <span>Fill</span>
+    </div>
+    <input type="range" id="sizeSlider" class="size-slider" min="1" max="50" value="3" title="Brush size" aria-label="Brush size">
   </div>
 
   <div class="canvas-area" id="canvasArea">
@@ -367,8 +318,14 @@
 
 <div class="timeline">
   <div class="fps-control">
-    <label>FPS (1–60)</label>
+    <label for="fpsInput">FPS (1–60)</label>
     <input type="number" id="fpsInput" value="12" min="1" max="60" step="1">
+  </div>
+  <div class="frame-actions">
+    <button id="copyFrameBtn" title="Copy frame (Ctrl+C)">📋</button>
+    <button id="pasteFrameBtn" title="Paste frame (Ctrl+V)">📄</button>
+    <button id="deleteFrameBtn" title="Delete current frame (Del)">🗑</button>
+    <button id="restoreFrameBtn" title="Restore last deleted (Alt+Z)">♻</button>
   </div>
   <div class="frames-container" id="framesContainer"></div>
   <button class="add-frame" id="addFrameBtn" title="Add new frame">+</button>
@@ -389,7 +346,22 @@
   <div class="playback-hint">Press ESC or click anywhere to close</div>
 </div>
 
+<canvas id="confettiCanvas"></canvas>
+
 <script type="module">
+// ─────────────────────────── CONSTANTS ───────────────────────────
+const CANVAS_W = 800;
+const CANVAS_H = 500;
+const THUMB_SIZE = 80;
+const GRID_STEP = 40;
+const MAX_HOLD = 20;
+const MAX_UNDO = 100;
+const SMOOTH_WINDOW = 4;
+const FAST_STROKE_SPEED = 1000;
+const FAST_STROKE_DIST = 500;
+const WHITE_THRESHOLD = 240;
+
+// ─────────────────────────── DOM ───────────────────────────
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const onionCanvas = document.getElementById('onionCanvas');
@@ -400,18 +372,33 @@ const playbackOverlay = document.getElementById('playbackOverlay');
 const playbackCanvas = document.getElementById('playbackCanvas');
 const playbackCtx = playbackCanvas.getContext('2d');
 const fpsInput = document.getElementById('fpsInput');
+const canvasArea = document.getElementById('canvasArea');
+const canvasWrapper = document.getElementById('canvasWrapper');
+const onionBtn = document.getElementById('onionBtn');
+const gridBtn = document.getElementById('gridBtn');
 
+// ─────────────────────────── STATE ───────────────────────────
 class Frame {
-  constructor() {
-    this.commands = [];
-    this.holdDuration = 1;
+  constructor(commands = [], holdDuration = 1) {
+    this.commands = commands;
+    this.holdDuration = holdDuration;
+    this._raster = null;
+  }
+  // Commands are IMMUTABLE after commit. Any mutation must call invalidate().
+  invalidate() { this._raster = null; }
+  getRaster() {
+    if (this._raster) return this._raster;
+    const c = document.createElement('canvas');
+    c.width = CANVAS_W;
+    c.height = CANVAS_H;
+    const cc = c.getContext('2d');
+    cc.fillStyle = '#ffffff';
+    cc.fillRect(0, 0, CANVAS_W, CANVAS_H);
+    for (const cmd of this.commands) applyCommand(cmd, cc);
+    this._raster = c;
+    return c;
   }
 }
-
-const offscreenCanvas = document.createElement('canvas');
-offscreenCanvas.width = canvas.width;
-offscreenCanvas.height = canvas.height;
-const offscreenCtx = offscreenCanvas.getContext('2d', { willReadFrequently: true });
 
 let frames = [new Frame()];
 let currentFrame = 0;
@@ -423,15 +410,23 @@ let fillColor = '#ff6b6b';
 let currentSize = 3;
 let isDrawing = false;
 let liveStroke = null;
+let liveStrokeMeta = null;
 let shapePreview = null;
 let smoothBuffer = [];
-let startX = 0, startY = 0;
 let isPlaying = false;
 let playRafId = null;
 let playStartTime = 0;
 let playRenderedFrames = null;
+let playFps = 12;
+let clipboardFrame = null;
+let trash = [];
+let exportInProgress = false;
+let activeObjectUrls = new Set();
+let speedDemonShown = false;
+let fastStrokeCount = 0;
 
-const SMOOTHING_WINDOW = 4;
+// ─────────────────────────── HELPERS ───────────────────────────
+const mod = e => e.ctrlKey || e.metaKey;
 
 function getFps() {
   let v = parseInt(fpsInput.value, 10);
@@ -440,56 +435,75 @@ function getFps() {
   if (v > 60) v = 60;
   return v;
 }
+
 fpsInput.addEventListener('input', () => {
   const v = parseInt(fpsInput.value, 10);
   if (isNaN(v)) return;
   if (v < 1) fpsInput.value = 1;
   if (v > 60) fpsInput.value = 60;
+  updateStatus();
 });
-fpsInput.addEventListener('blur', () => { fpsInput.value = getFps(); });
+fpsInput.addEventListener('blur', () => {
+  fpsInput.value = getFps();
+  updateStatus();
+});
 
 function makeTempCanvas() {
   const c = document.createElement('canvas');
-  c.width = canvas.width;
-  c.height = canvas.height;
+  c.width = CANVAS_W;
+  c.height = CANVAS_H;
   return c;
 }
 
 function hexToRgb(hex) {
-  return [
-    parseInt(hex.slice(1, 3), 16),
-    parseInt(hex.slice(3, 5), 16),
-    parseInt(hex.slice(5, 7), 16),
-    255
-  ];
+  return [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16), 255];
 }
 
+function cloneFrame(frame) {
+  return new Frame(structuredClone(frame.commands), frame.holdDuration);
+}
+
+function trackUrl(url) {
+  activeObjectUrls.add(url);
+  return url;
+}
+
+function revokeAllUrls() {
+  activeObjectUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch (_) {} });
+  activeObjectUrls.clear();
+}
+
+function downloadBlob(blob, filename) {
+  const url = trackUrl(URL.createObjectURL(blob));
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    a.remove();
+    try { URL.revokeObjectURL(url); } catch (_) {}
+    activeObjectUrls.delete(url);
+  }, 1500);
+}
+
+// ─────────────────────────── COMMAND EXECUTOR ───────────────────────────
 function floodFillCtx(c, x, y, color) {
   const w = c.canvas.width, h = c.canvas.height;
-  x = Math.floor(x);
-  y = Math.floor(y);
+  x = Math.floor(x); y = Math.floor(y);
   if (x < 0 || y < 0 || x >= w || y >= h) return;
-
   const imgData = c.getImageData(0, 0, w, h);
   const data = imgData.data;
   const tIdx = (y * w + x) * 4;
-  const tColor = [data[tIdx], data[tIdx + 1], data[tIdx + 2], data[tIdx + 3]];
+  const tColor = [data[tIdx], data[tIdx+1], data[tIdx+2], data[tIdx+3]];
   const fc = hexToRgb(color);
-
-  if (tColor[0] === fc[0] && tColor[1] === fc[1] &&
-      tColor[2] === fc[2] && tColor[3] === fc[3]) return;
-
+  if (tColor[0]===fc[0] && tColor[1]===fc[1] && tColor[2]===fc[2] && tColor[3]===fc[3]) return;
   const tol = 32;
-  const match = (idx) =>
-    Math.abs(data[idx] - tColor[0]) < tol &&
-    Math.abs(data[idx + 1] - tColor[1]) < tol &&
-    Math.abs(data[idx + 2] - tColor[2]) < tol &&
-    Math.abs(data[idx + 3] - tColor[3]) < tol;
-
+  const match = idx =>
+    Math.abs(data[idx]-tColor[0])<tol && Math.abs(data[idx+1]-tColor[1])<tol &&
+    Math.abs(data[idx+2]-tColor[2])<tol && Math.abs(data[idx+3]-tColor[3])<tol;
   const stack = [[x, y]];
   const visited = new Uint8Array(w * h);
-
-  while (stack.length > 0) {
+  while (stack.length) {
     const [cx, cy] = stack.pop();
     if (cx < 0 || cy < 0 || cx >= w || cy >= h) continue;
     const pid = cy * w + cx;
@@ -497,13 +511,9 @@ function floodFillCtx(c, x, y, color) {
     visited[pid] = 1;
     const idx = pid * 4;
     if (!match(idx)) continue;
-    data[idx] = fc[0];
-    data[idx + 1] = fc[1];
-    data[idx + 2] = fc[2];
-    data[idx + 3] = fc[3];
-    stack.push([cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]);
+    data[idx]=fc[0]; data[idx+1]=fc[1]; data[idx+2]=fc[2]; data[idx+3]=fc[3];
+    stack.push([cx+1, cy], [cx-1, cy], [cx, cy+1], [cx, cy-1]);
   }
-
   c.putImageData(imgData, 0, 0);
 }
 
@@ -514,14 +524,22 @@ function applyCommand(cmd, c) {
   c.lineWidth = cmd.size;
   c.lineCap = 'round';
   c.lineJoin = 'round';
-
   switch (cmd.type) {
     case 'pen':
     case 'eraser': {
       const pts = cmd.points;
-      if (pts.length === 1) {
+      if (!pts || pts.length === 0) break;
+      if (cmd.rainbow && cmd.type === 'pen' && pts.length > 1) {
+        for (let i = 1; i < pts.length; i++) {
+          c.strokeStyle = `hsl(${(i*8)%360}, 80%, 55%)`;
+          c.beginPath();
+          c.moveTo(pts[i-1].x, pts[i-1].y);
+          c.lineTo(pts[i].x, pts[i].y);
+          c.stroke();
+        }
+      } else if (pts.length === 1) {
         c.beginPath();
-        c.arc(pts[0].x, pts[0].y, cmd.size / 2, 0, Math.PI * 2);
+        c.arc(pts[0].x, pts[0].y, cmd.size/2, 0, Math.PI*2);
         c.fill();
       } else {
         c.beginPath();
@@ -531,107 +549,131 @@ function applyCommand(cmd, c) {
       }
       break;
     }
-    case 'line': {
-      c.beginPath();
-      c.moveTo(cmd.x1, cmd.y1);
-      c.lineTo(cmd.x2, cmd.y2);
-      c.stroke();
+    case 'line':
+      c.beginPath(); c.moveTo(cmd.x1, cmd.y1); c.lineTo(cmd.x2, cmd.y2); c.stroke();
       break;
-    }
-    case 'rect': {
-      c.strokeRect(cmd.x1, cmd.y1, cmd.x2 - cmd.x1, cmd.y2 - cmd.y1);
+    case 'rect':
+      c.strokeRect(cmd.x1, cmd.y1, cmd.x2-cmd.x1, cmd.y2-cmd.y1);
       break;
-    }
     case 'circle': {
-      const cx = (cmd.x1 + cmd.x2) / 2;
-      const cy = (cmd.y1 + cmd.y2) / 2;
-      const rx = Math.abs(cmd.x2 - cmd.x1) / 2;
-      const ry = Math.abs(cmd.y2 - cmd.y1) / 2;
-      c.beginPath();
-      c.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-      c.stroke();
-      break;
+      const cx=(cmd.x1+cmd.x2)/2, cy=(cmd.y1+cmd.y2)/2;
+      const rx=Math.abs(cmd.x2-cmd.x1)/2, ry=Math.abs(cmd.y2-cmd.y1)/2;
+      c.beginPath(); c.ellipse(cx, cy, rx, ry, 0, 0, Math.PI*2); c.stroke(); break;
     }
-    case 'fill': {
+    case 'fill':
       floodFillCtx(c, cmd.x, cmd.y, cmd.color);
       break;
-    }
+    case 'text':
+      c.font = `bold ${cmd.size}px 'Segoe UI', sans-serif`;
+      c.textBaseline = 'top';
+      c.fillText(cmd.text, cmd.x, cmd.y);
+      break;
+    default:
+      console.warn('Unknown command type:', cmd.type);
   }
   c.restore();
 }
 
-function renderFrameTo(frame, targetCtx, w, h) {
-  targetCtx.fillStyle = '#ffffff';
-  targetCtx.fillRect(0, 0, w, h);
-  for (const cmd of frame.commands) applyCommand(cmd, targetCtx);
-}
-
+// ─────────────────────────── RENDER ───────────────────────────
 function renderCurrentFrame() {
-  renderFrameTo(frames[currentFrame], offscreenCtx, canvas.width, canvas.height);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(offscreenCanvas, 0, 0);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+  ctx.drawImage(frames[currentFrame].getRaster(), 0, 0);
   updateOnionSkin();
   updateFrameThumbnail(currentFrame);
   updateUndoRedoButtons();
 }
 
+function renderGhost(frame, targetCtx) {
+  // Renders frame with white bg, then makes white pixels fully transparent.
+  const tmp = makeTempCanvas();
+  const tctx = tmp.getContext('2d', { willReadFrequently: true });
+  tctx.drawImage(frame.getRaster(), 0, 0);
+  const img = tctx.getImageData(0, 0, CANVAS_W, CANVAS_H);
+  const data = img.data;
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i] > WHITE_THRESHOLD && data[i+1] > WHITE_THRESHOLD && data[i+2] > WHITE_THRESHOLD) {
+      data[i+3] = 0;
+    }
+  }
+  tctx.putImageData(img, 0, 0);
+  targetCtx.drawImage(tmp, 0, 0);
+}
+
 function updateOnionSkin() {
-  onionCtx.clearRect(0, 0, onionCanvas.width, onionCanvas.height);
-  const btn = document.getElementById('onionBtn');
-  if (!btn.classList.contains('active')) return;
+  onionCtx.setTransform(1, 0, 0, 1, 0, 0);
+  onionCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+  if (!onionBtn.classList.contains('active')) return;
 
-  const drawFaint = (frame, alpha) => {
-    const tmp = makeTempCanvas();
-    const tctx = tmp.getContext('2d', { willReadFrequently: true });
-    renderFrameTo(frame, tctx, canvas.width, canvas.height);
-    onionCtx.globalAlpha = alpha;
-    onionCtx.drawImage(tmp, 0, 0);
-  };
-
-  if (currentFrame > 0) drawFaint(frames[currentFrame - 1], 0.28);
-  if (currentFrame < frames.length - 1) drawFaint(frames[currentFrame + 1], 0.16);
+  if (currentFrame > 0) {
+    onionCtx.globalAlpha = 0.28;
+    renderGhost(frames[currentFrame - 1], onionCtx);
+  }
+  if (currentFrame < frames.length - 1) {
+    onionCtx.globalAlpha = 0.16;
+    renderGhost(frames[currentFrame + 1], onionCtx);
+  }
   onionCtx.globalAlpha = 1;
 }
 
 function drawGrid() {
-  gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
-  const btn = document.getElementById('gridBtn');
-  if (!btn.classList.contains('active')) return;
-  const step = 40;
+  gridCtx.setTransform(1, 0, 0, 1, 0, 0);
+  gridCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+  if (!gridBtn.classList.contains('active')) return;
+
+  // Center the grid so gridlines pass through the canvas center
+  const offsetX = (CANVAS_W % GRID_STEP) / 2;
+  const offsetY = (CANVAS_H % GRID_STEP) / 2;
   gridCtx.strokeStyle = 'rgba(102, 126, 234, 0.45)';
   gridCtx.lineWidth = 1;
-  for (let x = 0; x <= canvas.width; x += step) {
+  for (let x = offsetX; x <= CANVAS_W; x += GRID_STEP) {
     gridCtx.beginPath();
     gridCtx.moveTo(x + 0.5, 0);
-    gridCtx.lineTo(x + 0.5, canvas.height);
+    gridCtx.lineTo(x + 0.5, CANVAS_H);
     gridCtx.stroke();
   }
-  for (let y = 0; y <= canvas.height; y += step) {
+  for (let y = offsetY; y <= CANVAS_H; y += GRID_STEP) {
     gridCtx.beginPath();
     gridCtx.moveTo(0, y + 0.5);
-    gridCtx.lineTo(canvas.width, y + 0.5);
+    gridCtx.lineTo(CANVAS_W, y + 0.5);
     gridCtx.stroke();
   }
   gridCtx.strokeStyle = 'rgba(255, 215, 0, 0.6)';
   gridCtx.lineWidth = 1.5;
   gridCtx.beginPath();
-  gridCtx.moveTo(canvas.width / 2 + 0.5, 0);
-  gridCtx.lineTo(canvas.width / 2 + 0.5, canvas.height);
+  gridCtx.moveTo(CANVAS_W/2 + 0.5, 0);
+  gridCtx.lineTo(CANVAS_W/2 + 0.5, CANVAS_H);
   gridCtx.stroke();
   gridCtx.beginPath();
-  gridCtx.moveTo(0, canvas.height / 2 + 0.5);
-  gridCtx.lineTo(canvas.width, canvas.height / 2 + 0.5);
+  gridCtx.moveTo(0, CANVAS_H/2 + 0.5);
+  gridCtx.lineTo(CANVAS_W, CANVAS_H/2 + 0.5);
   gridCtx.stroke();
 }
 
+// ─────────────────────────── LAYOUT (responsive canvas) ───────────────────────────
+function layoutCanvas() {
+  const pad = 40;
+  const availW = canvasArea.clientWidth - pad;
+  const availH = canvasArea.clientHeight - pad;
+  const aspect = CANVAS_W / CANVAS_H;
+  let w = Math.min(availW, CANVAS_W);
+  let h = w / aspect;
+  if (h > availH) { h = availH; w = h * aspect; }
+  w = Math.max(120, Math.floor(w));
+  h = Math.max(75, Math.floor(h));
+  canvasWrapper.style.width = w + 'px';
+  canvasWrapper.style.height = h + 'px';
+}
+
+// ─────────────────────────── INPUT ───────────────────────────
 function getPos(e) {
   const rect = canvas.getBoundingClientRect();
-  const sx = canvas.width / rect.width;
-  const sy = canvas.height / rect.height;
-  let cx, cy;
-  if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
-  else { cx = e.clientX; cy = e.clientY; }
-  return { x: (cx - rect.left) * sx, y: (cy - rect.top) * sy };
+  const sx = CANVAS_W / rect.width;
+  const sy = CANVAS_H / rect.height;
+  return {
+    x: (e.clientX - rect.left) * sx,
+    y: (e.clientY - rect.top) * sy
+  };
 }
 
 function averagePoint(buf) {
@@ -640,32 +682,89 @@ function averagePoint(buf) {
   return { x: sx / buf.length, y: sy / buf.length };
 }
 
+function startTextInput(pos) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = rect.width / CANVAS_W;
+  const scaleY = rect.height / CANVAS_H;
+  const fontSize = Math.max(12, Math.min(200, currentSize * 4));
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = 'Type text, Enter to confirm';
+  input.style.cssText = `
+    position: fixed;
+    left: ${rect.left + pos.x*scaleX}px;
+    top: ${rect.top + pos.y*scaleY}px;
+    background: rgba(0,0,0,0.9); color: ${currentColor};
+    border: 2px solid #667eea; border-radius: 4px;
+    padding: 6px 10px; font-family: 'Segoe UI', sans-serif;
+    font-weight: bold; font-size: ${Math.min(fontSize, 32)}px;
+    z-index: 500; min-width: 200px; outline: none;
+    box-shadow: 0 4px 20px rgba(102,126,234,0.5);
+  `;
+  document.body.appendChild(input);
+  setTimeout(() => input.focus(), 10);
+  let committed = false;
+  const commit = () => {
+    if (committed) return;
+    committed = true;
+    const val = input.value.trim();
+    input.remove();
+    if (!val) return;
+    pushUndo();
+    frames[currentFrame].commands.push({
+      type: 'text', x: pos.x, y: pos.y, text: val, color: currentColor, size: fontSize
+    });
+    frames[currentFrame].invalidate();
+    renderCurrentFrame();
+  };
+  input.addEventListener('keydown', ev => {
+    ev.stopPropagation();
+    if (ev.key === 'Enter') { ev.preventDefault(); commit(); }
+    if (ev.key === 'Escape') { ev.preventDefault(); committed = true; input.remove(); }
+  });
+  input.addEventListener('blur', () => setTimeout(commit, 100));
+}
+
 function startDraw(e) {
   if (isPlaying) return;
-  e.preventDefault();
-  isDrawing = true;
+  if (e.button !== undefined && e.button !== 0) return;
+  if (e.target !== canvas) return;
   const pos = getPos(e);
-  startX = pos.x;
-  startY = pos.y;
+
+  if (currentTool === 'text') {
+    startTextInput(pos);
+    return;
+  }
+
+  isDrawing = true;
 
   if (currentTool === 'fill') {
     pushUndo();
-    frames[currentFrame].commands.push({
-      type: 'fill', x: pos.x, y: pos.y, color: fillColor
-    });
+    frames[currentFrame].commands.push({ type: 'fill', x: pos.x, y: pos.y, color: fillColor });
+    frames[currentFrame].invalidate();
     isDrawing = false;
     renderCurrentFrame();
     return;
   }
 
   if (currentTool === 'pen' || currentTool === 'eraser') {
+    const isRainbow = currentTool === 'pen' && e.shiftKey;
     const color = currentTool === 'eraser' ? '#ffffff' : currentColor;
-    liveStroke = { type: currentTool, color, size: currentSize, points: [pos] };
+    liveStroke = {
+      type: currentTool,
+      color,
+      rainbow: isRainbow,
+      size: currentSize,
+      points: [pos]
+    };
+    liveStrokeMeta = { startTime: performance.now(), totalDist: 0 };
     smoothBuffer = [pos];
-    ctx.fillStyle = color;
+    ctx.fillStyle = isRainbow ? 'hsl(0, 80%, 55%)' : color;
     ctx.beginPath();
-    ctx.arc(pos.x, pos.y, currentSize / 2, 0, Math.PI * 2);
+    ctx.arc(pos.x, pos.y, currentSize/2, 0, Math.PI*2);
     ctx.fill();
+    if (isRainbow) toast('🌈 Rainbow pen!', 1200);
   } else {
     shapePreview = {
       type: currentTool, color: currentColor, size: currentSize,
@@ -676,56 +775,79 @@ function startDraw(e) {
 
 function draw(e) {
   if (!isDrawing || isPlaying) return;
-  e.preventDefault();
   const pos = getPos(e);
 
   if (liveStroke) {
     smoothBuffer.push(pos);
-    if (smoothBuffer.length > SMOOTHING_WINDOW) smoothBuffer.shift();
+    if (smoothBuffer.length > SMOOTH_WINDOW) smoothBuffer.shift();
     const avg = averagePoint(smoothBuffer);
     const last = liveStroke.points[liveStroke.points.length - 1];
-    if (Math.hypot(avg.x - last.x, avg.y - last.y) < 0.4) return;
+    const dist = Math.hypot(avg.x - last.x, avg.y - last.y);
+    if (dist < 0.4) return;
     liveStroke.points.push(avg);
-    ctx.strokeStyle = liveStroke.color;
+    liveStrokeMeta.totalDist += dist;
+
     ctx.lineWidth = liveStroke.size;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
+    if (liveStroke.rainbow) {
+      ctx.strokeStyle = `hsl(${(liveStroke.points.length * 8) % 360}, 80%, 55%)`;
+    } else {
+      ctx.strokeStyle = liveStroke.color;
+    }
     ctx.beginPath();
     ctx.moveTo(last.x, last.y);
     ctx.lineTo(avg.x, avg.y);
     ctx.stroke();
   } else if (shapePreview) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(offscreenCanvas, 0, 0);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+    ctx.drawImage(frames[currentFrame].getRaster(), 0, 0);
     shapePreview.x2 = pos.x;
     shapePreview.y2 = pos.y;
     applyCommand(shapePreview, ctx);
   }
 }
 
-function endDraw(e) {
+function endDraw() {
   if (!isDrawing) return;
   isDrawing = false;
 
   if (liveStroke) {
     pushUndo();
+    const duration = performance.now() - liveStrokeMeta.startTime;
+    const speed = liveStrokeMeta.totalDist / Math.max(duration, 1) * 1000;
+    if (speed > FAST_STROKE_SPEED && liveStrokeMeta.totalDist > FAST_STROKE_DIST) {
+      fastStrokeCount++;
+      if (fastStrokeCount >= 2 && !speedDemonShown) {
+        speedDemonShown = true;
+        toast('⚡ Speed demon!', 1500);
+      }
+    } else {
+      fastStrokeCount = Math.max(0, fastStrokeCount - 1);
+    }
     frames[currentFrame].commands.push(liveStroke);
+    frames[currentFrame].invalidate();
     liveStroke = null;
+    liveStrokeMeta = null;
     smoothBuffer = [];
     renderCurrentFrame();
   } else if (shapePreview) {
     pushUndo();
     frames[currentFrame].commands.push(shapePreview);
+    frames[currentFrame].invalidate();
     shapePreview = null;
     renderCurrentFrame();
   }
 }
 
+// ─────────────────────────── UNDO ───────────────────────────
+// Commands are treated as immutable after commit. Slices are safe.
 function pushUndo() {
   if (!undoStack[currentFrame]) undoStack[currentFrame] = [];
   if (!redoStack[currentFrame]) redoStack[currentFrame] = [];
   undoStack[currentFrame].push(frames[currentFrame].commands.slice());
-  if (undoStack[currentFrame].length > 100) undoStack[currentFrame].shift();
+  if (undoStack[currentFrame].length > MAX_UNDO) undoStack[currentFrame].shift();
   redoStack[currentFrame] = [];
   updateUndoRedoButtons();
 }
@@ -735,6 +857,7 @@ function undo() {
   if (!redoStack[currentFrame]) redoStack[currentFrame] = [];
   redoStack[currentFrame].push(frames[currentFrame].commands.slice());
   frames[currentFrame].commands = undoStack[currentFrame].pop();
+  frames[currentFrame].invalidate();
   renderCurrentFrame();
 }
 
@@ -743,19 +866,18 @@ function redo() {
   if (!undoStack[currentFrame]) undoStack[currentFrame] = [];
   undoStack[currentFrame].push(frames[currentFrame].commands.slice());
   frames[currentFrame].commands = redoStack[currentFrame].pop();
+  frames[currentFrame].invalidate();
   renderCurrentFrame();
 }
 
 function updateUndoRedoButtons() {
-  document.getElementById('undoBtn').disabled =
-    !undoStack[currentFrame] || undoStack[currentFrame].length === 0;
-  document.getElementById('redoBtn').disabled =
-    !redoStack[currentFrame] || redoStack[currentFrame].length === 0;
+  document.getElementById('undoBtn').disabled = !undoStack[currentFrame] || undoStack[currentFrame].length === 0;
+  document.getElementById('redoBtn').disabled = !redoStack[currentFrame] || redoStack[currentFrame].length === 0;
 }
 
+// ─────────────────────────── FRAMES ───────────────────────────
 function addFrame() {
-  const newFrame = new Frame();
-  frames.splice(currentFrame + 1, 0, newFrame);
+  frames.splice(currentFrame + 1, 0, new Frame());
   undoStack.splice(currentFrame + 1, 0, []);
   redoStack.splice(currentFrame + 1, 0, []);
   currentFrame++;
@@ -765,7 +887,8 @@ function addFrame() {
 }
 
 function deleteFrame(index) {
-  if (frames.length === 1) { alert('Cannot delete the only frame.'); return; }
+  if (frames.length === 1) { toast('🤷 Cannot delete the only frame'); return; }
+  trash.push({ frame: cloneFrame(frames[index]), index });
   frames.splice(index, 1);
   undoStack.splice(index, 1);
   redoStack.splice(index, 1);
@@ -774,15 +897,59 @@ function deleteFrame(index) {
   rebuildThumbnails();
   renderCurrentFrame();
   updateStatus();
+  updateTrashButton();
+}
+
+function restoreFrame() {
+  if (trash.length === 0) { toast('🤷 Nothing to restore'); return; }
+  const { frame, index } = trash.pop();
+  const insertIdx = Math.min(index, frames.length);
+  frames.splice(insertIdx, 0, frame);
+  undoStack.splice(insertIdx, 0, []);
+  redoStack.splice(insertIdx, 0, []);
+  rebuildThumbnails();
+  selectFrame(insertIdx);
+  updateStatus();
+  updateTrashButton();
+  toast('♻ Frame restored');
+}
+
+function copyFrame() {
+  clipboardFrame = cloneFrame(frames[currentFrame]);
+  toast('📋 Frame copied');
+}
+
+function pasteFrame() {
+  if (!clipboardFrame) { toast('📄 Nothing to paste'); return; }
+  frames.splice(currentFrame + 1, 0, cloneFrame(clipboardFrame));
+  undoStack.splice(currentFrame + 1, 0, []);
+  redoStack.splice(currentFrame + 1, 0, []);
+  currentFrame++;
+  rebuildThumbnails();
+  renderCurrentFrame();
+  updateStatus();
+  toast('📄 Frame pasted');
+}
+
+function updateTrashButton() {
+  const btn = document.getElementById('restoreFrameBtn');
+  btn.disabled = trash.length === 0;
+  btn.title = trash.length === 0 ? 'No deleted frames' : `Restore (${trash.length} in trash, Alt+Z)`;
+  btn.textContent = trash.length > 0 ? `♻${trash.length}` : '♻';
 }
 
 function selectFrame(index) {
   if (index < 0 || index >= frames.length) return;
   currentFrame = index;
-  document.querySelectorAll('.frame').forEach((el, i) => {
-    el.classList.toggle('active', i === index);
-  });
+  document.querySelectorAll('.frame').forEach((el, i) => el.classList.toggle('active', i === index));
   renderCurrentFrame();
+  updateStatus();
+}
+
+function cycleHold(index, delta) {
+  const f = frames[index];
+  f.holdDuration = Math.max(1, Math.min(MAX_HOLD, f.holdDuration + delta));
+  updateHoldBadge(index);
   updateStatus();
 }
 
@@ -796,22 +963,14 @@ function updateHoldBadge(index) {
   badge.classList.toggle('long', n > 1);
 }
 
-function cycleHold(index, delta) {
-  const f = frames[index];
-  f.holdDuration = Math.max(1, Math.min(20, f.holdDuration + delta));
-  updateHoldBadge(index);
-}
-
 function updateFrameThumbnail(index) {
   const frameEl = document.querySelectorAll('.frame')[index];
   if (!frameEl) return;
   const thumb = frameEl.querySelector('canvas');
   if (!thumb) return;
   const tctx = thumb.getContext('2d');
-  const tmp = makeTempCanvas();
-  renderFrameTo(frames[index], tmp.getContext('2d', { willReadFrequently: true }), canvas.width, canvas.height);
-  tctx.clearRect(0, 0, 80, 80);
-  tctx.drawImage(tmp, 0, 0, 80, 80);
+  tctx.clearRect(0, 0, THUMB_SIZE, THUMB_SIZE);
+  tctx.drawImage(frames[index].getRaster(), 0, 0, THUMB_SIZE, THUMB_SIZE);
 }
 
 function rebuildThumbnails() {
@@ -821,53 +980,46 @@ function rebuildThumbnails() {
     const div = document.createElement('div');
     div.className = 'frame' + (i === currentFrame ? ' active' : '');
     const thumb = document.createElement('canvas');
-    thumb.width = 80;
-    thumb.height = 80;
+    thumb.width = THUMB_SIZE;
+    thumb.height = THUMB_SIZE;
     div.appendChild(thumb);
-
     const num = document.createElement('div');
     num.className = 'num';
     num.textContent = i + 1;
     div.appendChild(num);
-
     const hold = document.createElement('div');
     hold.className = 'hold';
-    hold.title = 'Click + hold, right-click - hold';
+    hold.title = 'Left-click +1 hold, right-click -1 hold';
     hold.textContent = '×' + frame.holdDuration;
     if (frame.holdDuration > 1) hold.classList.add('long');
-    hold.onclick = (e) => { e.stopPropagation(); cycleHold(i, 1); };
-    hold.oncontextmenu = (e) => { e.preventDefault(); e.stopPropagation(); cycleHold(i, -1); };
+    hold.onclick = e => { e.stopPropagation(); cycleHold(i, 1); };
+    hold.oncontextmenu = e => { e.preventDefault(); e.stopPropagation(); cycleHold(i, -1); };
     div.appendChild(hold);
-
     const del = document.createElement('button');
     del.className = 'del';
     del.textContent = '×';
-    del.onclick = (e) => { e.stopPropagation(); deleteFrame(i); };
+    del.title = 'Delete frame';
+    del.onclick = e => { e.stopPropagation(); deleteFrame(i); };
     div.appendChild(del);
-
     div.onclick = () => { if (!isPlaying) selectFrame(i); };
     container.appendChild(div);
-
-    const tmp = makeTempCanvas();
-    renderFrameTo(frame, tmp.getContext('2d', { willReadFrequently: true }), canvas.width, canvas.height);
     const tctx = thumb.getContext('2d');
-    tctx.drawImage(tmp, 0, 0, 80, 80);
+    tctx.drawImage(frame.getRaster(), 0, 0, THUMB_SIZE, THUMB_SIZE);
   });
 }
 
+// ─────────────────────────── PLAYBACK ───────────────────────────
 function play() {
   if (isPlaying) return;
   const totalTicks = frames.reduce((s, f) => s + f.holdDuration, 0);
-  if (totalTicks < 2) { alert('Need at least 2 total frames to play.'); return; }
-
-  playRenderedFrames = frames.map(f => {
-    const c = makeTempCanvas();
-    renderFrameTo(f, c.getContext('2d', { willReadFrequently: true }), canvas.width, canvas.height);
-    return c;
-  });
-
-  playbackCanvas.width = canvas.width;
-  playbackCanvas.height = canvas.height;
+  if (totalTicks < 2) {
+    toast('🖼 Need at least 2 total frames — that\'s just a picture!', 3000);
+    return;
+  }
+  playFps = getFps();
+  playRenderedFrames = frames.map(f => f.getRaster());
+  playbackCanvas.width = CANVAS_W;
+  playbackCanvas.height = CANVAS_H;
   playbackOverlay.classList.add('show');
   isPlaying = true;
   playStartTime = performance.now();
@@ -877,20 +1029,19 @@ function play() {
 
 function playTick(timestamp) {
   if (!isPlaying) return;
-  const fps = getFps();
-  const frameTime = 1000 / fps;
+  const frameTime = 1000 / playFps;
   const totalTicks = frames.reduce((s, f) => s + f.holdDuration, 0);
   const totalDuration = totalTicks * frameTime;
   const elapsed = (timestamp - playStartTime) % totalDuration;
   const tickIdx = Math.floor(elapsed / frameTime);
-
   let acc = 0, shown = 0;
   for (let i = 0; i < frames.length; i++) {
     acc += frames[i].holdDuration;
     if (tickIdx < acc) { shown = i; break; }
   }
+  playbackCtx.setTransform(1, 0, 0, 1, 0, 0);
   playbackCtx.fillStyle = '#ffffff';
-  playbackCtx.fillRect(0, 0, playbackCanvas.width, playbackCanvas.height);
+  playbackCtx.fillRect(0, 0, CANVAS_W, CANVAS_H);
   playbackCtx.drawImage(playRenderedFrames[shown], 0, 0);
   playRafId = requestAnimationFrame(playTick);
 }
@@ -904,76 +1055,84 @@ function stop() {
   renderCurrentFrame();
 }
 
-function downloadBlob(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.rel = 'noopener';
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => {
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, 1500);
+// ─────────────────────────── EXPORT ───────────────────────────
+function setExportBusy(busy) {
+  exportInProgress = busy;
+  ['exportGifBtn', 'exportMp4Btn', 'exportPngBtn'].forEach(id => {
+    document.getElementById(id).disabled = busy;
+  });
+}
+
+function openModal(titleText, textText) {
+  revokeAllUrls();
+  const modal = document.getElementById('modal');
+  document.getElementById('modalTitle').textContent = titleText;
+  document.getElementById('modalText').textContent = textText;
+  document.getElementById('modalPreview').innerHTML = '';
+  document.getElementById('progressBar').style.display = 'block';
+  document.getElementById('progressFill').style.width = '0%';
+  modal.classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  revokeAllUrls();
+}
+
+function setModalPreview(html) {
+  document.getElementById('modalPreview').innerHTML = html;
+  document.getElementById('progressBar').style.display = 'none';
 }
 
 function exportPNG() {
-  const c = makeTempCanvas();
-  renderFrameTo(frames[currentFrame], c.getContext('2d', { willReadFrequently: true }), canvas.width, canvas.height);
-  c.toBlob(blob => {
-    if (!blob) { alert('Could not create PNG.'); return; }
-    downloadBlob(blob, `wanis_frame_${currentFrame + 1}.png`);
-  }, 'image/png');
+  if (exportInProgress) return;
+  setExportBusy(true);
+  try {
+    frames[currentFrame].getRaster().toBlob(blob => {
+      if (!blob) { alert('Could not create PNG.'); setExportBusy(false); return; }
+      downloadBlob(blob, `wanis_frame_${currentFrame + 1}.png`);
+      setExportBusy(false);
+    }, 'image/png');
+  } catch (e) {
+    alert('PNG export failed: ' + e.message);
+    setExportBusy(false);
+  }
 }
 
-async function loadGifenc() {
-  for (const u of [
-    'https://cdn.jsdelivr.net/npm/gifenc/+esm',
-    'https://unpkg.com/gifenc/+esm',
-    'https://esm.sh/gifenc'
-  ]) {
+async function loadModule(paths, validate) {
+  let lastErr;
+  for (const u of paths) {
     try {
-      const mod = await import(u);
-      if (mod.GIFEncoder && mod.quantize && mod.applyPalette) return mod;
-    } catch (_) {}
+      const mod_ = await import(u);
+      if (validate(mod_)) return mod_;
+    } catch (e) { lastErr = e; }
   }
-  throw new Error('Failed to load gifenc from any CDN');
+  throw lastErr || new Error('Failed to load module from any CDN');
 }
 
-async function loadMediabunny() {
-  for (const u of [
-    'https://cdn.jsdelivr.net/npm/mediabunny/+esm',
-    'https://unpkg.com/mediabunny/+esm',
-    'https://esm.sh/mediabunny'
-  ]) {
-    try {
-      const mod = await import(u);
-      if (mod.Output && mod.CanvasSource && mod.BufferTarget) return mod;
-    } catch (_) {}
-  }
-  throw new Error('Failed to load mediabunny from any CDN');
-}
+const loadGifenc = () => loadModule([
+  'https://cdn.jsdelivr.net/npm/gifenc/+esm',
+  'https://unpkg.com/gifenc/+esm',
+  'https://esm.sh/gifenc'
+], m => m.GIFEncoder && m.quantize && m.applyPalette);
+
+const loadMediabunny = () => loadModule([
+  'https://cdn.jsdelivr.net/npm/mediabunny/+esm',
+  'https://unpkg.com/mediabunny/+esm',
+  'https://esm.sh/mediabunny'
+], m => m.Output && m.CanvasSource && m.BufferTarget);
 
 async function exportGIF() {
-  if (frames.length < 1) { alert('Need at least 1 frame.'); return; }
-  const modal = document.getElementById('modal');
-  const title = document.getElementById('modalTitle');
-  const text = document.getElementById('modalText');
-  const preview = document.getElementById('modalPreview');
-  const pb = document.getElementById('progressBar');
-  const pf = document.getElementById('progressFill');
+  if (exportInProgress) return;
+  if (frames.length < 1) return;
+  setExportBusy(true);
+  openModal('Creating GIF', 'Loading GIF library...');
 
-  modal.classList.add('show');
-  title.textContent = 'Creating GIF';
-  text.textContent = 'Loading GIF library...';
-  preview.innerHTML = '';
-  pb.style.display = 'block';
-  pf.style.width = '0%';
+  const modalText = document.getElementById('modalText');
+  const progressFill = document.getElementById('progressFill');
 
   try {
     const { GIFEncoder, quantize, applyPalette } = await loadGifenc();
-    text.textContent = 'Encoding...';
     const fps = getFps();
     const gif = GIFEncoder();
 
@@ -981,86 +1140,81 @@ async function exportGIF() {
       const frame = frames[i];
       const delay = Math.round((1000 / fps) * frame.holdDuration);
       const c = makeTempCanvas();
-      renderFrameTo(frame, c.getContext('2d', { willReadFrequently: true }), canvas.width, canvas.height);
-      const img = c.getContext('2d').getImageData(0, 0, c.width, c.height);
+      c.getContext('2d').drawImage(frame.getRaster(), 0, 0);
+      const img = c.getContext('2d').getImageData(0, 0, CANVAS_W, CANVAS_H);
       const palette = quantize(img.data, 256);
       const index = applyPalette(img.data, palette);
-      gif.writeFrame(index, c.width, c.height, { palette, delay });
-
-      const pct = Math.round(((i + 1) / frames.length) * 100);
-      pf.style.width = pct + '%';
-      text.textContent = `Encoding frame ${i + 1} / ${frames.length}... ${pct}%`;
+      gif.writeFrame(index, CANVAS_W, CANVAS_H, { palette, delay });
+      const pct = Math.round(((i+1) / frames.length) * 100);
+      progressFill.style.width = pct + '%';
+      modalText.textContent = `Encoding frame ${i+1} / ${frames.length}... ${pct}%`;
       await new Promise(r => setTimeout(r, 0));
     }
     gif.finish();
     const blob = new Blob([gif.bytes()], { type: 'image/gif' });
-    const url = URL.createObjectURL(blob);
-    pf.style.width = '100%';
-    text.textContent = 'GIF is ready.';
-    preview.innerHTML = `
+    const url = trackUrl(URL.createObjectURL(blob));
+    modalText.textContent = 'GIF is ready.';
+    setModalPreview(`
       <img src="${url}" style="max-width:100%;border-radius:8px;margin:10px 0;">
-      <br><button id="gifDownloadBtn" class="success" style="margin-top:10px;">📥 Download GIF</button>`;
-    pb.style.display = 'none';
+      <br><button id="gifDownloadBtn" class="success" style="margin-top:10px;">📥 Download GIF</button>`);
     document.getElementById('gifDownloadBtn').onclick = () =>
       downloadBlob(blob, `wanis_${Date.now()}.gif`);
   } catch (err) {
     console.error(err);
-    text.textContent = 'GIF export failed: ' + err.message;
-    pb.style.display = 'none';
+    modalText.textContent = 'GIF export failed: ' + err.message;
+    document.getElementById('progressBar').style.display = 'none';
+  } finally {
+    setExportBusy(false);
   }
 }
 
 async function exportMP4() {
-  if (frames.length < 1) { alert('Need at least 1 frame.'); return; }
-  const modal = document.getElementById('modal');
-  const title = document.getElementById('modalTitle');
-  const text = document.getElementById('modalText');
-  const preview = document.getElementById('modalPreview');
-  const pb = document.getElementById('progressBar');
-  const pf = document.getElementById('progressFill');
+  if (exportInProgress) return;
+  if (frames.length < 1) return;
+  setExportBusy(true);
+  openModal('Creating video', 'Loading video encoder...');
 
-  modal.classList.add('show');
-  title.textContent = 'Creating video';
-  text.textContent = 'Loading video encoder...';
-  preview.innerHTML = '';
-  pb.style.display = 'block';
-  pf.style.width = '0%';
+  const modalText = document.getElementById('modalText');
+  const progressFill = document.getElementById('progressFill');
 
   if (!window.VideoEncoder) {
-    text.textContent = 'WebCodecs not available. Use a recent Chrome, Edge, or Safari.';
-    pb.style.display = 'none';
+    modalText.textContent = 'WebCodecs not available. Use a recent Chrome, Edge, or Safari.';
+    document.getElementById('progressBar').style.display = 'none';
+    setExportBusy(false);
     return;
   }
 
   let mb;
   try { mb = await loadMediabunny(); }
   catch (err) {
-    text.textContent = 'Could not load encoder: ' + err.message;
-    pb.style.display = 'none';
+    modalText.textContent = 'Could not load encoder: ' + err.message;
+    document.getElementById('progressBar').style.display = 'none';
+    setExportBusy(false);
     return;
   }
   const { Output, Mp4OutputFormat, WebMOutputFormat, BufferTarget, CanvasSource, QUALITY_HIGH } = mb;
 
   const fps = getFps();
   const recCanvas = makeTempCanvas();
-  const rctx = recCanvas.getContext('2d', { willReadFrequently: true });
+  const rctx = recCanvas.getContext('2d');
 
   async function tryEncode(OutputFormat, codec, ext, mimeType) {
     const output = new Output({ format: new OutputFormat(), target: new BufferTarget() });
     const vs = new CanvasSource(recCanvas, { codec, bitrate: QUALITY_HIGH });
     output.addVideoTrack(vs);
     await output.start();
-
     let t = 0;
     for (let i = 0; i < frames.length; i++) {
       const frame = frames[i];
       const dur = frame.holdDuration / fps;
-      renderFrameTo(frame, rctx, canvas.width, canvas.height);
+      rctx.setTransform(1, 0, 0, 1, 0, 0);
+      rctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+      rctx.drawImage(frame.getRaster(), 0, 0);
       await vs.add(t, dur);
       t += dur;
-      const pct = Math.round(((i + 1) / frames.length) * 100);
-      pf.style.width = pct + '%';
-      text.textContent = `${ext.toUpperCase()} frame ${i + 1} / ${frames.length}... ${pct}%`;
+      const pct = Math.round(((i+1) / frames.length) * 100);
+      progressFill.style.width = pct + '%';
+      modalText.textContent = `${ext.toUpperCase()} frame ${i+1} / ${frames.length}... ${pct}%`;
     }
     await output.finalize();
     if (!output.target.buffer) throw new Error('No output buffer');
@@ -1072,40 +1226,277 @@ async function exportMP4() {
     try {
       blob = await tryEncode(Mp4OutputFormat, 'avc', 'mp4', 'video/mp4');
       ext = 'mp4';
-    } catch (e) {
-      console.warn('MP4 failed, trying WebM:', e);
-      text.textContent = 'MP4 codec unavailable, falling back to WebM...';
+    } catch (mp4Err) {
+      console.warn('MP4 failed, trying WebM:', mp4Err);
+      modalText.textContent = 'MP4 codec unavailable, falling back to WebM...';
       blob = await tryEncode(WebMOutputFormat, 'vp9', 'webm', 'video/webm');
       ext = 'webm';
     }
-    const url = URL.createObjectURL(blob);
-    pf.style.width = '100%';
-    text.textContent = `${ext.toUpperCase()} video is ready.`;
-    preview.innerHTML = `
+    const url = trackUrl(URL.createObjectURL(blob));
+    modalText.textContent = `${ext.toUpperCase()} video is ready.`;
+    setModalPreview(`
       <video src="${url}" controls loop style="max-width:100%;border-radius:8px;margin:10px 0;"></video>
-      <br><button id="videoDownloadBtn" class="success" style="margin-top:10px;">📥 Download ${ext.toUpperCase()}</button>`;
-    pb.style.display = 'none';
+      <br><button id="videoDownloadBtn" class="success" style="margin-top:10px;">📥 Download ${ext.toUpperCase()}</button>`);
     document.getElementById('videoDownloadBtn').onclick = () =>
       downloadBlob(blob, `wanis_${Date.now()}.${ext}`);
   } catch (err) {
     console.error(err);
-    text.textContent = 'Video export failed: ' + err.message;
-    pb.style.display = 'none';
+    modalText.textContent = 'Video export failed: ' + err.message;
+    document.getElementById('progressBar').style.display = 'none';
+  } finally {
+    setExportBusy(false);
   }
 }
 
-canvas.addEventListener('mousedown', startDraw);
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('mouseup', endDraw);
-canvas.addEventListener('mouseout', endDraw);
-canvas.addEventListener('touchstart', startDraw, { passive: false });
-canvas.addEventListener('touchmove', draw, { passive: false });
-canvas.addEventListener('touchend', endDraw);
+// ─────────────────────────── UI EXTRAS ───────────────────────────
+function toast(msg, duration = 2200) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => {
+    t.classList.remove('show');
+    setTimeout(() => t.remove(), 350);
+  }, duration);
+}
+
+// Confetti / particles
+const confettiCanvas = document.getElementById('confettiCanvas');
+const cctx = confettiCanvas.getContext('2d');
+let confettiParticles = [];
+let confettiRunning = false;
+
+function resizeConfetti() {
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+}
+resizeConfetti();
+window.addEventListener('resize', () => { resizeConfetti(); layoutCanvas(); });
+
+function spawnBurst(x, y, count, colorFn, speed, gravity = 0.35) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const v = speed * (0.4 + Math.random());
+    confettiParticles.push({
+      x, y,
+      vx: Math.cos(angle) * v,
+      vy: Math.sin(angle) * v - speed * 0.25,
+      size: 4 + Math.random() * 8,
+      color: colorFn(i),
+      life: 1,
+      rotation: Math.random() * Math.PI * 2,
+      spin: (Math.random() - 0.5) * 0.4,
+      gravity
+    });
+  }
+  if (!confettiRunning) { confettiRunning = true; confettiLoop(); }
+}
+
+function spawnConfetti(count = 150) {
+  spawnBurst(window.innerWidth/2, window.innerHeight/2, count,
+    () => `hsl(${Math.random()*360}, 85%, 60%)`, 14, 0.35);
+}
+
+function spawnSparkles(x, y, count = 35) {
+  spawnBurst(x, y, count,
+    () => `hsl(${40 + Math.random()*50}, 95%, ${55 + Math.random()*25}%)`, 7, 0.08);
+}
+
+function confettiLoop() {
+  cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  for (let i = confettiParticles.length - 1; i >= 0; i--) {
+    const p = confettiParticles[i];
+    p.x += p.vx; p.y += p.vy;
+    p.vy += p.gravity;
+    p.vx *= 0.99;
+    p.rotation += p.spin;
+    p.life -= 0.008;
+    if (p.life <= 0 || p.y > confettiCanvas.height + 50) { confettiParticles.splice(i, 1); continue; }
+    cctx.save();
+    cctx.globalAlpha = Math.max(0, p.life);
+    cctx.translate(p.x, p.y);
+    cctx.rotate(p.rotation);
+    cctx.fillStyle = p.color;
+    cctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
+    cctx.restore();
+  }
+  if (confettiParticles.length > 0) requestAnimationFrame(confettiLoop);
+  else { confettiRunning = false; cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height); }
+}
+
+// Size indicator
+let sizeIndicatorEl = null;
+let sizeIndicatorTimer = null;
+function showSizeIndicator(x, y, size) {
+  if (sizeIndicatorEl) sizeIndicatorEl.remove();
+  clearTimeout(sizeIndicatorTimer);
+  sizeIndicatorEl = document.createElement('div');
+  sizeIndicatorEl.textContent = 'Size: ' + size;
+  sizeIndicatorEl.style.cssText = `
+    position: fixed; left: ${x + 18}px; top: ${y - 12}px;
+    background: rgba(0,0,0,0.9); color: #fff; padding: 6px 12px;
+    border-radius: 6px; font-size: 13px; font-weight: bold;
+    border: 2px solid #667eea; pointer-events: none; z-index: 99997;
+    box-shadow: 0 4px 15px rgba(102,126,234,0.5);
+    transition: opacity 0.3s, transform 0.3s;
+  `;
+  document.body.appendChild(sizeIndicatorEl);
+  sizeIndicatorTimer = setTimeout(() => {
+    if (sizeIndicatorEl) {
+      sizeIndicatorEl.style.opacity = '0';
+      sizeIndicatorEl.style.transform = 'translateY(-10px)';
+      setTimeout(() => { if (sizeIndicatorEl) { sizeIndicatorEl.remove(); sizeIndicatorEl = null; } }, 350);
+    }
+  }, 600);
+}
+
+// ─────────────────────────── EASTER EGGS (mouse) ───────────────────────────
+// Middle-click → sparkles (doesn't interfere with drawing)
+canvas.addEventListener('pointerdown', (e) => {
+  if (e.button === 1) {
+    e.preventDefault();
+    spawnSparkles(e.clientX, e.clientY, 45);
+    toast('✨ Sparkle!', 1000);
+  }
+});
+
+// Right-click → mini confetti
+canvas.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  if (isPlaying) return;
+  spawnBurst(e.clientX, e.clientY, 20,
+    () => `hsl(${Math.random()*360}, 85%, 65%)`, 5, 0.2);
+  toast('🎨 Right-click sparkle', 1500);
+});
+
+// Wheel → brush size
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const dir = e.deltaY > 0 ? -1 : 1;
+  currentSize = Math.max(1, Math.min(50, currentSize + dir));
+  document.getElementById('sizeSlider').value = currentSize;
+  updateStatus();
+  showSizeIndicator(e.clientX, e.clientY, currentSize);
+}, { passive: false });
+
+// Shake detection → earthquake
+let mouseTrail = [];
+let lastShakeTime = 0;
+canvas.addEventListener('mousemove', (e) => {
+  if (isDrawing || isPlaying) return;
+  const now = performance.now();
+  mouseTrail.push({ x: e.clientX, y: e.clientY, t: now });
+  mouseTrail = mouseTrail.filter(p => now - p.t < 450);
+  if (mouseTrail.length < 10) return;
+  let directionChanges = 0;
+  for (let i = 2; i < mouseTrail.length; i++) {
+    const dx1 = mouseTrail[i-1].x - mouseTrail[i-2].x;
+    const dx2 = mouseTrail[i].x - mouseTrail[i-1].x;
+    const dy1 = mouseTrail[i-1].y - mouseTrail[i-2].y;
+    const dy2 = mouseTrail[i].y - mouseTrail[i-1].y;
+    if (dx1 * dx2 < 0 || dy1 * dy2 < 0) directionChanges++;
+  }
+  if (directionChanges >= 8 && now - lastShakeTime > 4000) {
+    lastShakeTime = now;
+    mouseTrail = [];
+    const main = document.getElementById('mainArea');
+    main.classList.remove('quake');
+    void main.offsetWidth;
+    main.classList.add('quake');
+    setTimeout(() => main.classList.remove('quake'), 700);
+    toast('🌋 Earthquake!', 1800);
+  }
+});
+
+// Triple-click subtitle → animation fact
+const ANIMATION_FACTS = [
+  '🎬 The first animated film was Fantasmagorie (1908), made of 700 drawings!',
+  '🎬 At 24 fps, one second of animation = 24 individual drawings.',
+  '🎬 Studio Ghibli\'s Spirited Away has ~140,000 hand-drawn frames.',
+  '🎬 "Onion skinning" is named after the translucent onion paper animators used.',
+  '🎬 The bouncing ball is the very first animation exercise animators learn.',
+  '🎬 Walt Disney\'s Snow White used over 2 million individual drawings.',
+  '🎬 The "squash and stretch" principle dates back to 1930s rubber hose animation.',
+  '🎬 Anime often runs on "2s" or "3s" — drawings held for 2–3 frames to save work.',
+  '🎬 Flipbook animation works thanks to persistence of vision (~1/16th of a second).'
+];
+let subtitleClicks = 0;
+let subtitleTimer = null;
+const subtitleEl = document.getElementById('subtitle');
+subtitleEl.addEventListener('click', (e) => {
+  e.stopPropagation();
+  subtitleClicks++;
+  clearTimeout(subtitleTimer);
+  subtitleTimer = setTimeout(() => subtitleClicks = 0, 2000);
+  if (subtitleClicks >= 3) {
+    subtitleClicks = 0;
+    toast(ANIMATION_FACTS[Math.floor(Math.random() * ANIMATION_FACTS.length)], 4500);
+  }
+});
+
+// Logo 5× click
+let logoClicks = 0;
+let logoClickTimer = null;
+document.getElementById('logo').addEventListener('click', (e) => {
+  if (e.target === subtitleEl) return;
+  logoClicks++;
+  clearTimeout(logoClickTimer);
+  logoClickTimer = setTimeout(() => logoClicks = 0, 2000);
+  if (logoClicks >= 5) {
+    logoClicks = 0;
+    const logo = document.getElementById('logo');
+    logo.classList.remove('spin');
+    void logo.offsetWidth;
+    logo.classList.add('spin');
+    spawnConfetti(200);
+    toast('🎉 WAnis says hi!', 2000);
+  }
+});
+
+// Konami code
+const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let konamiIdx = 0;
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  const target = typeof konamiCode[konamiIdx] === 'string' ? konamiCode[konamiIdx].toLowerCase() : konamiCode[konamiIdx];
+  if (key === target) {
+    konamiIdx++;
+    if (konamiIdx === konamiCode.length) {
+      konamiIdx = 0;
+      spawnConfetti(250);
+      toast('🎉 You found the secret! Enjoy the confetti 🎉', 4000);
+      setTimeout(() => spawnConfetti(150), 600);
+      setTimeout(() => spawnConfetti(150), 1200);
+    }
+  } else {
+    konamiIdx = (key === konamiCode[0]) ? 1 : 0;
+  }
+});
+
+// ─────────────────────────── EVENT WIRING ───────────────────────────
+// Pointer events with capture — reliable stroke ending outside canvas
+canvas.addEventListener('pointerdown', (e) => {
+  if (e.button === 1) return; // middle-click handled above
+  if (!canvas.hasPointerCapture?.(e.pointerId)) {
+    try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+  }
+  startDraw(e);
+});
+canvas.addEventListener('pointermove', draw);
+canvas.addEventListener('pointerup', endDraw);
+canvas.addEventListener('pointercancel', endDraw);
+canvas.addEventListener('lostpointercapture', () => { if (isDrawing) endDraw(); });
 
 document.querySelectorAll('.tool-btn').forEach(btn => {
   btn.onclick = () => {
-    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tool-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
     btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
     currentTool = btn.dataset.tool;
     updateStatus();
   };
@@ -1123,55 +1514,91 @@ document.getElementById('playBtn').onclick = play;
 document.getElementById('stopBtn').onclick = stop;
 document.getElementById('undoBtn').onclick = undo;
 document.getElementById('redoBtn').onclick = redo;
+document.getElementById('copyFrameBtn').onclick = copyFrame;
+document.getElementById('pasteFrameBtn').onclick = pasteFrame;
+document.getElementById('deleteFrameBtn').onclick = () => deleteFrame(currentFrame);
+document.getElementById('restoreFrameBtn').onclick = restoreFrame;
 
 document.getElementById('clearBtn').onclick = () => {
-  if (frames[currentFrame].commands.length === 0) return;
+  if (frames[currentFrame].commands.length === 0) { toast('✨ Frame is already empty'); return; }
   if (!confirm('Clear all content on this frame?')) return;
   pushUndo();
   frames[currentFrame].commands = [];
+  frames[currentFrame].invalidate();
   renderCurrentFrame();
 };
 
-document.getElementById('onionBtn').onclick = e => {
-  e.target.classList.toggle('active');
+onionBtn.onclick = () => {
+  onionBtn.classList.toggle('active');
   updateOnionSkin();
 };
-document.getElementById('gridBtn').onclick = e => {
-  e.target.classList.toggle('active');
+gridBtn.onclick = () => {
+  gridBtn.classList.toggle('active');
   drawGrid();
 };
 
 document.getElementById('exportPngBtn').onclick = exportPNG;
 document.getElementById('exportGifBtn').onclick = exportGIF;
 document.getElementById('exportMp4Btn').onclick = exportMP4;
-document.getElementById('modalCloseBtn').onclick = () => {
-  document.getElementById('modal').classList.remove('show');
-};
+document.getElementById('modalCloseBtn').onclick = closeModal;
+
+// Modal: backdrop click + Escape
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target.id === 'modal') closeModal();
+});
 
 playbackOverlay.onclick = () => { if (isPlaying) stop(); };
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && isPlaying) { e.preventDefault(); stop(); return; }
-  if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
-  if (e.ctrlKey && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) { e.preventDefault(); redo(); }
-  if (e.key === ' ') { e.preventDefault(); isPlaying ? stop() : play(); }
+  const inInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
+  if (inInput) return;
+
+  if (e.key === 'Escape') {
+    if (document.getElementById('modal').classList.contains('show')) {
+      e.preventDefault(); closeModal(); return;
+    }
+    if (isPlaying) { e.preventDefault(); stop(); return; }
+  }
+  if (mod(e) && e.key === 'z') { e.preventDefault(); undo(); }
+  if (mod(e) && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) { e.preventDefault(); redo(); }
+  if (mod(e) && e.key === 'c') { e.preventDefault(); copyFrame(); }
+  if (mod(e) && e.key === 'v') { e.preventDefault(); pasteFrame(); }
+  if (e.key === 'Delete') { e.preventDefault(); deleteFrame(currentFrame); }
+  if (e.altKey && e.key === 'z') { e.preventDefault(); restoreFrame(); }
+  if (e.key === ' ' && !document.getElementById('modal').classList.contains('show')) {
+    e.preventDefault();
+    isPlaying ? stop() : play();
+  }
   if (!isPlaying && e.key === 'ArrowRight' && currentFrame < frames.length - 1) selectFrame(currentFrame + 1);
   if (!isPlaying && e.key === 'ArrowLeft' && currentFrame > 0) selectFrame(currentFrame - 1);
+});
+
+// Unload guard
+window.addEventListener('beforeunload', (e) => {
+  if (frames.some(f => f.commands.length > 0)) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
 });
 
 function updateStatus() {
   const total = frames.reduce((s, f) => s + f.holdDuration, 0);
   const dur = (total / getFps()).toFixed(2);
+  const hint = currentTool === 'pen' ? ' (Shift = 🌈, wheel = size)' : currentTool === 'text' ? ' (click canvas)' : '';
   document.getElementById('status').textContent =
-    `Frame ${currentFrame + 1}/${frames.length} | ${currentTool} | Size: ${currentSize} | ${dur}s`;
+    `Frame ${currentFrame + 1}/${frames.length} | ${currentTool}${hint} | Size: ${currentSize} | ${dur}s`;
 }
 
-ctx.fillStyle = '#ffffff';
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+// ─────────────────────────── INIT ───────────────────────────
+layoutCanvas();
 rebuildThumbnails();
 renderCurrentFrame();
 drawGrid();
 updateStatus();
+updateTrashButton();
+
+setTimeout(() => toast('💡 Tip: hold Shift while drawing for rainbow pen', 3500), 800);
+setTimeout(() => toast('🖱 Try middle-click, right-click, scroll, or shake the mouse on the canvas', 4000), 5000);
 </script>
 
 </body>
