@@ -126,7 +126,6 @@
     left: 0;
     pointer-events: none;
   }
-  #gridCanvas { display: none; }
 
   .canvas-overlay-btns {
     position: absolute;
@@ -227,7 +226,9 @@
     color: #fff;
     border: 1px solid #444;
     border-radius: 4px;
+    text-align: center;
   }
+  .fps-control input:invalid { border-color: #e74c3c; }
 
   .modal {
     position: fixed;
@@ -367,8 +368,8 @@
 
 <div class="timeline">
   <div class="fps-control">
-    <label>FPS</label>
-    <input type="number" id="fpsInput" value="12" min="1" max="30">
+    <label>FPS (1–60)</label>
+    <input type="number" id="fpsInput" value="12" min="1" max="60" step="1">
   </div>
   <div class="frames-container" id="framesContainer"></div>
   <button class="add-frame" id="addFrameBtn" title="Add new frame">+</button>
@@ -389,7 +390,9 @@
   <div class="playback-hint">Press ESC or click anywhere to close</div>
 </div>
 
-<script>
+<script type="module">
+import { GIFEncoder, quantize, applyPalette } from 'https://unpkg.com/gifenc';
+
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d', { willReadFrequently: true });
 const onionCanvas = document.getElementById('onionCanvas');
@@ -399,6 +402,7 @@ const gridCtx = gridCanvas.getContext('2d');
 const playbackOverlay = document.getElementById('playbackOverlay');
 const playbackCanvas = document.getElementById('playbackCanvas');
 const playbackCtx = playbackCanvas.getContext('2d');
+const fpsInput = document.getElementById('fpsInput');
 
 let frames = [];
 let currentFrame = 0;
@@ -413,6 +417,24 @@ let isPlaying = false;
 let playInterval = null;
 let undoStack = [];
 let redoStack = [];
+
+function getFps() {
+  let v = parseInt(fpsInput.value, 10);
+  if (isNaN(v)) v = 12;
+  if (v < 1) v = 1;
+  if (v > 60) v = 60;
+  return v;
+}
+
+fpsInput.addEventListener('input', () => {
+  const v = parseInt(fpsInput.value, 10);
+  if (isNaN(v)) return;
+  if (v < 1) fpsInput.value = 1;
+  if (v > 60) fpsInput.value = 60;
+});
+fpsInput.addEventListener('blur', () => {
+  fpsInput.value = getFps();
+});
 
 function createBlankFrame() {
   const c = document.createElement('canvas');
@@ -512,33 +534,36 @@ function updateOnionSkin() {
 }
 
 function drawGrid() {
-  const btn = document.getElementById('gridBtn');
-  if (!btn.classList.contains('active')) {
-    gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
-    return;
-  }
   gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+  const btn = document.getElementById('gridBtn');
+  if (!btn.classList.contains('active')) return;
+
   const step = 40;
-  gridCtx.strokeStyle = 'rgba(102, 126, 234, 0.35)';
+  gridCtx.strokeStyle = 'rgba(102, 126, 234, 0.45)';
   gridCtx.lineWidth = 1;
+
   for (let x = 0; x <= canvas.width; x += step) {
     gridCtx.beginPath();
-    gridCtx.moveTo(x, 0);
-    gridCtx.lineTo(x, canvas.height);
+    gridCtx.moveTo(x + 0.5, 0);
+    gridCtx.lineTo(x + 0.5, canvas.height);
     gridCtx.stroke();
   }
   for (let y = 0; y <= canvas.height; y += step) {
     gridCtx.beginPath();
-    gridCtx.moveTo(0, y);
-    gridCtx.lineTo(canvas.width, y);
+    gridCtx.moveTo(0, y + 0.5);
+    gridCtx.lineTo(canvas.width, y + 0.5);
     gridCtx.stroke();
   }
-  gridCtx.strokeStyle = 'rgba(255, 215, 0, 0.5)';
+
+  gridCtx.strokeStyle = 'rgba(255, 215, 0, 0.6)';
+  gridCtx.lineWidth = 1.5;
   gridCtx.beginPath();
-  gridCtx.moveTo(canvas.width / 2, 0);
-  gridCtx.lineTo(canvas.width / 2, canvas.height);
-  gridCtx.moveTo(0, canvas.height / 2);
-  gridCtx.lineTo(canvas.width, canvas.height / 2);
+  gridCtx.moveTo(canvas.width / 2 + 0.5, 0);
+  gridCtx.lineTo(canvas.width / 2 + 0.5, canvas.height);
+  gridCtx.stroke();
+  gridCtx.beginPath();
+  gridCtx.moveTo(0, canvas.height / 2 + 0.5);
+  gridCtx.lineTo(canvas.width, canvas.height / 2 + 0.5);
   gridCtx.stroke();
 }
 
@@ -753,7 +778,7 @@ function play() {
   playbackOverlay.classList.add('show');
 
   let i = 0;
-  const fps = parseInt(document.getElementById('fpsInput').value) || 12;
+  const fps = getFps();
 
   playbackCtx.putImageData(frames[0], 0, 0);
 
@@ -781,22 +806,25 @@ function frameToCanvas(frameData) {
   return c;
 }
 
-function exportPNG() {
-  saveCurrentFrame();
-  const link = document.createElement('a');
-  link.download = `wanis_frame_${currentFrame + 1}.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 1500);
 }
 
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = src;
-    s.onload = resolve;
-    s.onerror = reject;
-    document.head.appendChild(s);
-  });
+function exportPNG() {
+  saveCurrentFrame();
+  canvas.toBlob(blob => {
+    if (!blob) { alert('Could not create PNG.'); return; }
+    downloadBlob(blob, `wanis_frame_${currentFrame + 1}.png`);
+  }, 'image/png');
 }
 
 async function exportGIF() {
@@ -817,45 +845,45 @@ async function exportGIF() {
   pb.style.display = 'block';
   pf.style.width = '0%';
 
-  if (!window.GIF) {
-    try {
-      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js');
-    } catch (err) {
-      text.textContent = 'Failed to load GIF library. Check your network connection.';
-      return;
+  try {
+    const fps = getFps();
+    const delay = Math.round(1000 / fps);
+    const gif = GIFEncoder();
+
+    for (let i = 0; i < frames.length; i++) {
+      const c = frameToCanvas(frames[i]);
+      const imageData = c.getContext('2d').getImageData(0, 0, c.width, c.height);
+      const { data, width, height } = imageData;
+
+      const palette = quantize(data, 256);
+      const index = applyPalette(data, palette);
+
+      gif.writeFrame(index, width, height, { palette, delay });
+
+      const pct = Math.round(((i + 1) / frames.length) * 100);
+      pf.style.width = pct + '%';
+      text.textContent = `Encoding frame ${i + 1} / ${frames.length}... ${pct}%`;
+
+      await new Promise(r => setTimeout(r, 0));
     }
-  }
 
-  const fps = parseInt(document.getElementById('fpsInput').value) || 12;
-  const delay = Math.round(1000 / fps);
+    gif.finish();
+    const bytes = gif.bytes();
+    const blob = new Blob([bytes], { type: 'image/gif' });
+    const url = URL.createObjectURL(blob);
 
-  const gif = new GIF({
-    workers: 2,
-    quality: 10,
-    width: canvas.width,
-    height: canvas.height,
-    workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js'
-  });
-
-  frames.forEach(fd => gif.addFrame(frameToCanvas(fd), { delay }));
-
-  gif.on('progress', p => {
-    pf.style.width = (p * 100) + '%';
-    text.textContent = `Rendering GIF... ${Math.round(p * 100)}%`;
-  });
-
-  gif.on('finished', blob => {
     pf.style.width = '100%';
     text.textContent = 'GIF is ready.';
-    const url = URL.createObjectURL(blob);
     preview.innerHTML = `
       <img src="${url}" style="max-width:100%;border-radius:8px;margin:10px 0;">
       <br><a href="${url}" download="wanis_${Date.now()}.gif">
       <button class="success" style="margin-top:10px;">📥 Download GIF</button></a>`;
     pb.style.display = 'none';
-  });
-
-  gif.render();
+  } catch (err) {
+    console.error(err);
+    text.textContent = 'GIF export failed: ' + err.message;
+    pb.style.display = 'none';
+  }
 }
 
 async function exportMP4() {
@@ -871,7 +899,7 @@ async function exportMP4() {
 
   modal.classList.add('show');
   title.textContent = 'Creating video';
-  text.textContent = 'Recording frames...';
+  text.textContent = 'Recording frames... Please keep this tab open.';
   preview.innerHTML = '';
   pb.style.display = 'block';
   pf.style.width = '0%';
@@ -885,7 +913,7 @@ async function exportMP4() {
   recCanvas.width = canvas.width;
   recCanvas.height = canvas.height;
   const rctx = recCanvas.getContext('2d');
-  const fps = parseInt(document.getElementById('fpsInput').value) || 12;
+  const fps = getFps();
 
   const candidates = [
     'video/mp4;codecs=avc1.42E01E',
@@ -905,12 +933,28 @@ async function exportMP4() {
   const isMP4 = mimeType.includes('mp4');
   const ext = isMP4 ? 'mp4' : 'webm';
 
-  const stream = recCanvas.captureStream(fps);
+  const stream = recCanvas.captureStream(0);
+  const videoTrack = stream.getVideoTracks()[0];
+
   const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 5000000 });
   const chunks = [];
-  recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+
+  recorder.ondataavailable = e => {
+    if (e.data.size > 0) chunks.push(e.data);
+  };
+
+  recorder.onerror = e => {
+    console.error('MediaRecorder error:', e);
+    text.textContent = 'Recording failed: ' + (e.error?.message || 'unknown error');
+    pb.style.display = 'none';
+  };
 
   recorder.onstop = () => {
+    if (chunks.length === 0) {
+      text.textContent = 'No video data was captured. This browser may not support canvas recording with this format. Try WebM or use Chrome/Edge.';
+      pb.style.display = 'none';
+      return;
+    }
     const blob = new Blob(chunks, { type: mimeType });
     const url = URL.createObjectURL(blob);
     pf.style.width = '100%';
@@ -924,22 +968,41 @@ async function exportMP4() {
     pb.style.display = 'none';
   };
 
-  recorder.start();
+  recorder.start(100);
 
   const frameTime = 1000 / fps;
   const totalDuration = frames.length * frameTime;
   const startTime = performance.now();
+  let currentIdx = -1;
 
-  const renderLoop = () => {
+  const timer = setInterval(() => {
     const elapsed = performance.now() - startTime;
-    if (elapsed >= totalDuration) { recorder.stop(); return; }
+    if (elapsed >= totalDuration) {
+      clearInterval(timer);
+      if (chunks.length === 0 && recorder.state === 'recording') {
+        try { recorder.requestData(); } catch (_) {}
+      }
+      recorder.stop();
+      return;
+    }
+
     const idx = Math.min(Math.floor(elapsed / frameTime), frames.length - 1);
-    rctx.putImageData(frames[idx], 0, 0);
+    if (idx !== currentIdx) {
+      currentIdx = idx;
+      rctx.putImageData(frames[idx], 0, 0);
+      try { videoTrack.requestFrame(); } catch (_) {}
+    }
+
     pf.style.width = Math.min(100, (elapsed / totalDuration) * 100) + '%';
-    text.textContent = `Recording... ${Math.round((elapsed / totalDuration) * 100)}%`;
-    requestAnimationFrame(renderLoop);
-  };
-  requestAnimationFrame(renderLoop);
+    text.textContent = `Recording... ${Math.round((elapsed / totalDuration) * 100)}% — keep this tab open`;
+  }, 1000 / fps);
+
+  setTimeout(() => {
+    if (recorder.state === 'recording') {
+      clearInterval(timer);
+      recorder.stop();
+    }
+  }, totalDuration + 3000);
 }
 
 canvas.addEventListener('mousedown', startDraw);
