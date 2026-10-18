@@ -58,11 +58,31 @@
     90% { transform: translate(-2px, 2px); }
   }
 
+  /* ─────────── TOOLBAR (vertically scrollable) ─────────── */
   .toolbar {
-    width: 74px; background: #16213e; padding: 10px 5px;
+    width: 78px; background: #16213e; padding: 10px 5px;
     display: flex; flex-direction: column; gap: 8px; align-items: center;
-    overflow-y: auto;
+    overflow-y: auto; overflow-x: hidden;
+    scrollbar-gutter: stable;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #667eea #0d1626;
   }
+  .toolbar::-webkit-scrollbar { width: 10px; }
+  .toolbar::-webkit-scrollbar-track {
+    background: #0d1626;
+    border-radius: 5px;
+    margin: 4px 0;
+  }
+  .toolbar::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 5px;
+    border: 2px solid #0d1626;
+    transition: background 0.2s;
+  }
+  .toolbar::-webkit-scrollbar-thumb:hover { background: #8a9fef; }
+  .toolbar::-webkit-scrollbar-thumb:active { background: #ffd700; }
+
   .tool-btn {
     width: 52px; min-height: 50px; border-radius: 10px;
     background: #2d2d44; color: #fff;
@@ -88,7 +108,7 @@
   .color-picker::-webkit-color-swatch-wrapper { padding: 0; }
   .color-picker::-webkit-color-swatch { border: 2px solid #667eea; border-radius: 8px; }
 
-  .size-slider { width: 48px; writing-mode: vertical-lr; direction: rtl; height: 90px; }
+  .size-slider { width: 48px; writing-mode: vertical-lr; direction: rtl; height: 90px; flex-shrink: 0; }
 
   .canvas-area {
     flex: 1; background: #0f0f1e;
@@ -100,7 +120,6 @@
     position: relative;
     background: #fff;
     box-shadow: 0 0 40px rgba(102, 126, 234, 0.3);
-    /* width/height set by JS layoutCanvas() */
   }
   #canvas, #onionCanvas, #gridCanvas {
     position: absolute; top: 0; left: 0;
@@ -116,6 +135,7 @@
   }
   .canvas-overlay-btns button { padding: 6px 12px; font-size: 12px; }
 
+  /* ─────────── TIMELINE / FRAMES (horizontally scrollable) ─────────── */
   .timeline {
     background: #16213e; padding: 10px;
     border-top: 2px solid #2d2d44;
@@ -124,6 +144,7 @@
   .fps-control {
     display: flex; flex-direction: column; align-items: center; gap: 5px;
     padding: 0 10px; border-right: 2px solid #2d2d44;
+    flex-shrink: 0;
   }
   .fps-control label { font-size: 11px; color: #aaa; }
   .fps-control input {
@@ -135,18 +156,68 @@
   .frame-actions {
     display: flex; gap: 4px; padding: 0 10px;
     border-right: 2px solid #2d2d44; align-items: center;
+    flex-shrink: 0;
   }
   .frame-actions button { padding: 6px 8px; font-size: 14px; min-width: 34px; justify-content: center; }
 
+  /* Frame strip wrapper with left/right fade hint */
+  .frames-strip-wrap {
+    flex: 1; position: relative;
+    display: flex; min-width: 0;
+  }
+  .frames-strip-wrap::before,
+  .frames-strip-wrap::after {
+    content: '';
+    position: absolute; top: 0; bottom: 0;
+    width: 20px;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .frames-strip-wrap::before {
+    left: 0;
+    background: linear-gradient(to right, #16213e, transparent);
+  }
+  .frames-strip-wrap::after {
+    right: 0;
+    background: linear-gradient(to left, #16213e, transparent);
+  }
+  .frames-strip-wrap.has-overflow-left::before { opacity: 1; }
+  .frames-strip-wrap.has-overflow-right::after { opacity: 1; }
+
   .frames-container {
     flex: 1; display: flex; gap: 6px;
-    overflow-x: auto; padding: 5px;
+    overflow-x: auto; overflow-y: hidden;
+    padding: 5px; padding-bottom: 10px;
+    scrollbar-gutter: stable;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #667eea #0d1626;
+    min-width: 0;
   }
+  .frames-container::-webkit-scrollbar { height: 10px; }
+  .frames-container::-webkit-scrollbar-track {
+    background: #0d1626;
+    border-radius: 5px;
+    margin: 0 4px;
+  }
+  .frames-container::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 5px;
+    border: 2px solid #0d1626;
+    transition: background 0.2s;
+  }
+  .frames-container::-webkit-scrollbar-thumb:hover { background: #8a9fef; }
+  .frames-container::-webkit-scrollbar-thumb:active { background: #ffd700; }
+  .frames-container::-webkit-scrollbar-corner { background: transparent; }
+
   .frame {
     min-width: 80px; height: 80px;
     background: #fff; border: 3px solid #2d2d44; border-radius: 6px;
     cursor: pointer; position: relative; overflow: hidden;
-    transition: all 0.2s; flex-shrink: 0;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    flex-shrink: 0;
   }
   .frame:hover { border-color: #667eea; }
   .frame.active { border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
@@ -283,7 +354,7 @@
 </div>
 
 <div class="main" id="mainArea">
-  <div class="toolbar">
+  <div class="toolbar" id="toolbar">
     <button type="button" class="tool-btn active" data-tool="pen" aria-pressed="true"><span>✏️</span><span class="label">Pen</span></button>
     <button type="button" class="tool-btn" data-tool="eraser" aria-pressed="false"><span>🧽</span><span class="label">Eraser</span></button>
     <button type="button" class="tool-btn" data-tool="line" aria-pressed="false"><span>📏</span><span class="label">Line</span></button>
@@ -327,7 +398,9 @@
     <button id="deleteFrameBtn" title="Delete current frame (Del)">🗑</button>
     <button id="restoreFrameBtn" title="Restore last deleted (Alt+Z)">♻</button>
   </div>
-  <div class="frames-container" id="framesContainer"></div>
+  <div class="frames-strip-wrap" id="framesStripWrap">
+    <div class="frames-container" id="framesContainer"></div>
+  </div>
   <button class="add-frame" id="addFrameBtn" title="Add new frame">+</button>
 </div>
 
@@ -349,7 +422,6 @@
 <canvas id="confettiCanvas"></canvas>
 
 <script type="module">
-// ─────────────────────────── CONSTANTS ───────────────────────────
 const CANVAS_W = 800;
 const CANVAS_H = 500;
 const THUMB_SIZE = 80;
@@ -361,7 +433,6 @@ const FAST_STROKE_SPEED = 1000;
 const FAST_STROKE_DIST = 500;
 const WHITE_THRESHOLD = 240;
 
-// ─────────────────────────── DOM ───────────────────────────
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const onionCanvas = document.getElementById('onionCanvas');
@@ -376,15 +447,16 @@ const canvasArea = document.getElementById('canvasArea');
 const canvasWrapper = document.getElementById('canvasWrapper');
 const onionBtn = document.getElementById('onionBtn');
 const gridBtn = document.getElementById('gridBtn');
+const framesContainer = document.getElementById('framesContainer');
+const framesStripWrap = document.getElementById('framesStripWrap');
+const toolbar = document.getElementById('toolbar');
 
-// ─────────────────────────── STATE ───────────────────────────
 class Frame {
   constructor(commands = [], holdDuration = 1) {
     this.commands = commands;
     this.holdDuration = holdDuration;
     this._raster = null;
   }
-  // Commands are IMMUTABLE after commit. Any mutation must call invalidate().
   invalidate() { this._raster = null; }
   getRaster() {
     if (this._raster) return this._raster;
@@ -425,7 +497,6 @@ let activeObjectUrls = new Set();
 let speedDemonShown = false;
 let fastStrokeCount = 0;
 
-// ─────────────────────────── HELPERS ───────────────────────────
 const mod = e => e.ctrlKey || e.metaKey;
 
 function getFps() {
@@ -486,7 +557,6 @@ function downloadBlob(blob, filename) {
   }, 1500);
 }
 
-// ─────────────────────────── COMMAND EXECUTOR ───────────────────────────
 function floodFillCtx(c, x, y, color) {
   const w = c.canvas.width, h = c.canvas.height;
   x = Math.floor(x); y = Math.floor(y);
@@ -574,7 +644,6 @@ function applyCommand(cmd, c) {
   c.restore();
 }
 
-// ─────────────────────────── RENDER ───────────────────────────
 function renderCurrentFrame() {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
@@ -585,7 +654,6 @@ function renderCurrentFrame() {
 }
 
 function renderGhost(frame, targetCtx) {
-  // Renders frame with white bg, then makes white pixels fully transparent.
   const tmp = makeTempCanvas();
   const tctx = tmp.getContext('2d', { willReadFrequently: true });
   tctx.drawImage(frame.getRaster(), 0, 0);
@@ -604,7 +672,6 @@ function updateOnionSkin() {
   onionCtx.setTransform(1, 0, 0, 1, 0, 0);
   onionCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
   if (!onionBtn.classList.contains('active')) return;
-
   if (currentFrame > 0) {
     onionCtx.globalAlpha = 0.28;
     renderGhost(frames[currentFrame - 1], onionCtx);
@@ -620,8 +687,6 @@ function drawGrid() {
   gridCtx.setTransform(1, 0, 0, 1, 0, 0);
   gridCtx.clearRect(0, 0, CANVAS_W, CANVAS_H);
   if (!gridBtn.classList.contains('active')) return;
-
-  // Center the grid so gridlines pass through the canvas center
   const offsetX = (CANVAS_W % GRID_STEP) / 2;
   const offsetY = (CANVAS_H % GRID_STEP) / 2;
   gridCtx.strokeStyle = 'rgba(102, 126, 234, 0.45)';
@@ -650,7 +715,6 @@ function drawGrid() {
   gridCtx.stroke();
 }
 
-// ─────────────────────────── LAYOUT (responsive canvas) ───────────────────────────
 function layoutCanvas() {
   const pad = 40;
   const availW = canvasArea.clientWidth - pad;
@@ -665,7 +729,42 @@ function layoutCanvas() {
   canvasWrapper.style.height = h + 'px';
 }
 
-// ─────────────────────────── INPUT ───────────────────────────
+// ─────────────── SCROLL INDICATORS ───────────────
+function updateFrameScrollIndicators() {
+  const hasOverflowLeft = framesContainer.scrollLeft > 4;
+  const hasOverflowRight = framesContainer.scrollLeft + framesContainer.clientWidth < framesContainer.scrollWidth - 4;
+  framesStripWrap.classList.toggle('has-overflow-left', hasOverflowLeft);
+  framesStripWrap.classList.toggle('has-overflow-right', hasOverflowRight);
+}
+
+framesContainer.addEventListener('scroll', updateFrameScrollIndicators);
+window.addEventListener('resize', updateFrameScrollIndicators);
+
+// Wheel → horizontal scroll on the frame strip
+framesContainer.addEventListener('wheel', (e) => {
+  if (Math.abs(e.deltaY) < 1) return;
+  e.preventDefault();
+  framesContainer.scrollLeft += e.deltaY + e.deltaX;
+  updateFrameScrollIndicators();
+}, { passive: false });
+
+// Auto-scroll the active frame into view
+function scrollFrameIntoView(index) {
+  const frameEl = framesContainer.children[index];
+  if (!frameEl) return;
+  const elLeft = frameEl.offsetLeft;
+  const elRight = elLeft + frameEl.offsetWidth;
+  const viewLeft = framesContainer.scrollLeft;
+  const viewRight = viewLeft + framesContainer.clientWidth;
+  const margin = 20;
+  if (elLeft - margin < viewLeft) {
+    framesContainer.scrollTo({ left: elLeft - margin, behavior: 'smooth' });
+  } else if (elRight + margin > viewRight) {
+    framesContainer.scrollTo({ left: elRight + margin - framesContainer.clientWidth, behavior: 'smooth' });
+  }
+}
+
+// ─────────────── INPUT ───────────────
 function getPos(e) {
   const rect = canvas.getBoundingClientRect();
   const sx = CANVAS_W / rect.width;
@@ -732,10 +831,7 @@ function startDraw(e) {
   if (e.target !== canvas) return;
   const pos = getPos(e);
 
-  if (currentTool === 'text') {
-    startTextInput(pos);
-    return;
-  }
+  if (currentTool === 'text') { startTextInput(pos); return; }
 
   isDrawing = true;
 
@@ -752,11 +848,7 @@ function startDraw(e) {
     const isRainbow = currentTool === 'pen' && e.shiftKey;
     const color = currentTool === 'eraser' ? '#ffffff' : currentColor;
     liveStroke = {
-      type: currentTool,
-      color,
-      rainbow: isRainbow,
-      size: currentSize,
-      points: [pos]
+      type: currentTool, color, rainbow: isRainbow, size: currentSize, points: [pos]
     };
     liveStrokeMeta = { startTime: performance.now(), totalDist: 0 };
     smoothBuffer = [pos];
@@ -790,11 +882,9 @@ function draw(e) {
     ctx.lineWidth = liveStroke.size;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    if (liveStroke.rainbow) {
-      ctx.strokeStyle = `hsl(${(liveStroke.points.length * 8) % 360}, 80%, 55%)`;
-    } else {
-      ctx.strokeStyle = liveStroke.color;
-    }
+    ctx.strokeStyle = liveStroke.rainbow
+      ? `hsl(${(liveStroke.points.length * 8) % 360}, 80%, 55%)`
+      : liveStroke.color;
     ctx.beginPath();
     ctx.moveTo(last.x, last.y);
     ctx.lineTo(avg.x, avg.y);
@@ -841,8 +931,6 @@ function endDraw() {
   }
 }
 
-// ─────────────────────────── UNDO ───────────────────────────
-// Commands are treated as immutable after commit. Slices are safe.
 function pushUndo() {
   if (!undoStack[currentFrame]) undoStack[currentFrame] = [];
   if (!redoStack[currentFrame]) redoStack[currentFrame] = [];
@@ -875,7 +963,6 @@ function updateUndoRedoButtons() {
   document.getElementById('redoBtn').disabled = !redoStack[currentFrame] || redoStack[currentFrame].length === 0;
 }
 
-// ─────────────────────────── FRAMES ───────────────────────────
 function addFrame() {
   frames.splice(currentFrame + 1, 0, new Frame());
   undoStack.splice(currentFrame + 1, 0, []);
@@ -884,6 +971,7 @@ function addFrame() {
   rebuildThumbnails();
   renderCurrentFrame();
   updateStatus();
+  scrollFrameIntoView(currentFrame);
 }
 
 function deleteFrame(index) {
@@ -898,6 +986,7 @@ function deleteFrame(index) {
   renderCurrentFrame();
   updateStatus();
   updateTrashButton();
+  scrollFrameIntoView(currentFrame);
 }
 
 function restoreFrame() {
@@ -928,6 +1017,7 @@ function pasteFrame() {
   rebuildThumbnails();
   renderCurrentFrame();
   updateStatus();
+  scrollFrameIntoView(currentFrame);
   toast('📄 Frame pasted');
 }
 
@@ -944,6 +1034,7 @@ function selectFrame(index) {
   document.querySelectorAll('.frame').forEach((el, i) => el.classList.toggle('active', i === index));
   renderCurrentFrame();
   updateStatus();
+  scrollFrameIntoView(index);
 }
 
 function cycleHold(index, delta) {
@@ -974,8 +1065,7 @@ function updateFrameThumbnail(index) {
 }
 
 function rebuildThumbnails() {
-  const container = document.getElementById('framesContainer');
-  container.innerHTML = '';
+  framesContainer.innerHTML = '';
   frames.forEach((frame, i) => {
     const div = document.createElement('div');
     div.className = 'frame' + (i === currentFrame ? ' active' : '');
@@ -1002,13 +1092,16 @@ function rebuildThumbnails() {
     del.onclick = e => { e.stopPropagation(); deleteFrame(i); };
     div.appendChild(del);
     div.onclick = () => { if (!isPlaying) selectFrame(i); };
-    container.appendChild(div);
+    framesContainer.appendChild(div);
     const tctx = thumb.getContext('2d');
     tctx.drawImage(frame.getRaster(), 0, 0, THUMB_SIZE, THUMB_SIZE);
   });
+  requestAnimationFrame(() => {
+    updateFrameScrollIndicators();
+    scrollFrameIntoView(currentFrame);
+  });
 }
 
-// ─────────────────────────── PLAYBACK ───────────────────────────
 function play() {
   if (isPlaying) return;
   const totalTicks = frames.reduce((s, f) => s + f.holdDuration, 0);
@@ -1055,7 +1148,6 @@ function stop() {
   renderCurrentFrame();
 }
 
-// ─────────────────────────── EXPORT ───────────────────────────
 function setExportBusy(busy) {
   exportInProgress = busy;
   ['exportGifBtn', 'exportMp4Btn', 'exportPngBtn'].forEach(id => {
@@ -1127,7 +1219,6 @@ async function exportGIF() {
   if (frames.length < 1) return;
   setExportBusy(true);
   openModal('Creating GIF', 'Loading GIF library...');
-
   const modalText = document.getElementById('modalText');
   const progressFill = document.getElementById('progressFill');
 
@@ -1135,7 +1226,6 @@ async function exportGIF() {
     const { GIFEncoder, quantize, applyPalette } = await loadGifenc();
     const fps = getFps();
     const gif = GIFEncoder();
-
     for (let i = 0; i < frames.length; i++) {
       const frame = frames[i];
       const delay = Math.round((1000 / fps) * frame.holdDuration);
@@ -1173,7 +1263,6 @@ async function exportMP4() {
   if (frames.length < 1) return;
   setExportBusy(true);
   openModal('Creating video', 'Loading video encoder...');
-
   const modalText = document.getElementById('modalText');
   const progressFill = document.getElementById('progressFill');
 
@@ -1248,7 +1337,6 @@ async function exportMP4() {
   }
 }
 
-// ─────────────────────────── UI EXTRAS ───────────────────────────
 function toast(msg, duration = 2200) {
   const t = document.createElement('div');
   t.className = 'toast';
@@ -1261,7 +1349,6 @@ function toast(msg, duration = 2200) {
   }, duration);
 }
 
-// Confetti / particles
 const confettiCanvas = document.getElementById('confettiCanvas');
 const cctx = confettiCanvas.getContext('2d');
 let confettiParticles = [];
@@ -1325,7 +1412,6 @@ function confettiLoop() {
   else { confettiRunning = false; cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height); }
 }
 
-// Size indicator
 let sizeIndicatorEl = null;
 let sizeIndicatorTimer = null;
 function showSizeIndicator(x, y, size) {
@@ -1351,8 +1437,6 @@ function showSizeIndicator(x, y, size) {
   }, 600);
 }
 
-// ─────────────────────────── EASTER EGGS (mouse) ───────────────────────────
-// Middle-click → sparkles (doesn't interfere with drawing)
 canvas.addEventListener('pointerdown', (e) => {
   if (e.button === 1) {
     e.preventDefault();
@@ -1361,7 +1445,6 @@ canvas.addEventListener('pointerdown', (e) => {
   }
 });
 
-// Right-click → mini confetti
 canvas.addEventListener('contextmenu', (e) => {
   e.preventDefault();
   if (isPlaying) return;
@@ -1370,7 +1453,6 @@ canvas.addEventListener('contextmenu', (e) => {
   toast('🎨 Right-click sparkle', 1500);
 });
 
-// Wheel → brush size
 canvas.addEventListener('wheel', (e) => {
   e.preventDefault();
   const dir = e.deltaY > 0 ? -1 : 1;
@@ -1380,7 +1462,6 @@ canvas.addEventListener('wheel', (e) => {
   showSizeIndicator(e.clientX, e.clientY, currentSize);
 }, { passive: false });
 
-// Shake detection → earthquake
 let mouseTrail = [];
 let lastShakeTime = 0;
 canvas.addEventListener('mousemove', (e) => {
@@ -1409,7 +1490,6 @@ canvas.addEventListener('mousemove', (e) => {
   }
 });
 
-// Triple-click subtitle → animation fact
 const ANIMATION_FACTS = [
   '🎬 The first animated film was Fantasmagorie (1908), made of 700 drawings!',
   '🎬 At 24 fps, one second of animation = 24 individual drawings.',
@@ -1435,7 +1515,6 @@ subtitleEl.addEventListener('click', (e) => {
   }
 });
 
-// Logo 5× click
 let logoClicks = 0;
 let logoClickTimer = null;
 document.getElementById('logo').addEventListener('click', (e) => {
@@ -1454,7 +1533,6 @@ document.getElementById('logo').addEventListener('click', (e) => {
   }
 });
 
-// Konami code
 const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
 let konamiIdx = 0;
 document.addEventListener('keydown', (e) => {
@@ -1475,10 +1553,8 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// ─────────────────────────── EVENT WIRING ───────────────────────────
-// Pointer events with capture — reliable stroke ending outside canvas
 canvas.addEventListener('pointerdown', (e) => {
-  if (e.button === 1) return; // middle-click handled above
+  if (e.button === 1) return;
   if (!canvas.hasPointerCapture?.(e.pointerId)) {
     try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
   }
@@ -1499,6 +1575,8 @@ document.querySelectorAll('.tool-btn').forEach(btn => {
     btn.setAttribute('aria-pressed', 'true');
     currentTool = btn.dataset.tool;
     updateStatus();
+    // Scroll the active tool into view inside the toolbar
+    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
 });
 
@@ -1542,7 +1620,6 @@ document.getElementById('exportGifBtn').onclick = exportGIF;
 document.getElementById('exportMp4Btn').onclick = exportMP4;
 document.getElementById('modalCloseBtn').onclick = closeModal;
 
-// Modal: backdrop click + Escape
 document.getElementById('modal').addEventListener('click', (e) => {
   if (e.target.id === 'modal') closeModal();
 });
@@ -1573,7 +1650,6 @@ document.addEventListener('keydown', e => {
   if (!isPlaying && e.key === 'ArrowLeft' && currentFrame > 0) selectFrame(currentFrame - 1);
 });
 
-// Unload guard
 window.addEventListener('beforeunload', (e) => {
   if (frames.some(f => f.commands.length > 0)) {
     e.preventDefault();
@@ -1589,7 +1665,6 @@ function updateStatus() {
     `Frame ${currentFrame + 1}/${frames.length} | ${currentTool}${hint} | Size: ${currentSize} | ${dur}s`;
 }
 
-// ─────────────────────────── INIT ───────────────────────────
 layoutCanvas();
 rebuildThumbnails();
 renderCurrentFrame();
