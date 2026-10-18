@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WAnis - Web Animate Studio</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #1a1a2e;
+    color: #fff;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .logo { font-size: 20px; font-weight: bold; display: flex; align-items: baseline; gap: 6px; }
+  .logo span { color: #ffd700; }
+  .logo small { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: normal; }
+
+  .controls { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  button {
+    background: #2d2d44;
+    color: #fff;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  button:hover { background: #3d3d5c; transform: translateY(-1px); }
+  button.active { background: #667eea; }
+  button.danger { background: #e74c3c; }
+  button.success { background: #27ae60; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .main { display: flex; flex: 1; overflow: hidden; }
+
+  .toolbar {
+    width: 70px;
+    background: #16213e;
+    padding: 10px 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    overflow-y: auto;
+  }
+  .tool-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: #2d2d44;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    flex-shrink: 0;
+  }
+  .tool-btn .label { font-size: 8px; margin-top: 2px; }
+  .tool-btn:hover { background: #3d3d5c; }
+  .tool-btn.active { border-color: #667eea; background: #3d3d5c; }
+
+  .color-picker {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: none;
+    flex-shrink: 0;
+  }
+  .color-picker::-webkit-color-swatch-wrapper { padding: 0; }
+  .color-picker::-webkit-color-swatch { border: 2px solid #667eea; border-radius: 10px; }
+
+  .size-slider {
+    width: 50px;
+    writing-mode: vertical-lr;
+    direction: rtl;
+    height: 100px;
+  }
+
+  .canvas-area {
+    flex: 1;
+    background: #0f0f1e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .canvas-wrapper {
+    position: relative;
+    box-shadow: 0 0 40px rgba(102, 126, 234, 0.3);
+    background: #fff;
+  }
+  #canvas {
+    display: block;
+    cursor: crosshair;
+    background: #fff;
+    touch-action: none;
+  }
+  #gridCanvas, #onionCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
+  #gridCanvas { display: none; }
+
+  .canvas-overlay-btns {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 6px;
+    z-index: 10;
+    flex-direction: column;
+  }
+  .canvas-overlay-btns button { padding: 6px 12px; font-size: 12px; }
+
+  .timeline {
+    background: #16213e;
+    padding: 10px;
+    border-top: 2px solid #2d2d44;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .frames-container {
+    flex: 1;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 5px;
+  }
+  .frame {
+    min-width: 80px;
+    height: 80px;
+    background: #fff;
+    border: 3px solid #2d2d44;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .frame:hover { border-color: #667eea; }
+  .frame.active { border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
+  .frame canvas { width: 100%; height: 100%; display: block; }
+  .frame .num {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .frame .del {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 12px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .frame:hover .del { display: flex; }
+  .add-frame {
+    min-width: 80px;
+    height: 80px;
+    background: #2d2d44;
+    border: 3px dashed #667eea;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 30px;
+    color: #667eea;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .add-frame:hover { background: #3d3d5c; }
+  .fps-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 0 10px;
+    border-left: 2px solid #2d2d44;
+    border-right: 2px solid #2d2d44;
+  }
+  .fps-control label { font-size: 11px; color: #aaa; }
+  .fps-control input {
+    width: 60px;
+    padding: 3px;
+    background: #2d2d44;
+    color: #fff;
+    border: 1px solid #444;
+    border-radius: 4px;
+  }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .modal.show { display: flex; }
+  .modal-content {
+    background: #1a1a2e;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 500px;
+    text-align: center;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  .modal-content h2 { margin-bottom: 15px; color: #667eea; }
+  .modal-content p { color: #aaa; margin-bottom: 20px; font-size: 13px; }
+  .modal-content button { margin: 5px; }
+
+  .status {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.7);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #aaa;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #2d2d44;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 15px 0;
+  }
+  .progress-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  .playback-overlay {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    animation: fadeIn 0.2s ease;
+  }
+  .playback-overlay.show { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .playback-overlay canvas {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    box-shadow: 0 0 60px rgba(102, 126, 234, 0.4);
+    border-radius: 4px;
+    background: #fff;
+  }
+
+  .playback-hint {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.65);
+    font-size: 13px;
+    pointer-events: none;
+    background: rgba(0,0,0,0.5);
+    padding: 8px 18px;
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.65; }
+    50% { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">🎬 <span>WAnis</span><small>Web Animate Studio</small></div>
+  <div class="controls">
+    <button id="playBtn" class="success" title="Space">▶ Play</button>
+    <button id="stopBtn">⏹ Stop</button>
+    <button id="undoBtn" title="Ctrl+Z">↶ Undo</button>
+    <button id="redoBtn" title="Ctrl+Y">↷ Redo</button>
+    <button id="clearBtn">🗑 Clear</button>
+    <button id="exportGifBtn">🎞 GIF</button>
+    <button id="exportMp4Btn">🎥 MP4</button>
+    <button id="exportPngBtn">🖼 PNG</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="toolbar">
+    <div class="tool-btn active" data-tool="pen"><span>✏️</span><span class="label">Pen</span></div>
+    <div class="tool-btn" data-tool="eraser"><span>🧽</span><span class="label">Eraser</span></div>
+    <div class="tool-btn" data-tool="line"><span>📏</span><span class="label">Line</span></div>
+    <div class="tool-btn" data-tool="rect"><span>⬜</span><span class="label">Rect</span></div>
+    <div class="tool-btn" data-tool="circle"><span>⭕</span><span class="label">Circle</span></div>
+    <div class="tool-btn" data-tool="fill"><span>🪣</span><span class="label">Fill</span></div>
+    <input type="color" id="colorPicker" class="color-picker" value="#000000" title="Brush color">
+    <input type="color" id="fillColorPicker" class="color-picker" value="#ff6b6b" title="Fill color" style="height:36px;">
+    <input type="range" id="sizeSlider" class="size-slider" min="1" max="50" value="3" title="Brush size">
+  </div>
+
+  <div class="canvas-area" id="canvasArea">
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="canvas" width="800" height="500"></canvas>
+      <canvas id="onionCanvas" width="800" height="500"></canvas>
+      <canvas id="gridCanvas" width="800" height="500"></canvas>
+    </div>
+    <div class="canvas-overlay-btns">
+      <button id="onionBtn" class="active" title="Show ghost of prev/next frames">👁 Onion</button>
+      <button id="gridBtn" title="40px grid">▦ Grid</button>
+    </div>
+    <div class="status" id="status">Frame 1/1</div>
+  </div>
+</div>
+
+<div class="timeline">
+  <div class="fps-control">
+    <label>FPS</label>
+    <input type="number" id="fpsInput" value="12" min="1" max="30">
+  </div>
+  <div class="frames-container" id="framesContainer"></div>
+  <button class="add-frame" id="addFrameBtn" title="Add new frame">+</button>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h2 id="modalTitle">Export</h2>
+    <p id="modalText">Processing...</p>
+    <div class="progress-bar" id="progressBar" style="display:none;"><div class="fill" id="progressFill"></div></div>
+    <div id="modalPreview"></div>
+    <button id="modalCloseBtn">Close</button>
+  </div>
+</div>
+
+<div class="playback-overlay" id="playbackOverlay">
+  <canvas id="playbackCanvas" width="800" height="500"></canvas>
+  <div class="playback-hint">Press ESC or click anywhere to close</div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { willReadFrequently: true });
+const onionCanvas = document.getElementById('onionCanvas');
+const onionCtx = onionCanvas.getContext('2d');
+const gridCanvas = document.getElementById('gridCanvas');
+const gridCtx = gridCanvas.getContext('2d');
+const playbackOverlay = document.getElementById('playbackOverlay');
+const playbackCanvas = document.getElementById('playbackCanvas');
+const playbackCtx = playbackCanvas.getContext('2d');
+
+let frames = [];
+let currentFrame = 0;
+let currentTool = 'pen';
+let currentColor = '#000000';
+let fillColor = '#ff6b6b';
+let currentSize = 3;
+let isDrawing = false;
+let startX, startY;
+let shapeSnapshot = null;
+let isPlaying = false;
+let playInterval = null;
+let undoStack = [];
+let redoStack = [];
+
+function createBlankFrame() {
+  const c = document.createElement('canvas');
+  c.width = canvas.width;
+  c.height = canvas.height;
+  const cctx = c.getContext('2d');
+  cctx.fillStyle = '#ffffff';
+  cctx.fillRect(0, 0, c.width, c.height);
+  return cctx.getImageData(0, 0, c.width, c.height);
+}
+
+function snapshotCurrent() {
+  return ctx.getImageData(0, 0, canvas.width, canvas.height);
+}
+
+function initFrames() {
+  frames = [createBlankFrame()];
+  currentFrame = 0;
+  undoStack = [[]];
+  redoStack = [[]];
+  renderFrames();
+  loadFrame(0);
+}
+
+function loadFrame(index) {
+  if (index < 0 || index >= frames.length) return;
+  currentFrame = index;
+  ctx.putImageData(frames[index], 0, 0);
+  updateOnionSkin();
+  renderFrames();
+  updateStatus();
+  updateUndoRedoButtons();
+}
+
+function saveCurrentFrame() {
+  frames[currentFrame] = snapshotCurrent();
+}
+
+function pushUndo() {
+  if (!undoStack[currentFrame]) undoStack[currentFrame] = [];
+  if (!redoStack[currentFrame]) redoStack[currentFrame] = [];
+  undoStack[currentFrame].push(snapshotCurrent());
+  if (undoStack[currentFrame].length > 50) undoStack[currentFrame].shift();
+  redoStack[currentFrame] = [];
+  updateUndoRedoButtons();
+}
+
+function undo() {
+  if (!undoStack[currentFrame] || undoStack[currentFrame].length === 0) return;
+  if (!redoStack[currentFrame]) redoStack[currentFrame] = [];
+  redoStack[currentFrame].push(snapshotCurrent());
+  const prev = undoStack[currentFrame].pop();
+  ctx.putImageData(prev, 0, 0);
+  saveCurrentFrame();
+  updateFrameThumbnail(currentFrame);
+  updateOnionSkin();
+  updateUndoRedoButtons();
+}
+
+function redo() {
+  if (!redoStack[currentFrame] || redoStack[currentFrame].length === 0) return;
+  if (!undoStack[currentFrame]) undoStack[currentFrame] = [];
+  undoStack[currentFrame].push(snapshotCurrent());
+  const next = redoStack[currentFrame].pop();
+  ctx.putImageData(next, 0, 0);
+  saveCurrentFrame();
+  updateFrameThumbnail(currentFrame);
+  updateOnionSkin();
+  updateUndoRedoButtons();
+}
+
+function updateUndoRedoButtons() {
+  document.getElementById('undoBtn').disabled =
+    !undoStack[currentFrame] || undoStack[currentFrame].length === 0;
+  document.getElementById('redoBtn').disabled =
+    !redoStack[currentFrame] || redoStack[currentFrame].length === 0;
+}
+
+function updateOnionSkin() {
+  onionCtx.clearRect(0, 0, onionCanvas.width, onionCanvas.height);
+  const btn = document.getElementById('onionBtn');
+  if (!btn.classList.contains('active')) return;
+
+  const drawFaint = (frameData, alpha) => {
+    if (!frameData) return;
+    const tmp = document.createElement('canvas');
+    tmp.width = canvas.width;
+    tmp.height = canvas.height;
+    tmp.getContext('2d').putImageData(frameData, 0, 0);
+    onionCtx.globalAlpha = alpha;
+    onionCtx.drawImage(tmp, 0, 0);
+  };
+
+  if (currentFrame > 0) drawFaint(frames[currentFrame - 1], 0.28);
+  if (currentFrame < frames.length - 1) drawFaint(frames[currentFrame + 1], 0.16);
+  onionCtx.globalAlpha = 1;
+}
+
+function drawGrid() {
+  const btn = document.getElementById('gridBtn');
+  if (!btn.classList.contains('active')) {
+    gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+    return;
+  }
+  gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+  const step = 40;
+  gridCtx.strokeStyle = 'rgba(102, 126, 234, 0.35)';
+  gridCtx.lineWidth = 1;
+  for (let x = 0; x <= canvas.width; x += step) {
+    gridCtx.beginPath();
+    gridCtx.moveTo(x, 0);
+    gridCtx.lineTo(x, canvas.height);
+    gridCtx.stroke();
+  }
+  for (let y = 0; y <= canvas.height; y += step) {
+    gridCtx.beginPath();
+    gridCtx.moveTo(0, y);
+    gridCtx.lineTo(canvas.width, y);
+    gridCtx.stroke();
+  }
+  gridCtx.strokeStyle = 'rgba(255, 215, 0, 0.5)';
+  gridCtx.beginPath();
+  gridCtx.moveTo(canvas.width / 2, 0);
+  gridCtx.lineTo(canvas.width / 2, canvas.height);
+  gridCtx.moveTo(0, canvas.height / 2);
+  gridCtx.lineTo(canvas.width, canvas.height / 2);
+  gridCtx.stroke();
+}
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  let cx, cy;
+  if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
+  else { cx = e.clientX; cy = e.clientY; }
+  return { x: (cx - rect.left) * scaleX, y: (cy - rect.top) * scaleY };
+}
+
+function startDraw(e) {
+  if (isPlaying) return;
+  e.preventDefault();
+  isDrawing = true;
+  const pos = getPos(e);
+  startX = pos.x;
+  startY = pos.y;
+
+  pushUndo();
+
+  if (currentTool === 'pen' || currentTool === 'eraser') {
+    ctx.beginPath();
+    ctx.arc(startX, startY, currentSize / 2, 0, Math.PI * 2);
+    ctx.fillStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+  } else {
+    shapeSnapshot = snapshotCurrent();
+  }
+}
+
+function draw(e) {
+  if (!isDrawing || isPlaying) return;
+  e.preventDefault();
+  const pos = getPos(e);
+
+  if (currentTool === 'pen' || currentTool === 'eraser') {
+    ctx.lineTo(pos.x, pos.y);
+    ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
+    ctx.lineWidth = currentSize;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+  } else if (currentTool !== 'fill') {
+    if (shapeSnapshot) ctx.putImageData(shapeSnapshot, 0, 0);
+    ctx.strokeStyle = currentColor;
+    ctx.lineWidth = currentSize;
+    ctx.lineCap = 'round';
+    if (currentTool === 'line') {
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+    } else if (currentTool === 'rect') {
+      ctx.strokeRect(startX, startY, pos.x - startX, pos.y - startY);
+    } else if (currentTool === 'circle') {
+      const rx = Math.abs(pos.x - startX) / 2;
+      const ry = Math.abs(pos.y - startY) / 2;
+      const cx = (startX + pos.x) / 2;
+      const cy = (startY + pos.y) / 2;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  }
+}
+
+function endDraw(e) {
+  if (!isDrawing) return;
+  isDrawing = false;
+
+  if (currentTool === 'fill') {
+    const pos = getPos(e);
+    floodFill(pos.x, pos.y, fillColor);
+  }
+
+  saveCurrentFrame();
+  updateFrameThumbnail(currentFrame);
+  updateOnionSkin();
+  shapeSnapshot = null;
+}
+
+function hexToRgb(hex) {
+  return [
+    parseInt(hex.slice(1, 3), 16),
+    parseInt(hex.slice(3, 5), 16),
+    parseInt(hex.slice(5, 7), 16),
+    255
+  ];
+}
+
+function floodFill(x, y, color) {
+  x = Math.floor(x);
+  y = Math.floor(y);
+  if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) return;
+
+  const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imgData.data;
+  const w = canvas.width, h = canvas.height;
+  const tIdx = (y * w + x) * 4;
+  const targetColor = [data[tIdx], data[tIdx + 1], data[tIdx + 2], data[tIdx + 3]];
+  const fc = hexToRgb(color);
+
+  if (targetColor[0] === fc[0] && targetColor[1] === fc[1] &&
+      targetColor[2] === fc[2] && targetColor[3] === fc[3]) return;
+
+  const tolerance = 32;
+  const match = (idx) =>
+    Math.abs(data[idx] - targetColor[0]) < tolerance &&
+    Math.abs(data[idx + 1] - targetColor[1]) < tolerance &&
+    Math.abs(data[idx + 2] - targetColor[2]) < tolerance &&
+    Math.abs(data[idx + 3] - targetColor[3]) < tolerance;
+
+  const stack = [[x, y]];
+  const visited = new Uint8Array(w * h);
+
+  while (stack.length > 0) {
+    const [cx, cy] = stack.pop();
+    if (cx < 0 || cy < 0 || cx >= w || cy >= h) continue;
+    const pidx = cy * w + cx;
+    if (visited[pidx]) continue;
+    visited[pidx] = 1;
+    const idx = pidx * 4;
+    if (!match(idx)) continue;
+    data[idx] = fc[0];
+    data[idx + 1] = fc[1];
+    data[idx + 2] = fc[2];
+    data[idx + 3] = fc[3];
+    stack.push([cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]);
+  }
+
+  ctx.putImageData(imgData, 0, 0);
+}
+
+function addFrame() {
+  saveCurrentFrame();
+  const newFrame = createBlankFrame();
+  frames.splice(currentFrame + 1, 0, newFrame);
+  undoStack.splice(currentFrame + 1, 0, []);
+  redoStack.splice(currentFrame + 1, 0, []);
+  loadFrame(currentFrame + 1);
+}
+
+function deleteFrame(index) {
+  if (frames.length === 1) {
+    alert('Cannot delete the only frame.');
+    return;
+  }
+  frames.splice(index, 1);
+  undoStack.splice(index, 1);
+  redoStack.splice(index, 1);
+  if (currentFrame >= frames.length) currentFrame = frames.length - 1;
+  loadFrame(currentFrame);
+}
+
+function renderFrames() {
+  const container = document.getElementById('framesContainer');
+  container.innerHTML = '';
+  frames.forEach((frameData, i) => {
+    const div = document.createElement('div');
+    div.className = 'frame' + (i === currentFrame ? ' active' : '');
+    const thumb = document.createElement('canvas');
+    thumb.width = 80;
+    thumb.height = 80;
+    const tctx = thumb.getContext('2d');
+    const tmp = document.createElement('canvas');
+    tmp.width = canvas.width;
+    tmp.height = canvas.height;
+    tmp.getContext('2d').putImageData(frameData, 0, 0);
+    tctx.drawImage(tmp, 0, 0, 80, 80);
+    div.appendChild(thumb);
+    const num = document.createElement('div');
+    num.className = 'num';
+    num.textContent = i + 1;
+    div.appendChild(num);
+    const del = document.createElement('button');
+    del.className = 'del';
+    del.textContent = '×';
+    del.onclick = (e) => { e.stopPropagation(); deleteFrame(i); };
+    div.appendChild(del);
+    div.onclick = () => { if (!isPlaying) loadFrame(i); };
+    container.appendChild(div);
+  });
+}
+
+function updateFrameThumbnail(index) {
+  const frameEl = document.querySelectorAll('.frame')[index];
+  if (!frameEl) return;
+  const thumb = frameEl.querySelector('canvas');
+  if (!thumb) return;
+  const tctx = thumb.getContext('2d');
+  tctx.clearRect(0, 0, 80, 80);
+  const tmp = document.createElement('canvas');
+  tmp.width = canvas.width;
+  tmp.height = canvas.height;
+  tmp.getContext('2d').putImageData(frames[index], 0, 0);
+  tctx.drawImage(tmp, 0, 0, 80, 80);
+}
+
+function play() {
+  if (isPlaying) return;
+  if (frames.length < 2) { alert('Need at least 2 frames to play.'); return; }
+  saveCurrentFrame();
+  isPlaying = true;
+
+  playbackCanvas.width = canvas.width;
+  playbackCanvas.height = canvas.height;
+  playbackOverlay.classList.add('show');
+
+  let i = 0;
+  const fps = parseInt(document.getElementById('fpsInput').value) || 12;
+
+  playbackCtx.putImageData(frames[0], 0, 0);
+
+  playInterval = setInterval(() => {
+    i = (i + 1) % frames.length;
+    playbackCtx.putImageData(frames[i], 0, 0);
+  }, 1000 / fps);
+
+  document.getElementById('playBtn').classList.add('active');
+}
+
+function stop() {
+  isPlaying = false;
+  clearInterval(playInterval);
+  document.getElementById('playBtn').classList.remove('active');
+  playbackOverlay.classList.remove('show');
+  loadFrame(currentFrame);
+}
+
+function frameToCanvas(frameData) {
+  const c = document.createElement('canvas');
+  c.width = canvas.width;
+  c.height = canvas.height;
+  c.getContext('2d').putImageData(frameData, 0, 0);
+  return c;
+}
+
+function exportPNG() {
+  saveCurrentFrame();
+  const link = document.createElement('a');
+  link.download = `wanis_frame_${currentFrame + 1}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+async function exportGIF() {
+  saveCurrentFrame();
+  if (frames.length < 2) { alert('Need at least 2 frames to export.'); return; }
+
+  const modal = document.getElementById('modal');
+  const title = document.getElementById('modalTitle');
+  const text = document.getElementById('modalText');
+  const preview = document.getElementById('modalPreview');
+  const pb = document.getElementById('progressBar');
+  const pf = document.getElementById('progressFill');
+
+  modal.classList.add('show');
+  title.textContent = 'Creating GIF';
+  text.textContent = 'Please wait...';
+  preview.innerHTML = '';
+  pb.style.display = 'block';
+  pf.style.width = '0%';
+
+  if (!window.GIF) {
+    try {
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js');
+    } catch (err) {
+      text.textContent = 'Failed to load GIF library. Check your network connection.';
+      return;
+    }
+  }
+
+  const fps = parseInt(document.getElementById('fpsInput').value) || 12;
+  const delay = Math.round(1000 / fps);
+
+  const gif = new GIF({
+    workers: 2,
+    quality: 10,
+    width: canvas.width,
+    height: canvas.height,
+    workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js'
+  });
+
+  frames.forEach(fd => gif.addFrame(frameToCanvas(fd), { delay }));
+
+  gif.on('progress', p => {
+    pf.style.width = (p * 100) + '%';
+    text.textContent = `Rendering GIF... ${Math.round(p * 100)}%`;
+  });
+
+  gif.on('finished', blob => {
+    pf.style.width = '100%';
+    text.textContent = 'GIF is ready.';
+    const url = URL.createObjectURL(blob);
+    preview.innerHTML = `
+      <img src="${url}" style="max-width:100%;border-radius:8px;margin:10px 0;">
+      <br><a href="${url}" download="wanis_${Date.now()}.gif">
+      <button class="success" style="margin-top:10px;">📥 Download GIF</button></a>`;
+    pb.style.display = 'none';
+  });
+
+  gif.render();
+}
+
+async function exportMP4() {
+  saveCurrentFrame();
+  if (frames.length < 2) { alert('Need at least 2 frames to export.'); return; }
+
+  const modal = document.getElementById('modal');
+  const title = document.getElementById('modalTitle');
+  const text = document.getElementById('modalText');
+  const preview = document.getElementById('modalPreview');
+  const pb = document.getElementById('progressBar');
+  const pf = document.getElementById('progressFill');
+
+  modal.classList.add('show');
+  title.textContent = 'Creating video';
+  text.textContent = 'Recording frames...';
+  preview.innerHTML = '';
+  pb.style.display = 'block';
+  pf.style.width = '0%';
+
+  if (!window.MediaRecorder) {
+    text.textContent = 'This browser does not support MediaRecorder. Use a recent Chrome or Edge.';
+    return;
+  }
+
+  const recCanvas = document.createElement('canvas');
+  recCanvas.width = canvas.width;
+  recCanvas.height = canvas.height;
+  const rctx = recCanvas.getContext('2d');
+  const fps = parseInt(document.getElementById('fpsInput').value) || 12;
+
+  const candidates = [
+    'video/mp4;codecs=avc1.42E01E',
+    'video/mp4',
+    'video/webm;codecs=vp9',
+    'video/webm;codecs=vp8',
+    'video/webm'
+  ];
+  let mimeType = '';
+  for (const m of candidates) {
+    if (MediaRecorder.isTypeSupported(m)) { mimeType = m; break; }
+  }
+  if (!mimeType) {
+    text.textContent = 'No supported video format found.';
+    return;
+  }
+  const isMP4 = mimeType.includes('mp4');
+  const ext = isMP4 ? 'mp4' : 'webm';
+
+  const stream = recCanvas.captureStream(fps);
+  const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 5000000 });
+  const chunks = [];
+  recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+
+  recorder.onstop = () => {
+    const blob = new Blob(chunks, { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    pf.style.width = '100%';
+    text.textContent = isMP4
+      ? 'MP4 video is ready.'
+      : 'WebM video is ready (this browser does not support MP4).';
+    preview.innerHTML = `
+      <video src="${url}" controls loop style="max-width:100%;border-radius:8px;margin:10px 0;"></video>
+      <br><a href="${url}" download="wanis_${Date.now()}.${ext}">
+      <button class="success" style="margin-top:10px;">📥 Download ${ext.toUpperCase()}</button></a>`;
+    pb.style.display = 'none';
+  };
+
+  recorder.start();
+
+  const frameTime = 1000 / fps;
+  const totalDuration = frames.length * frameTime;
+  const startTime = performance.now();
+
+  const renderLoop = () => {
+    const elapsed = performance.now() - startTime;
+    if (elapsed >= totalDuration) { recorder.stop(); return; }
+    const idx = Math.min(Math.floor(elapsed / frameTime), frames.length - 1);
+    rctx.putImageData(frames[idx], 0, 0);
+    pf.style.width = Math.min(100, (elapsed / totalDuration) * 100) + '%';
+    text.textContent = `Recording... ${Math.round((elapsed / totalDuration) * 100)}%`;
+    requestAnimationFrame(renderLoop);
+  };
+  requestAnimationFrame(renderLoop);
+}
+
+canvas.addEventListener('mousedown', startDraw);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', endDraw);
+canvas.addEventListener('mouseout', endDraw);
+canvas.addEventListener('touchstart', startDraw, { passive: false });
+canvas.addEventListener('touchmove', draw, { passive: false });
+canvas.addEventListener('touchend', endDraw);
+
+document.querySelectorAll('.tool-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTool = btn.dataset.tool;
+    updateStatus();
+  };
+});
+
+document.getElementById('colorPicker').oninput = e => currentColor = e.target.value;
+document.getElementById('fillColorPicker').oninput = e => fillColor = e.target.value;
+document.getElementById('sizeSlider').oninput = e => {
+  currentSize = parseInt(e.target.value);
+  updateStatus();
+};
+
+document.getElementById('addFrameBtn').onclick = addFrame;
+document.getElementById('playBtn').onclick = play;
+document.getElementById('stopBtn').onclick = stop;
+document.getElementById('undoBtn').onclick = undo;
+document.getElementById('redoBtn').onclick = redo;
+
+document.getElementById('clearBtn').onclick = () => {
+  if (!confirm('Clear all content on this frame?')) return;
+  pushUndo();
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  saveCurrentFrame();
+  updateFrameThumbnail(currentFrame);
+  updateOnionSkin();
+  updateUndoRedoButtons();
+};
+
+document.getElementById('onionBtn').onclick = e => {
+  e.target.classList.toggle('active');
+  updateOnionSkin();
+};
+
+document.getElementById('gridBtn').onclick = e => {
+  e.target.classList.toggle('active');
+  drawGrid();
+};
+
+document.getElementById('exportPngBtn').onclick = exportPNG;
+document.getElementById('exportGifBtn').onclick = exportGIF;
+document.getElementById('exportMp4Btn').onclick = exportMP4;
+document.getElementById('modalCloseBtn').onclick = () => {
+  document.getElementById('modal').classList.remove('show');
+};
+
+playbackOverlay.onclick = () => {
+  if (isPlaying) stop();
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && isPlaying) {
+    e.preventDefault();
+    stop();
+    return;
+  }
+  if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
+  if (e.ctrlKey && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
+    e.preventDefault(); redo();
+  }
+  if (e.key === ' ') {
+    e.preventDefault();
+    if (isPlaying) stop();
+    else play();
+  }
+  if (!isPlaying && e.key === 'ArrowRight' && currentFrame < frames.length - 1) loadFrame(currentFrame + 1);
+  if (!isPlaying && e.key === 'ArrowLeft' && currentFrame > 0) loadFrame(currentFrame - 1);
+});
+
+function updateStatus() {
+  document.getElementById('status').textContent =
+    `Frame ${currentFrame + 1}/${frames.length} | ${currentTool} | Size: ${currentSize}`;
+}
+
+ctx.fillStyle = '#ffffff';
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+initFrames();
+drawGrid();
+updateOnionSkin();
+updateStatus();
+</script>
+
+</body>
+</html>
