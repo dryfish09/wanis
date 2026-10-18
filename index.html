@@ -168,6 +168,21 @@
     padding: 1px 5px;
     border-radius: 3px;
   }
+  .frame .hold {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: rgba(102, 126, 234, 0.85);
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+  .frame .hold:hover { background: rgba(102, 126, 234, 1); }
+  .frame .hold.long { background: #f39c12; }
   .frame .del {
     position: absolute;
     top: 2px;
@@ -375,18 +390,8 @@
 </div>
 
 <script type="module">
-import { GIFEncoder, quantize, applyPalette } from 'https://unpkg.com/gifenc';
-import {
-  Output,
-  Mp4OutputFormat,
-  WebMOutputFormat,
-  BufferTarget,
-  CanvasSource,
-  QUALITY_HIGH,
-} from 'https://unpkg.com/mediabunny';
-
 const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d', { willReadFrequently: true });
+const ctx = canvas.getContext('2d');
 const onionCanvas = document.getElementById('onionCanvas');
 const onionCtx = onionCanvas.getContext('2d');
 const gridCanvas = document.getElementById('gridCanvas');
@@ -396,19 +401,37 @@ const playbackCanvas = document.getElementById('playbackCanvas');
 const playbackCtx = playbackCanvas.getContext('2d');
 const fpsInput = document.getElementById('fpsInput');
 
-let frames = [];
+class Frame {
+  constructor() {
+    this.commands = [];
+    this.holdDuration = 1;
+  }
+}
+
+const offscreenCanvas = document.createElement('canvas');
+offscreenCanvas.width = canvas.width;
+offscreenCanvas.height = canvas.height;
+const offscreenCtx = offscreenCanvas.getContext('2d', { willReadFrequently: true });
+
+let frames = [new Frame()];
 let currentFrame = 0;
+let undoStack = [[]];
+let redoStack = [[]];
 let currentTool = 'pen';
 let currentColor = '#000000';
 let fillColor = '#ff6b6b';
 let currentSize = 3;
 let isDrawing = false;
-let startX, startY;
-let shapeSnapshot = null;
+let liveStroke = null;
+let shapePreview = null;
+let smoothBuffer = [];
+let startX = 0, startY = 0;
 let isPlaying = false;
-let playInterval = null;
-let undoStack = [];
-let redoStack = [];
+let playRafId = null;
+let playStartTime = 0;
+let playRenderedFrames = null;
+
+const SMOOTHING_WINDOW = 4;
 
 function getFps() {
   let v = parseInt(fpsInput.value, 10);
@@ -417,92 +440,139 @@ function getFps() {
   if (v > 60) v = 60;
   return v;
 }
-
 fpsInput.addEventListener('input', () => {
   const v = parseInt(fpsInput.value, 10);
   if (isNaN(v)) return;
   if (v < 1) fpsInput.value = 1;
   if (v > 60) fpsInput.value = 60;
 });
-fpsInput.addEventListener('blur', () => {
-  fpsInput.value = getFps();
-});
+fpsInput.addEventListener('blur', () => { fpsInput.value = getFps(); });
 
-function createBlankFrame() {
+function makeTempCanvas() {
   const c = document.createElement('canvas');
   c.width = canvas.width;
   c.height = canvas.height;
-  const cctx = c.getContext('2d');
-  cctx.fillStyle = '#ffffff';
-  cctx.fillRect(0, 0, c.width, c.height);
-  return cctx.getImageData(0, 0, c.width, c.height);
+  return c;
 }
 
-function snapshotCurrent() {
-  return ctx.getImageData(0, 0, canvas.width, canvas.height);
+function hexToRgb(hex) {
+  return [
+    parseInt(hex.slice(1, 3), 16),
+    parseInt(hex.slice(3, 5), 16),
+    parseInt(hex.slice(5, 7), 16),
+    255
+  ];
 }
 
-function initFrames() {
-  frames = [createBlankFrame()];
-  currentFrame = 0;
-  undoStack = [[]];
-  redoStack = [[]];
-  renderFrames();
-  loadFrame(0);
+function floodFillCtx(c, x, y, color) {
+  const w = c.canvas.width, h = c.canvas.height;
+  x = Math.floor(x);
+  y = Math.floor(y);
+  if (x < 0 || y < 0 || x >= w || y >= h) return;
+
+  const imgData = c.getImageData(0, 0, w, h);
+  const data = imgData.data;
+  const tIdx = (y * w + x) * 4;
+  const tColor = [data[tIdx], data[tIdx + 1], data[tIdx + 2], data[tIdx + 3]];
+  const fc = hexToRgb(color);
+
+  if (tColor[0] === fc[0] && tColor[1] === fc[1] &&
+      tColor[2] === fc[2] && tColor[3] === fc[3]) return;
+
+  const tol = 32;
+  const match = (idx) =>
+    Math.abs(data[idx] - tColor[0]) < tol &&
+    Math.abs(data[idx + 1] - tColor[1]) < tol &&
+    Math.abs(data[idx + 2] - tColor[2]) < tol &&
+    Math.abs(data[idx + 3] - tColor[3]) < tol;
+
+  const stack = [[x, y]];
+  const visited = new Uint8Array(w * h);
+
+  while (stack.length > 0) {
+    const [cx, cy] = stack.pop();
+    if (cx < 0 || cy < 0 || cx >= w || cy >= h) continue;
+    const pid = cy * w + cx;
+    if (visited[pid]) continue;
+    visited[pid] = 1;
+    const idx = pid * 4;
+    if (!match(idx)) continue;
+    data[idx] = fc[0];
+    data[idx + 1] = fc[1];
+    data[idx + 2] = fc[2];
+    data[idx + 3] = fc[3];
+    stack.push([cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]);
+  }
+
+  c.putImageData(imgData, 0, 0);
 }
 
-function loadFrame(index) {
-  if (index < 0 || index >= frames.length) return;
-  currentFrame = index;
-  ctx.putImageData(frames[index], 0, 0);
+function applyCommand(cmd, c) {
+  c.save();
+  c.strokeStyle = cmd.color;
+  c.fillStyle = cmd.color;
+  c.lineWidth = cmd.size;
+  c.lineCap = 'round';
+  c.lineJoin = 'round';
+
+  switch (cmd.type) {
+    case 'pen':
+    case 'eraser': {
+      const pts = cmd.points;
+      if (pts.length === 1) {
+        c.beginPath();
+        c.arc(pts[0].x, pts[0].y, cmd.size / 2, 0, Math.PI * 2);
+        c.fill();
+      } else {
+        c.beginPath();
+        c.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length; i++) c.lineTo(pts[i].x, pts[i].y);
+        c.stroke();
+      }
+      break;
+    }
+    case 'line': {
+      c.beginPath();
+      c.moveTo(cmd.x1, cmd.y1);
+      c.lineTo(cmd.x2, cmd.y2);
+      c.stroke();
+      break;
+    }
+    case 'rect': {
+      c.strokeRect(cmd.x1, cmd.y1, cmd.x2 - cmd.x1, cmd.y2 - cmd.y1);
+      break;
+    }
+    case 'circle': {
+      const cx = (cmd.x1 + cmd.x2) / 2;
+      const cy = (cmd.y1 + cmd.y2) / 2;
+      const rx = Math.abs(cmd.x2 - cmd.x1) / 2;
+      const ry = Math.abs(cmd.y2 - cmd.y1) / 2;
+      c.beginPath();
+      c.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+      c.stroke();
+      break;
+    }
+    case 'fill': {
+      floodFillCtx(c, cmd.x, cmd.y, cmd.color);
+      break;
+    }
+  }
+  c.restore();
+}
+
+function renderFrameTo(frame, targetCtx, w, h) {
+  targetCtx.fillStyle = '#ffffff';
+  targetCtx.fillRect(0, 0, w, h);
+  for (const cmd of frame.commands) applyCommand(cmd, targetCtx);
+}
+
+function renderCurrentFrame() {
+  renderFrameTo(frames[currentFrame], offscreenCtx, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(offscreenCanvas, 0, 0);
   updateOnionSkin();
-  renderFrames();
-  updateStatus();
-  updateUndoRedoButtons();
-}
-
-function saveCurrentFrame() {
-  frames[currentFrame] = snapshotCurrent();
-}
-
-function pushUndo() {
-  if (!undoStack[currentFrame]) undoStack[currentFrame] = [];
-  if (!redoStack[currentFrame]) redoStack[currentFrame] = [];
-  undoStack[currentFrame].push(snapshotCurrent());
-  if (undoStack[currentFrame].length > 50) undoStack[currentFrame].shift();
-  redoStack[currentFrame] = [];
-  updateUndoRedoButtons();
-}
-
-function undo() {
-  if (!undoStack[currentFrame] || undoStack[currentFrame].length === 0) return;
-  if (!redoStack[currentFrame]) redoStack[currentFrame] = [];
-  redoStack[currentFrame].push(snapshotCurrent());
-  const prev = undoStack[currentFrame].pop();
-  ctx.putImageData(prev, 0, 0);
-  saveCurrentFrame();
   updateFrameThumbnail(currentFrame);
-  updateOnionSkin();
   updateUndoRedoButtons();
-}
-
-function redo() {
-  if (!redoStack[currentFrame] || redoStack[currentFrame].length === 0) return;
-  if (!undoStack[currentFrame]) undoStack[currentFrame] = [];
-  undoStack[currentFrame].push(snapshotCurrent());
-  const next = redoStack[currentFrame].pop();
-  ctx.putImageData(next, 0, 0);
-  saveCurrentFrame();
-  updateFrameThumbnail(currentFrame);
-  updateOnionSkin();
-  updateUndoRedoButtons();
-}
-
-function updateUndoRedoButtons() {
-  document.getElementById('undoBtn').disabled =
-    !undoStack[currentFrame] || undoStack[currentFrame].length === 0;
-  document.getElementById('redoBtn').disabled =
-    !redoStack[currentFrame] || redoStack[currentFrame].length === 0;
 }
 
 function updateOnionSkin() {
@@ -510,12 +580,10 @@ function updateOnionSkin() {
   const btn = document.getElementById('onionBtn');
   if (!btn.classList.contains('active')) return;
 
-  const drawFaint = (frameData, alpha) => {
-    if (!frameData) return;
-    const tmp = document.createElement('canvas');
-    tmp.width = canvas.width;
-    tmp.height = canvas.height;
-    tmp.getContext('2d').putImageData(frameData, 0, 0);
+  const drawFaint = (frame, alpha) => {
+    const tmp = makeTempCanvas();
+    const tctx = tmp.getContext('2d', { willReadFrequently: true });
+    renderFrameTo(frame, tctx, canvas.width, canvas.height);
     onionCtx.globalAlpha = alpha;
     onionCtx.drawImage(tmp, 0, 0);
   };
@@ -529,11 +597,9 @@ function drawGrid() {
   gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
   const btn = document.getElementById('gridBtn');
   if (!btn.classList.contains('active')) return;
-
   const step = 40;
   gridCtx.strokeStyle = 'rgba(102, 126, 234, 0.45)';
   gridCtx.lineWidth = 1;
-
   for (let x = 0; x <= canvas.width; x += step) {
     gridCtx.beginPath();
     gridCtx.moveTo(x + 0.5, 0);
@@ -546,7 +612,6 @@ function drawGrid() {
     gridCtx.lineTo(canvas.width, y + 0.5);
     gridCtx.stroke();
   }
-
   gridCtx.strokeStyle = 'rgba(255, 215, 0, 0.6)';
   gridCtx.lineWidth = 1.5;
   gridCtx.beginPath();
@@ -561,12 +626,18 @@ function drawGrid() {
 
 function getPos(e) {
   const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
+  const sx = canvas.width / rect.width;
+  const sy = canvas.height / rect.height;
   let cx, cy;
   if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
   else { cx = e.clientX; cy = e.clientY; }
-  return { x: (cx - rect.left) * scaleX, y: (cy - rect.top) * scaleY };
+  return { x: (cx - rect.left) * sx, y: (cy - rect.top) * sy };
+}
+
+function averagePoint(buf) {
+  let sx = 0, sy = 0;
+  for (const p of buf) { sx += p.x; sy += p.y; }
+  return { x: sx / buf.length, y: sy / buf.length };
 }
 
 function startDraw(e) {
@@ -576,17 +647,30 @@ function startDraw(e) {
   const pos = getPos(e);
   startX = pos.x;
   startY = pos.y;
-  pushUndo();
+
+  if (currentTool === 'fill') {
+    pushUndo();
+    frames[currentFrame].commands.push({
+      type: 'fill', x: pos.x, y: pos.y, color: fillColor
+    });
+    isDrawing = false;
+    renderCurrentFrame();
+    return;
+  }
 
   if (currentTool === 'pen' || currentTool === 'eraser') {
+    const color = currentTool === 'eraser' ? '#ffffff' : currentColor;
+    liveStroke = { type: currentTool, color, size: currentSize, points: [pos] };
+    smoothBuffer = [pos];
+    ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.arc(startX, startY, currentSize / 2, 0, Math.PI * 2);
-    ctx.fillStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
+    ctx.arc(pos.x, pos.y, currentSize / 2, 0, Math.PI * 2);
     ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(startX, startY);
   } else {
-    shapeSnapshot = snapshotCurrent();
+    shapePreview = {
+      type: currentTool, color: currentColor, size: currentSize,
+      x1: pos.x, y1: pos.y, x2: pos.x, y2: pos.y
+    };
   }
 }
 
@@ -595,34 +679,27 @@ function draw(e) {
   e.preventDefault();
   const pos = getPos(e);
 
-  if (currentTool === 'pen' || currentTool === 'eraser') {
-    ctx.lineTo(pos.x, pos.y);
-    ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : currentColor;
-    ctx.lineWidth = currentSize;
+  if (liveStroke) {
+    smoothBuffer.push(pos);
+    if (smoothBuffer.length > SMOOTHING_WINDOW) smoothBuffer.shift();
+    const avg = averagePoint(smoothBuffer);
+    const last = liveStroke.points[liveStroke.points.length - 1];
+    if (Math.hypot(avg.x - last.x, avg.y - last.y) < 0.4) return;
+    liveStroke.points.push(avg);
+    ctx.strokeStyle = liveStroke.color;
+    ctx.lineWidth = liveStroke.size;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(last.x, last.y);
+    ctx.lineTo(avg.x, avg.y);
     ctx.stroke();
-  } else if (currentTool !== 'fill') {
-    if (shapeSnapshot) ctx.putImageData(shapeSnapshot, 0, 0);
-    ctx.strokeStyle = currentColor;
-    ctx.lineWidth = currentSize;
-    ctx.lineCap = 'round';
-    if (currentTool === 'line') {
-      ctx.beginPath();
-      ctx.moveTo(startX, startY);
-      ctx.lineTo(pos.x, pos.y);
-      ctx.stroke();
-    } else if (currentTool === 'rect') {
-      ctx.strokeRect(startX, startY, pos.x - startX, pos.y - startY);
-    } else if (currentTool === 'circle') {
-      const rx = Math.abs(pos.x - startX) / 2;
-      const ry = Math.abs(pos.y - startY) / 2;
-      const cx = (startX + pos.x) / 2;
-      const cy = (startY + pos.y) / 2;
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-      ctx.stroke();
-    }
+  } else if (shapePreview) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(offscreenCanvas, 0, 0);
+    shapePreview.x2 = pos.x;
+    shapePreview.y2 = pos.y;
+    applyCommand(shapePreview, ctx);
   }
 }
 
@@ -630,118 +707,99 @@ function endDraw(e) {
   if (!isDrawing) return;
   isDrawing = false;
 
-  if (currentTool === 'fill') {
-    const pos = getPos(e);
-    floodFill(pos.x, pos.y, fillColor);
+  if (liveStroke) {
+    pushUndo();
+    frames[currentFrame].commands.push(liveStroke);
+    liveStroke = null;
+    smoothBuffer = [];
+    renderCurrentFrame();
+  } else if (shapePreview) {
+    pushUndo();
+    frames[currentFrame].commands.push(shapePreview);
+    shapePreview = null;
+    renderCurrentFrame();
   }
-
-  saveCurrentFrame();
-  updateFrameThumbnail(currentFrame);
-  updateOnionSkin();
-  shapeSnapshot = null;
 }
 
-function hexToRgb(hex) {
-  return [
-    parseInt(hex.slice(1, 3), 16),
-    parseInt(hex.slice(3, 5), 16),
-    parseInt(hex.slice(5, 7), 16),
-    255
-  ];
+function pushUndo() {
+  if (!undoStack[currentFrame]) undoStack[currentFrame] = [];
+  if (!redoStack[currentFrame]) redoStack[currentFrame] = [];
+  undoStack[currentFrame].push(frames[currentFrame].commands.slice());
+  if (undoStack[currentFrame].length > 100) undoStack[currentFrame].shift();
+  redoStack[currentFrame] = [];
+  updateUndoRedoButtons();
 }
 
-function floodFill(x, y, color) {
-  x = Math.floor(x);
-  y = Math.floor(y);
-  if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) return;
+function undo() {
+  if (!undoStack[currentFrame] || undoStack[currentFrame].length === 0) return;
+  if (!redoStack[currentFrame]) redoStack[currentFrame] = [];
+  redoStack[currentFrame].push(frames[currentFrame].commands.slice());
+  frames[currentFrame].commands = undoStack[currentFrame].pop();
+  renderCurrentFrame();
+}
 
-  const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const data = imgData.data;
-  const w = canvas.width, h = canvas.height;
-  const tIdx = (y * w + x) * 4;
-  const targetColor = [data[tIdx], data[tIdx + 1], data[tIdx + 2], data[tIdx + 3]];
-  const fc = hexToRgb(color);
+function redo() {
+  if (!redoStack[currentFrame] || redoStack[currentFrame].length === 0) return;
+  if (!undoStack[currentFrame]) undoStack[currentFrame] = [];
+  undoStack[currentFrame].push(frames[currentFrame].commands.slice());
+  frames[currentFrame].commands = redoStack[currentFrame].pop();
+  renderCurrentFrame();
+}
 
-  if (targetColor[0] === fc[0] && targetColor[1] === fc[1] &&
-      targetColor[2] === fc[2] && targetColor[3] === fc[3]) return;
-
-  const tolerance = 32;
-  const match = (idx) =>
-    Math.abs(data[idx] - targetColor[0]) < tolerance &&
-    Math.abs(data[idx + 1] - targetColor[1]) < tolerance &&
-    Math.abs(data[idx + 2] - targetColor[2]) < tolerance &&
-    Math.abs(data[idx + 3] - targetColor[3]) < tolerance;
-
-  const stack = [[x, y]];
-  const visited = new Uint8Array(w * h);
-
-  while (stack.length > 0) {
-    const [cx, cy] = stack.pop();
-    if (cx < 0 || cy < 0 || cx >= w || cy >= h) continue;
-    const pidx = cy * w + cx;
-    if (visited[pidx]) continue;
-    visited[pidx] = 1;
-    const idx = pidx * 4;
-    if (!match(idx)) continue;
-    data[idx] = fc[0];
-    data[idx + 1] = fc[1];
-    data[idx + 2] = fc[2];
-    data[idx + 3] = fc[3];
-    stack.push([cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]);
-  }
-
-  ctx.putImageData(imgData, 0, 0);
+function updateUndoRedoButtons() {
+  document.getElementById('undoBtn').disabled =
+    !undoStack[currentFrame] || undoStack[currentFrame].length === 0;
+  document.getElementById('redoBtn').disabled =
+    !redoStack[currentFrame] || redoStack[currentFrame].length === 0;
 }
 
 function addFrame() {
-  saveCurrentFrame();
-  const newFrame = createBlankFrame();
+  const newFrame = new Frame();
   frames.splice(currentFrame + 1, 0, newFrame);
   undoStack.splice(currentFrame + 1, 0, []);
   redoStack.splice(currentFrame + 1, 0, []);
-  loadFrame(currentFrame + 1);
+  currentFrame++;
+  rebuildThumbnails();
+  renderCurrentFrame();
+  updateStatus();
 }
 
 function deleteFrame(index) {
-  if (frames.length === 1) {
-    alert('Cannot delete the only frame.');
-    return;
-  }
+  if (frames.length === 1) { alert('Cannot delete the only frame.'); return; }
   frames.splice(index, 1);
   undoStack.splice(index, 1);
   redoStack.splice(index, 1);
-  if (currentFrame >= frames.length) currentFrame = frames.length - 1;
-  loadFrame(currentFrame);
+  if (currentFrame > index) currentFrame--;
+  else if (currentFrame >= frames.length) currentFrame = frames.length - 1;
+  rebuildThumbnails();
+  renderCurrentFrame();
+  updateStatus();
 }
 
-function renderFrames() {
-  const container = document.getElementById('framesContainer');
-  container.innerHTML = '';
-  frames.forEach((frameData, i) => {
-    const div = document.createElement('div');
-    div.className = 'frame' + (i === currentFrame ? ' active' : '');
-    const thumb = document.createElement('canvas');
-    thumb.width = 80;
-    thumb.height = 80;
-    const tctx = thumb.getContext('2d');
-    const tmp = document.createElement('canvas');
-    tmp.width = canvas.width;
-    tmp.height = canvas.height;
-    tmp.getContext('2d').putImageData(frameData, 0, 0);
-    tctx.drawImage(tmp, 0, 0, 80, 80);
-    div.appendChild(thumb);
-    const num = document.createElement('div');
-    num.className = 'num';
-    num.textContent = i + 1;
-    div.appendChild(num);
-    const del = document.createElement('button');
-    del.className = 'del';
-    del.textContent = '×';
-    del.onclick = (e) => { e.stopPropagation(); deleteFrame(i); };
-    div.appendChild(del);
-    div.onclick = () => { if (!isPlaying) loadFrame(i); };
-    container.appendChild(div);
+function selectFrame(index) {
+  if (index < 0 || index >= frames.length) return;
+  currentFrame = index;
+  document.querySelectorAll('.frame').forEach((el, i) => {
+    el.classList.toggle('active', i === index);
   });
+  renderCurrentFrame();
+  updateStatus();
+}
+
+function updateHoldBadge(index) {
+  const frameEl = document.querySelectorAll('.frame')[index];
+  if (!frameEl) return;
+  const badge = frameEl.querySelector('.hold');
+  if (!badge) return;
+  const n = frames[index].holdDuration;
+  badge.textContent = '×' + n;
+  badge.classList.toggle('long', n > 1);
+}
+
+function cycleHold(index, delta) {
+  const f = frames[index];
+  f.holdDuration = Math.max(1, Math.min(20, f.holdDuration + delta));
+  updateHoldBadge(index);
 }
 
 function updateFrameThumbnail(index) {
@@ -750,46 +808,100 @@ function updateFrameThumbnail(index) {
   const thumb = frameEl.querySelector('canvas');
   if (!thumb) return;
   const tctx = thumb.getContext('2d');
+  const tmp = makeTempCanvas();
+  renderFrameTo(frames[index], tmp.getContext('2d', { willReadFrequently: true }), canvas.width, canvas.height);
   tctx.clearRect(0, 0, 80, 80);
-  const tmp = document.createElement('canvas');
-  tmp.width = canvas.width;
-  tmp.height = canvas.height;
-  tmp.getContext('2d').putImageData(frames[index], 0, 0);
   tctx.drawImage(tmp, 0, 0, 80, 80);
+}
+
+function rebuildThumbnails() {
+  const container = document.getElementById('framesContainer');
+  container.innerHTML = '';
+  frames.forEach((frame, i) => {
+    const div = document.createElement('div');
+    div.className = 'frame' + (i === currentFrame ? ' active' : '');
+    const thumb = document.createElement('canvas');
+    thumb.width = 80;
+    thumb.height = 80;
+    div.appendChild(thumb);
+
+    const num = document.createElement('div');
+    num.className = 'num';
+    num.textContent = i + 1;
+    div.appendChild(num);
+
+    const hold = document.createElement('div');
+    hold.className = 'hold';
+    hold.title = 'Click + hold, right-click - hold';
+    hold.textContent = '×' + frame.holdDuration;
+    if (frame.holdDuration > 1) hold.classList.add('long');
+    hold.onclick = (e) => { e.stopPropagation(); cycleHold(i, 1); };
+    hold.oncontextmenu = (e) => { e.preventDefault(); e.stopPropagation(); cycleHold(i, -1); };
+    div.appendChild(hold);
+
+    const del = document.createElement('button');
+    del.className = 'del';
+    del.textContent = '×';
+    del.onclick = (e) => { e.stopPropagation(); deleteFrame(i); };
+    div.appendChild(del);
+
+    div.onclick = () => { if (!isPlaying) selectFrame(i); };
+    container.appendChild(div);
+
+    const tmp = makeTempCanvas();
+    renderFrameTo(frame, tmp.getContext('2d', { willReadFrequently: true }), canvas.width, canvas.height);
+    const tctx = thumb.getContext('2d');
+    tctx.drawImage(tmp, 0, 0, 80, 80);
+  });
 }
 
 function play() {
   if (isPlaying) return;
-  if (frames.length < 2) { alert('Need at least 2 frames to play.'); return; }
-  saveCurrentFrame();
-  isPlaying = true;
+  const totalTicks = frames.reduce((s, f) => s + f.holdDuration, 0);
+  if (totalTicks < 2) { alert('Need at least 2 total frames to play.'); return; }
+
+  playRenderedFrames = frames.map(f => {
+    const c = makeTempCanvas();
+    renderFrameTo(f, c.getContext('2d', { willReadFrequently: true }), canvas.width, canvas.height);
+    return c;
+  });
+
   playbackCanvas.width = canvas.width;
   playbackCanvas.height = canvas.height;
   playbackOverlay.classList.add('show');
-  let i = 0;
-  const fps = getFps();
-  playbackCtx.putImageData(frames[0], 0, 0);
-  playInterval = setInterval(() => {
-    i = (i + 1) % frames.length;
-    playbackCtx.putImageData(frames[i], 0, 0);
-  }, 1000 / fps);
+  isPlaying = true;
+  playStartTime = performance.now();
   document.getElementById('playBtn').classList.add('active');
+  playRafId = requestAnimationFrame(playTick);
+}
+
+function playTick(timestamp) {
+  if (!isPlaying) return;
+  const fps = getFps();
+  const frameTime = 1000 / fps;
+  const totalTicks = frames.reduce((s, f) => s + f.holdDuration, 0);
+  const totalDuration = totalTicks * frameTime;
+  const elapsed = (timestamp - playStartTime) % totalDuration;
+  const tickIdx = Math.floor(elapsed / frameTime);
+
+  let acc = 0, shown = 0;
+  for (let i = 0; i < frames.length; i++) {
+    acc += frames[i].holdDuration;
+    if (tickIdx < acc) { shown = i; break; }
+  }
+  playbackCtx.fillStyle = '#ffffff';
+  playbackCtx.fillRect(0, 0, playbackCanvas.width, playbackCanvas.height);
+  playbackCtx.drawImage(playRenderedFrames[shown], 0, 0);
+  playRafId = requestAnimationFrame(playTick);
 }
 
 function stop() {
   isPlaying = false;
-  clearInterval(playInterval);
-  document.getElementById('playBtn').classList.remove('active');
+  if (playRafId) { cancelAnimationFrame(playRafId); playRafId = null; }
   playbackOverlay.classList.remove('show');
-  loadFrame(currentFrame);
-}
-
-function frameToCanvas(frameData) {
-  const c = document.createElement('canvas');
-  c.width = canvas.width;
-  c.height = canvas.height;
-  c.getContext('2d').putImageData(frameData, 0, 0);
-  return c;
+  document.getElementById('playBtn').classList.remove('active');
+  playRenderedFrames = null;
+  renderCurrentFrame();
 }
 
 function downloadBlob(blob, filename) {
@@ -807,17 +919,44 @@ function downloadBlob(blob, filename) {
 }
 
 function exportPNG() {
-  saveCurrentFrame();
-  canvas.toBlob(blob => {
+  const c = makeTempCanvas();
+  renderFrameTo(frames[currentFrame], c.getContext('2d', { willReadFrequently: true }), canvas.width, canvas.height);
+  c.toBlob(blob => {
     if (!blob) { alert('Could not create PNG.'); return; }
     downloadBlob(blob, `wanis_frame_${currentFrame + 1}.png`);
   }, 'image/png');
 }
 
-async function exportGIF() {
-  saveCurrentFrame();
-  if (frames.length < 2) { alert('Need at least 2 frames to export.'); return; }
+async function loadGifenc() {
+  for (const u of [
+    'https://cdn.jsdelivr.net/npm/gifenc/+esm',
+    'https://unpkg.com/gifenc/+esm',
+    'https://esm.sh/gifenc'
+  ]) {
+    try {
+      const mod = await import(u);
+      if (mod.GIFEncoder && mod.quantize && mod.applyPalette) return mod;
+    } catch (_) {}
+  }
+  throw new Error('Failed to load gifenc from any CDN');
+}
 
+async function loadMediabunny() {
+  for (const u of [
+    'https://cdn.jsdelivr.net/npm/mediabunny/+esm',
+    'https://unpkg.com/mediabunny/+esm',
+    'https://esm.sh/mediabunny'
+  ]) {
+    try {
+      const mod = await import(u);
+      if (mod.Output && mod.CanvasSource && mod.BufferTarget) return mod;
+    } catch (_) {}
+  }
+  throw new Error('Failed to load mediabunny from any CDN');
+}
+
+async function exportGIF() {
+  if (frames.length < 1) { alert('Need at least 1 frame.'); return; }
   const modal = document.getElementById('modal');
   const title = document.getElementById('modalTitle');
   const text = document.getElementById('modalText');
@@ -827,44 +966,43 @@ async function exportGIF() {
 
   modal.classList.add('show');
   title.textContent = 'Creating GIF';
-  text.textContent = 'Please wait...';
+  text.textContent = 'Loading GIF library...';
   preview.innerHTML = '';
   pb.style.display = 'block';
   pf.style.width = '0%';
 
   try {
+    const { GIFEncoder, quantize, applyPalette } = await loadGifenc();
+    text.textContent = 'Encoding...';
     const fps = getFps();
-    const delay = Math.round(1000 / fps);
     const gif = GIFEncoder();
 
     for (let i = 0; i < frames.length; i++) {
-      const c = frameToCanvas(frames[i]);
-      const imageData = c.getContext('2d').getImageData(0, 0, c.width, c.height);
-      const { data, width, height } = imageData;
-      const palette = quantize(data, 256);
-      const index = applyPalette(data, palette);
-      gif.writeFrame(index, width, height, { palette, delay });
+      const frame = frames[i];
+      const delay = Math.round((1000 / fps) * frame.holdDuration);
+      const c = makeTempCanvas();
+      renderFrameTo(frame, c.getContext('2d', { willReadFrequently: true }), canvas.width, canvas.height);
+      const img = c.getContext('2d').getImageData(0, 0, c.width, c.height);
+      const palette = quantize(img.data, 256);
+      const index = applyPalette(img.data, palette);
+      gif.writeFrame(index, c.width, c.height, { palette, delay });
+
       const pct = Math.round(((i + 1) / frames.length) * 100);
       pf.style.width = pct + '%';
       text.textContent = `Encoding frame ${i + 1} / ${frames.length}... ${pct}%`;
       await new Promise(r => setTimeout(r, 0));
     }
-
     gif.finish();
-    const bytes = gif.bytes();
-    const blob = new Blob([bytes], { type: 'image/gif' });
+    const blob = new Blob([gif.bytes()], { type: 'image/gif' });
     const url = URL.createObjectURL(blob);
-
     pf.style.width = '100%';
     text.textContent = 'GIF is ready.';
     preview.innerHTML = `
       <img src="${url}" style="max-width:100%;border-radius:8px;margin:10px 0;">
       <br><button id="gifDownloadBtn" class="success" style="margin-top:10px;">📥 Download GIF</button>`;
     pb.style.display = 'none';
-
-    document.getElementById('gifDownloadBtn').onclick = () => {
+    document.getElementById('gifDownloadBtn').onclick = () =>
       downloadBlob(blob, `wanis_${Date.now()}.gif`);
-    };
   } catch (err) {
     console.error(err);
     text.textContent = 'GIF export failed: ' + err.message;
@@ -873,9 +1011,7 @@ async function exportGIF() {
 }
 
 async function exportMP4() {
-  saveCurrentFrame();
-  if (frames.length < 2) { alert('Need at least 2 frames to export.'); return; }
-
+  if (frames.length < 1) { alert('Need at least 1 frame.'); return; }
   const modal = document.getElementById('modal');
   const title = document.getElementById('modalTitle');
   const text = document.getElementById('modalText');
@@ -885,70 +1021,75 @@ async function exportMP4() {
 
   modal.classList.add('show');
   title.textContent = 'Creating video';
-  text.textContent = 'Encoding frames deterministically...';
+  text.textContent = 'Loading video encoder...';
   preview.innerHTML = '';
   pb.style.display = 'block';
   pf.style.width = '0%';
 
   if (!window.VideoEncoder) {
-    text.textContent = 'This browser does not support WebCodecs. Use a recent Chrome or Edge.';
+    text.textContent = 'WebCodecs not available. Use a recent Chrome, Edge, or Safari.';
     pb.style.display = 'none';
     return;
   }
 
+  let mb;
+  try { mb = await loadMediabunny(); }
+  catch (err) {
+    text.textContent = 'Could not load encoder: ' + err.message;
+    pb.style.display = 'none';
+    return;
+  }
+  const { Output, Mp4OutputFormat, WebMOutputFormat, BufferTarget, CanvasSource, QUALITY_HIGH } = mb;
+
   const fps = getFps();
-  const frameDuration = 1 / fps;
-  const recCanvas = document.createElement('canvas');
-  recCanvas.width = canvas.width;
-  recCanvas.height = canvas.height;
-  const rctx = recCanvas.getContext('2d');
+  const recCanvas = makeTempCanvas();
+  const rctx = recCanvas.getContext('2d', { willReadFrequently: true });
 
-  try {
-    let format = new Mp4OutputFormat();
-    let ext = 'mp4';
-    let mimeType = 'video/mp4';
-
-    const output = new Output({
-      format,
-      target: new BufferTarget(),
-    });
-
-    const videoSource = new CanvasSource(recCanvas, {
-      codec: 'avc',
-      bitrate: QUALITY_HIGH,
-    });
-    output.addVideoTrack(videoSource);
-
+  async function tryEncode(OutputFormat, codec, ext, mimeType) {
+    const output = new Output({ format: new OutputFormat(), target: new BufferTarget() });
+    const vs = new CanvasSource(recCanvas, { codec, bitrate: QUALITY_HIGH });
+    output.addVideoTrack(vs);
     await output.start();
 
+    let t = 0;
     for (let i = 0; i < frames.length; i++) {
-      rctx.putImageData(frames[i], 0, 0);
-      await videoSource.add(i * frameDuration, frameDuration);
-
+      const frame = frames[i];
+      const dur = frame.holdDuration / fps;
+      renderFrameTo(frame, rctx, canvas.width, canvas.height);
+      await vs.add(t, dur);
+      t += dur;
       const pct = Math.round(((i + 1) / frames.length) * 100);
       pf.style.width = pct + '%';
-      text.textContent = `Encoding frame ${i + 1} / ${frames.length}... ${pct}%`;
+      text.textContent = `${ext.toUpperCase()} frame ${i + 1} / ${frames.length}... ${pct}%`;
     }
-
     await output.finalize();
+    if (!output.target.buffer) throw new Error('No output buffer');
+    return new Blob([output.target.buffer], { type: mimeType });
+  }
 
-    const buffer = output.target.buffer;
-    const blob = new Blob([buffer], { type: mimeType });
+  try {
+    let blob, ext;
+    try {
+      blob = await tryEncode(Mp4OutputFormat, 'avc', 'mp4', 'video/mp4');
+      ext = 'mp4';
+    } catch (e) {
+      console.warn('MP4 failed, trying WebM:', e);
+      text.textContent = 'MP4 codec unavailable, falling back to WebM...';
+      blob = await tryEncode(WebMOutputFormat, 'vp9', 'webm', 'video/webm');
+      ext = 'webm';
+    }
     const url = URL.createObjectURL(blob);
-
     pf.style.width = '100%';
-    text.textContent = 'MP4 video is ready.';
+    text.textContent = `${ext.toUpperCase()} video is ready.`;
     preview.innerHTML = `
       <video src="${url}" controls loop style="max-width:100%;border-radius:8px;margin:10px 0;"></video>
-      <br><button id="videoDownloadBtn" class="success" style="margin-top:10px;">📥 Download MP4</button>`;
+      <br><button id="videoDownloadBtn" class="success" style="margin-top:10px;">📥 Download ${ext.toUpperCase()}</button>`;
     pb.style.display = 'none';
-
-    document.getElementById('videoDownloadBtn').onclick = () => {
-      downloadBlob(blob, `wanis_${Date.now()}.mp4`);
-    };
+    document.getElementById('videoDownloadBtn').onclick = () =>
+      downloadBlob(blob, `wanis_${Date.now()}.${ext}`);
   } catch (err) {
     console.error(err);
-    text.textContent = 'MP4 export failed: ' + err.message;
+    text.textContent = 'Video export failed: ' + err.message;
     pb.style.display = 'none';
   }
 }
@@ -984,21 +1125,17 @@ document.getElementById('undoBtn').onclick = undo;
 document.getElementById('redoBtn').onclick = redo;
 
 document.getElementById('clearBtn').onclick = () => {
+  if (frames[currentFrame].commands.length === 0) return;
   if (!confirm('Clear all content on this frame?')) return;
   pushUndo();
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  saveCurrentFrame();
-  updateFrameThumbnail(currentFrame);
-  updateOnionSkin();
-  updateUndoRedoButtons();
+  frames[currentFrame].commands = [];
+  renderCurrentFrame();
 };
 
 document.getElementById('onionBtn').onclick = e => {
   e.target.classList.toggle('active');
   updateOnionSkin();
 };
-
 document.getElementById('gridBtn').onclick = e => {
   e.target.classList.toggle('active');
   drawGrid();
@@ -1011,39 +1148,29 @@ document.getElementById('modalCloseBtn').onclick = () => {
   document.getElementById('modal').classList.remove('show');
 };
 
-playbackOverlay.onclick = () => {
-  if (isPlaying) stop();
-};
+playbackOverlay.onclick = () => { if (isPlaying) stop(); };
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && isPlaying) {
-    e.preventDefault();
-    stop();
-    return;
-  }
+  if (e.key === 'Escape' && isPlaying) { e.preventDefault(); stop(); return; }
   if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
-  if (e.ctrlKey && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
-    e.preventDefault(); redo();
-  }
-  if (e.key === ' ') {
-    e.preventDefault();
-    if (isPlaying) stop();
-    else play();
-  }
-  if (!isPlaying && e.key === 'ArrowRight' && currentFrame < frames.length - 1) loadFrame(currentFrame + 1);
-  if (!isPlaying && e.key === 'ArrowLeft' && currentFrame > 0) loadFrame(currentFrame - 1);
+  if (e.ctrlKey && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) { e.preventDefault(); redo(); }
+  if (e.key === ' ') { e.preventDefault(); isPlaying ? stop() : play(); }
+  if (!isPlaying && e.key === 'ArrowRight' && currentFrame < frames.length - 1) selectFrame(currentFrame + 1);
+  if (!isPlaying && e.key === 'ArrowLeft' && currentFrame > 0) selectFrame(currentFrame - 1);
 });
 
 function updateStatus() {
+  const total = frames.reduce((s, f) => s + f.holdDuration, 0);
+  const dur = (total / getFps()).toFixed(2);
   document.getElementById('status').textContent =
-    `Frame ${currentFrame + 1}/${frames.length} | ${currentTool} | Size: ${currentSize}`;
+    `Frame ${currentFrame + 1}/${frames.length} | ${currentTool} | Size: ${currentSize} | ${dur}s`;
 }
 
 ctx.fillStyle = '#ffffff';
 ctx.fillRect(0, 0, canvas.width, canvas.height);
-initFrames();
+rebuildThumbnails();
+renderCurrentFrame();
 drawGrid();
-updateOnionSkin();
 updateStatus();
 </script>
 
