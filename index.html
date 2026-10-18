@@ -18,6 +18,7 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     flex-wrap: wrap; gap: 8px;
   }
+  .logo-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .logo {
     font-size: 20px; font-weight: bold;
     display: flex; align-items: baseline; gap: 6px;
@@ -29,6 +30,24 @@
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   .logo span { color: #ffd700; }
   .logo small { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: normal; cursor: pointer; }
+
+  .project-badge {
+    font-size: 12px;
+    color: rgba(255,255,255,0.9);
+    background: rgba(0,0,0,0.25);
+    padding: 4px 12px;
+    border-radius: 14px;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .project-badge:hover { background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.35); }
+  .project-badge.hidden { display: none; }
+
   .controls { display: flex; gap: 6px; flex-wrap: wrap; }
   button {
     background: #2d2d44; color: #fff; border: none;
@@ -40,6 +59,8 @@
   button:hover { background: #3d3d5c; transform: translateY(-1px); }
   button.active { background: #667eea; }
   button.success { background: #27ae60; }
+  button.danger { background: #e74c3c; }
+  button.danger:hover { background: #ff5544; }
   button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
   button:focus-visible { outline: 2px solid #ffd700; outline-offset: 2px; }
 
@@ -58,7 +79,6 @@
     90% { transform: translate(-2px, 2px); }
   }
 
-  /* ─────────── TOOLBAR (vertically scrollable) ─────────── */
   .toolbar {
     width: 78px; background: #16213e; padding: 10px 5px;
     display: flex; flex-direction: column; gap: 8px; align-items: center;
@@ -69,17 +89,8 @@
     scrollbar-color: #667eea #0d1626;
   }
   .toolbar::-webkit-scrollbar { width: 10px; }
-  .toolbar::-webkit-scrollbar-track {
-    background: #0d1626;
-    border-radius: 5px;
-    margin: 4px 0;
-  }
-  .toolbar::-webkit-scrollbar-thumb {
-    background: #667eea;
-    border-radius: 5px;
-    border: 2px solid #0d1626;
-    transition: background 0.2s;
-  }
+  .toolbar::-webkit-scrollbar-track { background: #0d1626; border-radius: 5px; margin: 4px 0; }
+  .toolbar::-webkit-scrollbar-thumb { background: #667eea; border-radius: 5px; border: 2px solid #0d1626; transition: background 0.2s; }
   .toolbar::-webkit-scrollbar-thumb:hover { background: #8a9fef; }
   .toolbar::-webkit-scrollbar-thumb:active { background: #ffd700; }
 
@@ -135,7 +146,6 @@
   }
   .canvas-overlay-btns button { padding: 6px 12px; font-size: 12px; }
 
-  /* ─────────── TIMELINE / FRAMES (horizontally scrollable) ─────────── */
   .timeline {
     background: #16213e; padding: 10px;
     border-top: 2px solid #2d2d44;
@@ -160,29 +170,14 @@
   }
   .frame-actions button { padding: 6px 8px; font-size: 14px; min-width: 34px; justify-content: center; }
 
-  /* Frame strip wrapper with left/right fade hint */
-  .frames-strip-wrap {
-    flex: 1; position: relative;
-    display: flex; min-width: 0;
+  .frames-strip-wrap { flex: 1; position: relative; display: flex; min-width: 0; }
+  .frames-strip-wrap::before, .frames-strip-wrap::after {
+    content: ''; position: absolute; top: 0; bottom: 0;
+    width: 20px; pointer-events: none; z-index: 3;
+    opacity: 0; transition: opacity 0.2s;
   }
-  .frames-strip-wrap::before,
-  .frames-strip-wrap::after {
-    content: '';
-    position: absolute; top: 0; bottom: 0;
-    width: 20px;
-    pointer-events: none;
-    z-index: 3;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .frames-strip-wrap::before {
-    left: 0;
-    background: linear-gradient(to right, #16213e, transparent);
-  }
-  .frames-strip-wrap::after {
-    right: 0;
-    background: linear-gradient(to left, #16213e, transparent);
-  }
+  .frames-strip-wrap::before { left: 0; background: linear-gradient(to right, #16213e, transparent); }
+  .frames-strip-wrap::after { right: 0; background: linear-gradient(to left, #16213e, transparent); }
   .frames-strip-wrap.has-overflow-left::before { opacity: 1; }
   .frames-strip-wrap.has-overflow-right::after { opacity: 1; }
 
@@ -197,20 +192,10 @@
     min-width: 0;
   }
   .frames-container::-webkit-scrollbar { height: 10px; }
-  .frames-container::-webkit-scrollbar-track {
-    background: #0d1626;
-    border-radius: 5px;
-    margin: 0 4px;
-  }
-  .frames-container::-webkit-scrollbar-thumb {
-    background: #667eea;
-    border-radius: 5px;
-    border: 2px solid #0d1626;
-    transition: background 0.2s;
-  }
+  .frames-container::-webkit-scrollbar-track { background: #0d1626; border-radius: 5px; margin: 0 4px; }
+  .frames-container::-webkit-scrollbar-thumb { background: #667eea; border-radius: 5px; border: 2px solid #0d1626; transition: background 0.2s; }
   .frames-container::-webkit-scrollbar-thumb:hover { background: #8a9fef; }
   .frames-container::-webkit-scrollbar-thumb:active { background: #ffd700; }
-  .frames-container::-webkit-scrollbar-corner { background: transparent; }
 
   .frame {
     min-width: 80px; height: 80px;
@@ -264,14 +249,123 @@
     z-index: 100;
   }
   .modal.show { display: flex; }
+  #confirmModal { z-index: 102; }
   .modal-content {
     background: #1a1a2e; padding: 30px; border-radius: 12px;
-    max-width: 500px; text-align: center;
+    max-width: 520px; width: calc(100% - 40px);
+    text-align: center;
     max-height: 85vh; overflow-y: auto;
   }
   .modal-content h2 { margin-bottom: 15px; color: #667eea; }
   .modal-content p { color: #aaa; margin-bottom: 20px; font-size: 13px; }
   .modal-content button { margin: 5px; }
+  .modal-buttons {
+    display: flex; gap: 8px;
+    justify-content: center; flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .fallback-hint {
+    font-size: 12px; color: #aaa;
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 12px 0;
+    line-height: 1.5;
+    text-align: left;
+  }
+  .fallback-hint strong { color: #ffd700; }
+
+  .project-list {
+    display: flex; flex-direction: column; gap: 8px;
+    max-height: 50vh; overflow-y: auto;
+    margin: 16px 0;
+    text-align: left;
+    padding-right: 4px;
+  }
+  .project-list::-webkit-scrollbar { width: 8px; }
+  .project-list::-webkit-scrollbar-track { background: #0d1626; border-radius: 4px; }
+  .project-list::-webkit-scrollbar-thumb { background: #667eea; border-radius: 4px; }
+  .project-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    background: #2d2d44;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .project-item:hover { background: #3d3d5c; border-color: #667eea; transform: translateX(2px); }
+  .project-item.active { border-color: #ffd700; background: #3d3d5c; }
+  .project-item .info { flex: 1; min-width: 0; }
+  .project-item .pname {
+    font-weight: bold; margin-bottom: 3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 14px;
+  }
+  .project-item .pmeta { font-size: 11px; color: #aaa; }
+  .project-item .del-proj {
+    background: #e74c3c; color: #fff; border: none;
+    width: 36px; height: 36px; border-radius: 50%;
+    cursor: pointer; font-size: 18px; font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.85; transition: all 0.2s;
+    flex-shrink: 0;
+    padding: 0;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .project-item .del-proj:hover { opacity: 1; background: #ff5544; transform: scale(1.1); }
+  .project-item .del-proj:active { transform: scale(0.95); }
+  .project-empty {
+    text-align: center;
+    padding: 30px 20px;
+    color: #aaa;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .new-project-input {
+    width: 100%;
+    padding: 12px 14px;
+    background: #2d2d44;
+    color: #fff;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    margin-bottom: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .new-project-input:focus { border-color: #ffd700; }
+  .new-project-input.error { border-color: #e74c3c; }
+
+  .new-project-error {
+    font-size: 13px;
+    color: #ff6b6b;
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.4);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    text-align: left;
+    line-height: 1.4;
+  }
+  .new-project-error.hidden { display: none; }
+
+  .storage-warning {
+    font-size: 12px;
+    color: #ff9f43;
+    background: rgba(255, 159, 67, 0.1);
+    border: 1px solid rgba(255, 159, 67, 0.4);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    line-height: 1.5;
+    text-align: left;
+  }
 
   .status {
     position: absolute; bottom: 10px; left: 10px;
@@ -340,8 +434,12 @@
 <body>
 
 <div class="header">
-  <div class="logo" id="logo">🎬 <span>WAnis</span><small id="subtitle">Web Animate Studio</small></div>
+  <div class="logo-group">
+    <div class="logo" id="logo">🎬 <span>WAnis</span><small id="subtitle">Web Animate Studio</small></div>
+    <div class="project-badge hidden" id="projectBadge" title="Open project manager">Untitled</div>
+  </div>
   <div class="controls">
+    <button id="projectsBtn" title="Manage projects">📁 Projects</button>
     <button id="playBtn" class="success" title="Space">▶ Play</button>
     <button id="stopBtn">⏹ Stop</button>
     <button id="undoBtn" title="Ctrl+Z">↶ Undo</button>
@@ -410,7 +508,47 @@
     <p id="modalText">Processing...</p>
     <div class="progress-bar" id="progressBar" style="display:none;"><div class="fill" id="progressFill"></div></div>
     <div id="modalPreview"></div>
+    <p id="modalFallbackHint" class="fallback-hint" style="display:none;"></p>
+    <div id="modalButtons" class="modal-buttons" style="display:none;"></div>
     <button id="modalCloseBtn">Close</button>
+  </div>
+</div>
+
+<div class="modal" id="projectsModal">
+  <div class="modal-content">
+    <h2>📁 Projects</h2>
+    <p id="projectsStorageWarning" class="storage-warning" style="display:none;">
+      ⚠️ <strong>LocalStorage unavailable</strong> — projects will be kept in memory only and lost on reload.
+    </p>
+    <div id="projectList" class="project-list"></div>
+    <div class="modal-buttons">
+      <button id="newProjectBtn" class="success">+ New Project</button>
+      <button id="projectsCloseBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="newProjectModal">
+  <div class="modal-content">
+    <h2 id="newProjectTitle">New Project</h2>
+    <p id="newProjectSubtitle" style="color:#aaa; font-size:13px; margin-bottom:16px;">Give your animation a name</p>
+    <p id="newProjectError" class="new-project-error hidden"></p>
+    <input type="text" id="newProjectName" class="new-project-input" placeholder="Untitled Animation" maxlength="60" autocomplete="off">
+    <div class="modal-buttons">
+      <button id="createProjectBtn" class="success">Create</button>
+      <button id="cancelNewProjectBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="confirmModal">
+  <div class="modal-content">
+    <h2 id="confirmTitle">Confirm</h2>
+    <p id="confirmText">Are you sure?</p>
+    <div class="modal-buttons">
+      <button id="confirmYes" class="danger">Yes</button>
+      <button id="confirmNo">Cancel</button>
+    </div>
   </div>
 </div>
 
@@ -432,6 +570,45 @@ const SMOOTH_WINDOW = 4;
 const FAST_STROKE_SPEED = 1000;
 const FAST_STROKE_DIST = 500;
 const WHITE_THRESHOLD = 240;
+const STORAGE_KEY = 'wanis_v1';
+
+const Storage = (() => {
+  let available = false;
+  const memory = {};
+  try {
+    const test = '__wanis_test__';
+    localStorage.setItem(test, test);
+    localStorage.removeItem(test);
+    available = true;
+  } catch (_) {
+    available = false;
+  }
+  return {
+    isAvailable: () => available,
+    get: (key) => {
+      if (available) {
+        try {
+          const raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : null;
+        } catch (_) { return null; }
+      }
+      return memory[key] || null;
+    },
+    set: (key, value) => {
+      if (!available) {
+        memory[key] = value;
+        return 'memory';
+      }
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+        return 'stored';
+      } catch (e) {
+        if (e && e.name === 'QuotaExceededError') return 'quota';
+        return 'error';
+      }
+    }
+  };
+})();
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -449,7 +626,324 @@ const onionBtn = document.getElementById('onionBtn');
 const gridBtn = document.getElementById('gridBtn');
 const framesContainer = document.getElementById('framesContainer');
 const framesStripWrap = document.getElementById('framesStripWrap');
-const toolbar = document.getElementById('toolbar');
+const projectBadge = document.getElementById('projectBadge');
+
+let projects = {};
+let projectOrder = [];
+let activeProjectId = null;
+let autosaveTimer = null;
+let newProjectRequired = false;
+let confirmCallback = null;
+
+function projectSlug() {
+  const p = projects[activeProjectId];
+  if (!p) return 'wanis';
+  return p.name.replace(/[^a-z0-9]+/gi, '_').replace(/^_+|_+$/g, '').toLowerCase() || 'wanis';
+}
+
+function nameExists(name, exceptId = null) {
+  const normalized = name.trim().toLowerCase();
+  if (!normalized) return false;
+  return Object.entries(projects).some(([id, p]) =>
+    id !== exceptId && p.name.trim().toLowerCase() === normalized
+  );
+}
+
+function persistAll() {
+  const data = {
+    v: 1,
+    projects,
+    order: projectOrder,
+    active: activeProjectId
+  };
+  const result = Storage.set(STORAGE_KEY, data);
+  if (result === 'quota') {
+    toast('⚠️ Storage full — project may not save properly', 4000);
+  }
+}
+
+function saveCurrentProject() {
+  if (!activeProjectId || !projects[activeProjectId]) return;
+  const p = projects[activeProjectId];
+  p.frames = frames.map(f => ({
+    commands: f.commands,
+    holdDuration: f.holdDuration
+  }));
+  p.fps = getFps();
+  p.currentFrame = currentFrame;
+  p.updatedAt = Date.now();
+  persistAll();
+}
+
+function scheduleAutosave() {
+  if (!activeProjectId) return;
+  if (autosaveTimer) clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(() => {
+    autosaveTimer = null;
+    try { saveCurrentProject(); } catch (e) { console.warn('Autosave failed:', e); }
+  }, 800);
+}
+
+function markDirty() { scheduleAutosave(); }
+
+function openProject(id) {
+  if (!projects[id]) return;
+  if (activeProjectId && projects[activeProjectId]) {
+    try { saveCurrentProject(); } catch (_) {}
+  }
+
+  const p = projects[id];
+  frames = (p.frames && p.frames.length)
+    ? p.frames.map(f => new Frame(f.commands || [], f.holdDuration || 1))
+    : [new Frame()];
+  currentFrame = Math.max(0, Math.min(p.currentFrame || 0, frames.length - 1));
+  fpsInput.value = p.fps || 12;
+  undoStack = frames.map(() => []);
+  redoStack = frames.map(() => []);
+  trash = [];
+  activeProjectId = id;
+
+  rebuildThumbnails();
+  renderCurrentFrame();
+  updateStatus();
+  updateTrashButton();
+  updateProjectBadge();
+  persistAll();
+}
+
+function createNewProject(name) {
+  const cleanName = (name || '').trim() || 'Untitled Animation';
+
+  if (nameExists(cleanName)) {
+    toast(`⚠️ A project named "${cleanName}" already exists`, 3000);
+    return null;
+  }
+
+  const id = 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  projects[id] = {
+    name: cleanName,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    frames: [{ commands: [], holdDuration: 1 }],
+    fps: 12,
+    currentFrame: 0
+  };
+  projectOrder.push(id);
+  persistAll();
+  openProject(id);
+  toast(`✅ Created "${cleanName}"`, 2200);
+  return id;
+}
+
+function deleteProject(id) {
+  try {
+    if (!projects[id]) return;
+    const p = projects[id];
+    const wasActive = id === activeProjectId;
+
+    delete projects[id];
+    projectOrder = projectOrder.filter(x => x !== id);
+
+    if (projectOrder.length === 0) {
+      activeProjectId = null;
+      frames = [new Frame()];
+      currentFrame = 0;
+      undoStack = [[]];
+      redoStack = [[]];
+      trash = [];
+      persistAll();
+      updateProjectBadge();
+      closeProjectsModal();
+      rebuildThumbnails();
+      renderCurrentFrame();
+      updateStatus();
+      showNewProjectModal(true);
+      return;
+    }
+
+    if (wasActive) {
+      activeProjectId = null;
+      openProject(projectOrder[0]);
+    }
+
+    persistAll();
+    renderProjectList();
+    updateProjectBadge();
+    toast(`🗑 Deleted "${p.name}"`, 2000);
+  } catch (err) {
+    console.error('Delete failed:', err);
+    toast('⚠️ Delete failed: ' + err.message, 3000);
+  }
+}
+
+function updateProjectBadge() {
+  if (!activeProjectId || !projects[activeProjectId]) {
+    projectBadge.classList.add('hidden');
+    return;
+  }
+  const p = projects[activeProjectId];
+  projectBadge.classList.remove('hidden');
+  projectBadge.textContent = (Storage.isAvailable() ? '' : '⚠️ ') + p.name;
+  projectBadge.title = Storage.isAvailable()
+    ? `Active project: ${p.name} — click to manage projects`
+    : `Active project: ${p.name} (session only — no persistence)`;
+}
+
+function renderProjectList() {
+  const list = document.getElementById('projectList');
+  const warning = document.getElementById('projectsStorageWarning');
+  warning.style.display = Storage.isAvailable() ? 'none' : 'block';
+
+  if (projectOrder.length === 0) {
+    list.innerHTML = '<div class="project-empty">No projects yet.<br>Click "New Project" to start animating!</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  projectOrder.slice().reverse().forEach(id => {
+    const p = projects[id];
+    if (!p) return;
+
+    const item = document.createElement('div');
+    item.className = 'project-item' + (id === activeProjectId ? ' active' : '');
+
+    const info = document.createElement('div');
+    info.className = 'info';
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'pname';
+    nameEl.textContent = p.name;
+    info.appendChild(nameEl);
+
+    const meta = document.createElement('div');
+    meta.className = 'pmeta';
+    const frameCount = p.frames?.length || 1;
+    const date = new Date(p.updatedAt || p.createdAt || Date.now());
+    const timeStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' ' +
+                    date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    meta.textContent = `${frameCount} frame${frameCount === 1 ? '' : 's'} · ${timeStr}`;
+    info.appendChild(meta);
+    item.appendChild(info);
+
+    const del = document.createElement('button');
+    del.className = 'del-proj';
+    del.textContent = '×';
+    del.title = `Delete "${p.name}"`;
+    del.type = 'button';
+
+    del.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+    });
+    del.addEventListener('click', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const hasContent = (p.frames || []).some(f => f.commands && f.commands.length > 0);
+      const msg = hasContent
+        ? `"${p.name}" has ${frameCount} frame${frameCount === 1 ? '' : 's'} with content. This cannot be recovered.`
+        : `"${p.name}" will be permanently deleted.`;
+      showConfirm(`Delete "${p.name}"?`, msg, () => deleteProject(id), 'Delete');
+    });
+
+    item.appendChild(del);
+
+    item.addEventListener('click', (e) => {
+      if (e.target === del || del.contains(e.target)) return;
+      closeProjectsModal();
+      if (id !== activeProjectId) {
+        openProject(id);
+        toast(`📂 Opened "${p.name}"`, 1800);
+      }
+    });
+
+    list.appendChild(item);
+  });
+}
+
+function openProjectsModal() {
+  renderProjectList();
+  document.getElementById('projectsModal').classList.add('show');
+}
+
+function closeProjectsModal() {
+  document.getElementById('projectsModal').classList.remove('show');
+}
+
+function showConfirm(title, text, onYes, yesLabel = 'Yes') {
+  confirmCallback = onYes;
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmText').textContent = text;
+  document.getElementById('confirmYes').textContent = yesLabel;
+  document.getElementById('confirmModal').classList.add('show');
+}
+
+function hideConfirm() {
+  document.getElementById('confirmModal').classList.remove('show');
+  confirmCallback = null;
+}
+
+function showNewProjectModal(required = false) {
+  newProjectRequired = required;
+  const title = document.getElementById('newProjectTitle');
+  const subtitle = document.getElementById('newProjectSubtitle');
+  const cancelBtn = document.getElementById('cancelNewProjectBtn');
+  const input = document.getElementById('newProjectName');
+  const error = document.getElementById('newProjectError');
+
+  if (required) {
+    title.textContent = 'Welcome to WAnis!';
+    subtitle.textContent = 'Name your first project to get started';
+    cancelBtn.style.display = 'none';
+  } else {
+    title.textContent = 'New Project';
+    subtitle.textContent = 'Give your animation a name';
+    cancelBtn.style.display = 'inline-flex';
+  }
+
+  input.value = '';
+  input.classList.remove('error');
+  error.classList.add('hidden');
+  error.textContent = '';
+  document.getElementById('newProjectModal').classList.add('show');
+  setTimeout(() => input.focus(), 100);
+}
+
+function hideNewProjectModal() {
+  if (newProjectRequired) return;
+  document.getElementById('newProjectModal').classList.remove('show');
+}
+
+function showNewProjectError(msg) {
+  const error = document.getElementById('newProjectError');
+  const input = document.getElementById('newProjectName');
+  error.textContent = msg;
+  error.classList.remove('hidden');
+  input.classList.add('error');
+  input.focus();
+  input.select();
+}
+
+function clearNewProjectError() {
+  const error = document.getElementById('newProjectError');
+  const input = document.getElementById('newProjectName');
+  error.classList.add('hidden');
+  error.textContent = '';
+  input.classList.remove('error');
+}
+
+function submitNewProject() {
+  const input = document.getElementById('newProjectName');
+  const name = input.value.trim() || 'Untitled Animation';
+
+  if (nameExists(name)) {
+    showNewProjectError(`A project named "${name}" already exists. Pick a different name.`);
+    return;
+  }
+
+  document.getElementById('newProjectModal').classList.remove('show');
+  newProjectRequired = false;
+  createNewProject(name);
+}
 
 class Frame {
   constructor(commands = [], holdDuration = 1) {
@@ -513,6 +1007,7 @@ fpsInput.addEventListener('input', () => {
   if (v < 1) fpsInput.value = 1;
   if (v > 60) fpsInput.value = 60;
   updateStatus();
+  markDirty();
 });
 fpsInput.addEventListener('blur', () => {
   fpsInput.value = getFps();
@@ -544,17 +1039,116 @@ function revokeAllUrls() {
   activeObjectUrls.clear();
 }
 
-function downloadBlob(blob, filename) {
+async function saveBlob(blob, filename) {
+  const file = new File([blob], filename, { type: blob.type });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title: filename });
+      return 'shared';
+    } catch (e) {
+      if (e.name === 'AbortError') return 'cancelled';
+    }
+  }
+
+  const blobUrl = URL.createObjectURL(blob);
+  try {
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    a.rel = 'noopener';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { a.remove(); URL.revokeObjectURL(blobUrl); }, 30000);
+    return 'download';
+  } catch (e) {
+    console.warn('Anchor download failed:', e);
+  }
+
+  if (blob.size < 20 * 1024 * 1024) {
+    try {
+      const dataUrl = await new Promise((res, rej) => {
+        const fr = new FileReader();
+        fr.onload = () => res(fr.result);
+        fr.onerror = rej;
+        fr.readAsDataURL(blob);
+      });
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => a.remove(), 5000);
+      URL.revokeObjectURL(blobUrl);
+      return 'download-data-url';
+    } catch (e) {
+      console.warn('Data URL download failed:', e);
+    }
+  }
+
+  try {
+    const w = window.open(blobUrl, '_blank');
+    if (w) return 'opened';
+  } catch (e) {
+    console.warn('window.open failed:', e);
+  }
+
+  URL.revokeObjectURL(blobUrl);
+  return 'failed';
+}
+
+function showExportResult(blob, filename, ext, mediaType) {
+  const preview = document.getElementById('modalPreview');
+  const hint = document.getElementById('modalFallbackHint');
+  const buttons = document.getElementById('modalButtons');
+  const text = document.getElementById('modalText');
+
+  const sizeStr = blob.size > 1024 * 1024
+    ? (blob.size / 1024 / 1024).toFixed(2) + ' MB'
+    : Math.round(blob.size / 1024) + ' KB';
+
+  text.textContent = `${ext.toUpperCase()} ready — ${sizeStr}`;
+  document.getElementById('progressBar').style.display = 'none';
+
   const url = trackUrl(URL.createObjectURL(blob));
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; a.rel = 'noopener';
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => {
-    a.remove();
-    try { URL.revokeObjectURL(url); } catch (_) {}
-    activeObjectUrls.delete(url);
-  }, 1500);
+
+  if (mediaType === 'image') {
+    preview.innerHTML = `<img src="${url}" alt="Preview" style="max-width:100%;max-height:50vh;border-radius:8px;margin:10px 0;display:block;margin-left:auto;margin-right:auto;">`;
+  } else {
+    preview.innerHTML = `<video src="${url}" controls loop playsinline style="max-width:100%;max-height:50vh;border-radius:8px;margin:10px 0;display:block;margin-left:auto;margin-right:auto;"></video>`;
+  }
+
+  const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+  hint.style.display = 'block';
+  hint.innerHTML = isTouch
+    ? `<strong>💡 If download doesn't work:</strong><br>Tap and hold the preview above → choose <strong>Save image</strong> / <strong>Save video</strong> / <strong>Save to Files</strong>.`
+    : `<strong>💡 If download doesn't start:</strong><br>Right-click the preview above → <strong>Save image as…</strong> or <strong>Save video as…</strong>.`;
+
+  buttons.style.display = 'flex';
+  buttons.innerHTML = `
+    <button id="modalDownloadBtn" class="success">📥 Download</button>
+    <button id="modalOpenBtn">🔗 Open in new tab</button>
+  `;
+
+  document.getElementById('modalDownloadBtn').onclick = async () => {
+    const result = await saveBlob(blob, filename);
+    const messages = {
+      'shared': '✅ Shared successfully',
+      'cancelled': '⏸ Share cancelled',
+      'download': '📥 Download started — check your downloads folder',
+      'download-data-url': '📥 Download started (data URL method)',
+      'opened': '🔗 Opened in new tab — save from there',
+      'failed': '⚠️ Auto-save failed — use the hint above'
+    };
+    text.textContent = messages[result] || messages.failed;
+  };
+
+  document.getElementById('modalOpenBtn').onclick = () => {
+    const w = window.open(url, '_blank');
+    if (!w) toast('⚠️ Popup blocked — allow popups for this site');
+  };
 }
 
 function floodFillCtx(c, x, y, color) {
@@ -651,6 +1245,7 @@ function renderCurrentFrame() {
   updateOnionSkin();
   updateFrameThumbnail(currentFrame);
   updateUndoRedoButtons();
+  markDirty();
 }
 
 function renderGhost(frame, targetCtx) {
@@ -729,7 +1324,6 @@ function layoutCanvas() {
   canvasWrapper.style.height = h + 'px';
 }
 
-// ─────────────── SCROLL INDICATORS ───────────────
 function updateFrameScrollIndicators() {
   const hasOverflowLeft = framesContainer.scrollLeft > 4;
   const hasOverflowRight = framesContainer.scrollLeft + framesContainer.clientWidth < framesContainer.scrollWidth - 4;
@@ -740,7 +1334,6 @@ function updateFrameScrollIndicators() {
 framesContainer.addEventListener('scroll', updateFrameScrollIndicators);
 window.addEventListener('resize', updateFrameScrollIndicators);
 
-// Wheel → horizontal scroll on the frame strip
 framesContainer.addEventListener('wheel', (e) => {
   if (Math.abs(e.deltaY) < 1) return;
   e.preventDefault();
@@ -748,7 +1341,6 @@ framesContainer.addEventListener('wheel', (e) => {
   updateFrameScrollIndicators();
 }, { passive: false });
 
-// Auto-scroll the active frame into view
 function scrollFrameIntoView(index) {
   const frameEl = framesContainer.children[index];
   if (!frameEl) return;
@@ -764,7 +1356,6 @@ function scrollFrameIntoView(index) {
   }
 }
 
-// ─────────────── INPUT ───────────────
 function getPos(e) {
   const rect = canvas.getBoundingClientRect();
   const sx = CANVAS_W / rect.width;
@@ -1042,6 +1633,7 @@ function cycleHold(index, delta) {
   f.holdDuration = Math.max(1, Math.min(MAX_HOLD, f.holdDuration + delta));
   updateHoldBadge(index);
   updateStatus();
+  markDirty();
 }
 
 function updateHoldBadge(index) {
@@ -1106,7 +1698,7 @@ function play() {
   if (isPlaying) return;
   const totalTicks = frames.reduce((s, f) => s + f.holdDuration, 0);
   if (totalTicks < 2) {
-    toast('🖼 Need at least 2 total frames — that\'s just a picture!', 3000);
+    toast('🖼 Need at least 2 total frames — that is just a picture!', 3000);
     return;
   }
   playFps = getFps();
@@ -1161,6 +1753,9 @@ function openModal(titleText, textText) {
   document.getElementById('modalTitle').textContent = titleText;
   document.getElementById('modalText').textContent = textText;
   document.getElementById('modalPreview').innerHTML = '';
+  document.getElementById('modalFallbackHint').style.display = 'none';
+  document.getElementById('modalButtons').style.display = 'none';
+  document.getElementById('modalButtons').innerHTML = '';
   document.getElementById('progressBar').style.display = 'block';
   document.getElementById('progressFill').style.width = '0%';
   modal.classList.add('show');
@@ -1171,22 +1766,25 @@ function closeModal() {
   revokeAllUrls();
 }
 
-function setModalPreview(html) {
-  document.getElementById('modalPreview').innerHTML = html;
-  document.getElementById('progressBar').style.display = 'none';
-}
-
 function exportPNG() {
   if (exportInProgress) return;
   setExportBusy(true);
+  openModal('PNG ready', 'Preparing preview...');
+
   try {
     frames[currentFrame].getRaster().toBlob(blob => {
-      if (!blob) { alert('Could not create PNG.'); setExportBusy(false); return; }
-      downloadBlob(blob, `wanis_frame_${currentFrame + 1}.png`);
+      if (!blob) {
+        document.getElementById('modalText').textContent = 'Could not create PNG.';
+        document.getElementById('progressBar').style.display = 'none';
+        setExportBusy(false);
+        return;
+      }
+      showExportResult(blob, `${projectSlug()}_frame_${currentFrame + 1}.png`, 'png', 'image');
       setExportBusy(false);
     }, 'image/png');
   } catch (e) {
-    alert('PNG export failed: ' + e.message);
+    document.getElementById('modalText').textContent = 'PNG export failed: ' + e.message;
+    document.getElementById('progressBar').style.display = 'none';
     setExportBusy(false);
   }
 }
@@ -1242,13 +1840,7 @@ async function exportGIF() {
     }
     gif.finish();
     const blob = new Blob([gif.bytes()], { type: 'image/gif' });
-    const url = trackUrl(URL.createObjectURL(blob));
-    modalText.textContent = 'GIF is ready.';
-    setModalPreview(`
-      <img src="${url}" style="max-width:100%;border-radius:8px;margin:10px 0;">
-      <br><button id="gifDownloadBtn" class="success" style="margin-top:10px;">📥 Download GIF</button>`);
-    document.getElementById('gifDownloadBtn').onclick = () =>
-      downloadBlob(blob, `wanis_${Date.now()}.gif`);
+    showExportResult(blob, `${projectSlug()}_${Date.now()}.gif`, 'gif', 'image');
   } catch (err) {
     console.error(err);
     modalText.textContent = 'GIF export failed: ' + err.message;
@@ -1321,13 +1913,7 @@ async function exportMP4() {
       blob = await tryEncode(WebMOutputFormat, 'vp9', 'webm', 'video/webm');
       ext = 'webm';
     }
-    const url = trackUrl(URL.createObjectURL(blob));
-    modalText.textContent = `${ext.toUpperCase()} video is ready.`;
-    setModalPreview(`
-      <video src="${url}" controls loop style="max-width:100%;border-radius:8px;margin:10px 0;"></video>
-      <br><button id="videoDownloadBtn" class="success" style="margin-top:10px;">📥 Download ${ext.toUpperCase()}</button>`);
-    document.getElementById('videoDownloadBtn').onclick = () =>
-      downloadBlob(blob, `wanis_${Date.now()}.${ext}`);
+    showExportResult(blob, `${projectSlug()}_${Date.now()}.${ext}`, ext, 'video');
   } catch (err) {
     console.error(err);
     modalText.textContent = 'Video export failed: ' + err.message;
@@ -1493,12 +2079,12 @@ canvas.addEventListener('mousemove', (e) => {
 const ANIMATION_FACTS = [
   '🎬 The first animated film was Fantasmagorie (1908), made of 700 drawings!',
   '🎬 At 24 fps, one second of animation = 24 individual drawings.',
-  '🎬 Studio Ghibli\'s Spirited Away has ~140,000 hand-drawn frames.',
+  '🎬 Studio Ghibli has produced over 140,000 hand-drawn frames for Spirited Away.',
   '🎬 "Onion skinning" is named after the translucent onion paper animators used.',
   '🎬 The bouncing ball is the very first animation exercise animators learn.',
-  '🎬 Walt Disney\'s Snow White used over 2 million individual drawings.',
+  '🎬 Snow White used over 2 million individual drawings.',
   '🎬 The "squash and stretch" principle dates back to 1930s rubber hose animation.',
-  '🎬 Anime often runs on "2s" or "3s" — drawings held for 2–3 frames to save work.',
+  '🎬 Anime often runs on "2s" or "3s" — drawings held for 2-3 frames to save work.',
   '🎬 Flipbook animation works thanks to persistence of vision (~1/16th of a second).'
 ];
 let subtitleClicks = 0;
@@ -1575,7 +2161,6 @@ document.querySelectorAll('.tool-btn').forEach(btn => {
     btn.setAttribute('aria-pressed', 'true');
     currentTool = btn.dataset.tool;
     updateStatus();
-    // Scroll the active tool into view inside the toolbar
     btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
 });
@@ -1599,11 +2184,12 @@ document.getElementById('restoreFrameBtn').onclick = restoreFrame;
 
 document.getElementById('clearBtn').onclick = () => {
   if (frames[currentFrame].commands.length === 0) { toast('✨ Frame is already empty'); return; }
-  if (!confirm('Clear all content on this frame?')) return;
-  pushUndo();
-  frames[currentFrame].commands = [];
-  frames[currentFrame].invalidate();
-  renderCurrentFrame();
+  showConfirm('Clear frame?', 'All content on this frame will be removed.', () => {
+    pushUndo();
+    frames[currentFrame].commands = [];
+    frames[currentFrame].invalidate();
+    renderCurrentFrame();
+  }, 'Clear');
 };
 
 onionBtn.onclick = () => {
@@ -1626,11 +2212,61 @@ document.getElementById('modal').addEventListener('click', (e) => {
 
 playbackOverlay.onclick = () => { if (isPlaying) stop(); };
 
+document.getElementById('projectsBtn').onclick = openProjectsModal;
+projectBadge.onclick = openProjectsModal;
+document.getElementById('projectsCloseBtn').onclick = closeProjectsModal;
+document.getElementById('projectsModal').addEventListener('click', (e) => {
+  if (e.target.id === 'projectsModal') closeProjectsModal();
+});
+document.getElementById('newProjectBtn').onclick = () => {
+  if (activeProjectId) saveCurrentProject();
+  closeProjectsModal();
+  showNewProjectModal(false);
+};
+document.getElementById('createProjectBtn').onclick = submitNewProject;
+document.getElementById('cancelNewProjectBtn').onclick = hideNewProjectModal;
+document.getElementById('newProjectModal').addEventListener('click', (e) => {
+  if (e.target.id === 'newProjectModal') hideNewProjectModal();
+});
+document.getElementById('newProjectName').addEventListener('input', () => {
+  clearNewProjectError();
+});
+document.getElementById('newProjectName').addEventListener('keydown', (e) => {
+  e.stopPropagation();
+  if (e.key === 'Enter') { e.preventDefault(); submitNewProject(); }
+  if (e.key === 'Escape' && !newProjectRequired) { e.preventDefault(); hideNewProjectModal(); }
+});
+
+document.getElementById('confirmYes').onclick = () => {
+  const cb = confirmCallback;
+  hideConfirm();
+  if (cb) {
+    try { cb(); } catch (err) {
+      console.error('Confirm action failed:', err);
+      toast('⚠️ Action failed: ' + err.message, 3000);
+    }
+  }
+};
+document.getElementById('confirmNo').onclick = hideConfirm;
+document.getElementById('confirmModal').addEventListener('click', (e) => {
+  if (e.target.id === 'confirmModal') hideConfirm();
+});
+
 document.addEventListener('keydown', e => {
   const inInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
   if (inInput) return;
 
   if (e.key === 'Escape') {
+    if (document.getElementById('confirmModal').classList.contains('show')) {
+      e.preventDefault(); hideConfirm(); return;
+    }
+    if (document.getElementById('newProjectModal').classList.contains('show')) {
+      if (!newProjectRequired) { e.preventDefault(); hideNewProjectModal(); }
+      return;
+    }
+    if (document.getElementById('projectsModal').classList.contains('show')) {
+      e.preventDefault(); closeProjectsModal(); return;
+    }
     if (document.getElementById('modal').classList.contains('show')) {
       e.preventDefault(); closeModal(); return;
     }
@@ -1651,9 +2287,22 @@ document.addEventListener('keydown', e => {
 });
 
 window.addEventListener('beforeunload', (e) => {
-  if (frames.some(f => f.commands.length > 0)) {
+  if (autosaveTimer) {
+    clearTimeout(autosaveTimer);
+    autosaveTimer = null;
+    try { saveCurrentProject(); } catch (_) {}
+  }
+  if (!Storage.isAvailable() && frames.some(f => f.commands.length > 0)) {
     e.preventDefault();
     e.returnValue = '';
+  }
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && autosaveTimer) {
+    clearTimeout(autosaveTimer);
+    autosaveTimer = null;
+    try { saveCurrentProject(); } catch (_) {}
   }
 });
 
@@ -1665,12 +2314,35 @@ function updateStatus() {
     `Frame ${currentFrame + 1}/${frames.length} | ${currentTool}${hint} | Size: ${currentSize} | ${dur}s`;
 }
 
+function initProjectSystem() {
+  let data = null;
+  try { data = Storage.get(STORAGE_KEY); } catch (_) {}
+
+  if (data && data.projects && data.order) {
+    projects = data.projects;
+    projectOrder = data.order.filter(id => projects[id]);
+    if (projectOrder.length === 0) {
+      showNewProjectModal(true);
+      return;
+    }
+    const active = (data.active && projects[data.active]) ? data.active : projectOrder[0];
+    openProject(active);
+  } else {
+    showNewProjectModal(true);
+  }
+
+  if (!Storage.isAvailable()) {
+    setTimeout(() => {
+      toast("⚠️ LocalStorage unavailable — projects won't persist across reloads", 5000);
+    }, 1500);
+  }
+}
+
 layoutCanvas();
-rebuildThumbnails();
-renderCurrentFrame();
 drawGrid();
 updateStatus();
 updateTrashButton();
+initProjectSystem();
 
 setTimeout(() => toast('💡 Tip: hold Shift while drawing for rainbow pen', 3500), 800);
 setTimeout(() => toast('🖱 Try middle-click, right-click, scroll, or shake the mouse on the canvas', 4000), 5000);
