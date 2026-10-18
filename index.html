@@ -228,7 +228,6 @@
     border-radius: 4px;
     text-align: center;
   }
-  .fps-control input:invalid { border-color: #e74c3c; }
 
   .modal {
     position: fixed;
@@ -811,6 +810,7 @@ function downloadBlob(blob, filename) {
   const a = document.createElement('a');
   a.href = url;
   a.download = filename;
+  a.rel = 'noopener';
   document.body.appendChild(a);
   a.click();
   setTimeout(() => {
@@ -876,9 +876,12 @@ async function exportGIF() {
     text.textContent = 'GIF is ready.';
     preview.innerHTML = `
       <img src="${url}" style="max-width:100%;border-radius:8px;margin:10px 0;">
-      <br><a href="${url}" download="wanis_${Date.now()}.gif">
-      <button class="success" style="margin-top:10px;">📥 Download GIF</button></a>`;
+      <br><button id="gifDownloadBtn" class="success" style="margin-top:10px;">📥 Download GIF</button>`;
     pb.style.display = 'none';
+
+    document.getElementById('gifDownloadBtn').onclick = () => {
+      downloadBlob(blob, `wanis_${Date.now()}.gif`);
+    };
   } catch (err) {
     console.error(err);
     text.textContent = 'GIF export failed: ' + err.message;
@@ -924,7 +927,9 @@ async function exportMP4() {
   ];
   let mimeType = '';
   for (const m of candidates) {
-    if (MediaRecorder.isTypeSupported(m)) { mimeType = m; break; }
+    try {
+      if (MediaRecorder.isTypeSupported(m)) { mimeType = m; break; }
+    } catch (_) {}
   }
   if (!mimeType) {
     text.textContent = 'No supported video format found.';
@@ -932,57 +937,117 @@ async function exportMP4() {
   }
   const isMP4 = mimeType.includes('mp4');
   const ext = isMP4 ? 'mp4' : 'webm';
+  const blobType = isMP4 ? 'video/mp4' : 'video/webm';
 
-  const stream = recCanvas.captureStream(0);
-  const videoTrack = stream.getVideoTracks()[0];
+  let stream, videoTrack, useRequestFrame = true;
+  try {
+    stream = recCanvas.captureStream(0);
+    videoTrack = stream.getVideoTracks()[0];
+    if (!videoTrack || typeof videoTrack.requestFrame !== 'function') {
+      throw new Error('requestFrame not supported');
+    }
+  } catch (_) {
+    try { if (stream) stream.getTracks().forEach(t => t.stop()); } catch (__) {}
+    stream = recCanvas.captureStream(fps);
+    videoTrack = stream.getVideoTracks()[0];
+    useRequestFrame = false;
+  }
 
   const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 5000000 });
   const chunks = [];
+  let built = false;
+  let timer = null;
+  let finalBlob = null;
 
-  recorder.ondataavailable = e => {
-    if (e.data.size > 0) chunks.push(e.data);
-  };
+  const buildPreview = () => {
+    if (built) return;
+    built = true;
+    if (timer) { clearInterval(timer); timer = null; }
+    try { stream.getTracks().forEach(t => t.stop()); } catch (_) {}
 
-  recorder.onerror = e => {
-    console.error('MediaRecorder error:', e);
-    text.textContent = 'Recording failed: ' + (e.error?.message || 'unknown error');
-    pb.style.display = 'none';
-  };
-
-  recorder.onstop = () => {
     if (chunks.length === 0) {
-      text.textContent = 'No video data was captured. This browser may not support canvas recording with this format. Try WebM or use Chrome/Edge.';
+      text.textContent = 'No video data was captured. Try WebM, or use Chrome/Edge.';
       pb.style.display = 'none';
       return;
     }
-    const blob = new Blob(chunks, { type: mimeType });
-    const url = URL.createObjectURL(blob);
+
+    try {
+      finalBlob = new Blob(chunks, { type: blobType });
+    } catch (e) {
+      text.textContent = 'Failed to assemble video: ' + e.message;
+      pb.style.display = 'none';
+      return;
+    }
+
+    const url = URL.createObjectURL(finalBlob);
     pf.style.width = '100%';
     text.textContent = isMP4
       ? 'MP4 video is ready.'
       : 'WebM video is ready (this browser does not support MP4).';
     preview.innerHTML = `
       <video src="${url}" controls loop style="max-width:100%;border-radius:8px;margin:10px 0;"></video>
-      <br><a href="${url}" download="wanis_${Date.now()}.${ext}">
-      <button class="success" style="margin-top:10px;">📥 Download ${ext.toUpperCase()}</button></a>`;
+      <br><button id="videoDownloadBtn" class="success" style="margin-top:10px;">📥 Download ${ext.toUpperCase()}</button>`;
     pb.style.display = 'none';
+
+    const btn = document.getElementById('videoDownloadBtn');
+    if (btn) {
+      btn.onclick = () => {
+        try {
+          downloadBlob(finalBlob, `wanis_${Date.now()}.${ext}`);
+        } catch (e) {
+          alert('Download failed: ' + e.message);
+        }
+      };
+    }
   };
 
-  recorder.start(100);
+  recorder.ondataavailable = e => {
+    if (e.data && e.data.size > 0) chunks.push(e.data);
+  };
+
+  recorder.onerror = e => {
+    console.error('MediaRecorder error:', e);
+    text.textContent = 'Recording failed: ' + (e.error?.message || e.error?.name || 'unknown error');
+    pb.style.display = 'none';
+    built = true;
+  };
+
+  recorder.onstop = () => {
+    setTimeout(buildPreview, 100);
+  };
+
+  try {
+    recorder.start(100);
+  } catch (e) {
+    text.textContent = 'Could not start recording: ' + e.message;
+    pb.style.display = 'none';
+    return;
+  }
 
   const frameTime = 1000 / fps;
   const totalDuration = frames.length * frameTime;
   const startTime = performance.now();
   let currentIdx = -1;
 
-  const timer = setInterval(() => {
+  timer = setInterval(() => {
+    if (built) return;
     const elapsed = performance.now() - startTime;
     if (elapsed >= totalDuration) {
       clearInterval(timer);
-      if (chunks.length === 0 && recorder.state === 'recording') {
-        try { recorder.requestData(); } catch (_) {}
+      timer = null;
+      try {
+        if (recorder.state === 'recording') {
+          if (chunks.length === 0) {
+            try { recorder.requestData(); } catch (_) {}
+          }
+          recorder.stop();
+        } else {
+          buildPreview();
+        }
+      } catch (e) {
+        console.warn('stop threw:', e);
+        buildPreview();
       }
-      recorder.stop();
       return;
     }
 
@@ -990,7 +1055,9 @@ async function exportMP4() {
     if (idx !== currentIdx) {
       currentIdx = idx;
       rctx.putImageData(frames[idx], 0, 0);
-      try { videoTrack.requestFrame(); } catch (_) {}
+      if (useRequestFrame) {
+        try { videoTrack.requestFrame(); } catch (_) {}
+      }
     }
 
     pf.style.width = Math.min(100, (elapsed / totalDuration) * 100) + '%';
@@ -998,11 +1065,12 @@ async function exportMP4() {
   }, 1000 / fps);
 
   setTimeout(() => {
+    if (built) return;
     if (recorder.state === 'recording') {
-      clearInterval(timer);
-      recorder.stop();
+      try { recorder.stop(); } catch (_) {}
     }
-  }, totalDuration + 3000);
+    setTimeout(buildPreview, 300);
+  }, totalDuration + 5000);
 }
 
 canvas.addEventListener('mousedown', startDraw);
