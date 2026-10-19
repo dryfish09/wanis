@@ -5,57 +5,20 @@
 <title>WAnis - Web Animate Studio</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: #1a1a2e; color: #fff;
-    height: 100vh; overflow: hidden;
-    display: flex; flex-direction: column;
-  }
-  .header {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    padding: 10px 20px;
-    display: flex; justify-content: space-between; align-items: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    flex-wrap: wrap; gap: 8px;
-  }
+  body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+  .header { background: linear-gradient(135deg, #667eea, #764ba2); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); flex-wrap: wrap; gap: 8px; }
   .logo-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .logo {
-    font-size: 20px; font-weight: bold;
-    display: flex; align-items: baseline; gap: 6px;
-    cursor: pointer; user-select: none;
-    transition: transform 0.2s;
-  }
+  .logo { font-size: 20px; font-weight: bold; display: flex; align-items: baseline; gap: 6px; cursor: pointer; user-select: none; transition: transform 0.2s; }
   .logo:hover { transform: scale(1.03); }
   .logo.spin { animation: spin 1s ease; }
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   .logo span { color: #ffd700; }
   .logo small { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: normal; cursor: pointer; }
-
-  .project-badge {
-    font-size: 12px;
-    color: rgba(255,255,255,0.9);
-    background: rgba(0,0,0,0.25);
-    padding: 4px 12px;
-    border-radius: 14px;
-    max-width: 220px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background 0.2s;
-    border: 1px solid rgba(255,255,255,0.15);
-  }
+  .project-badge { font-size: 12px; color: rgba(255,255,255,0.9); background: rgba(0,0,0,0.25); padding: 4px 12px; border-radius: 14px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; transition: background 0.2s; border: 1px solid rgba(255,255,255,0.15); }
   .project-badge:hover { background: rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.35); }
   .project-badge.hidden { display: none; }
-
   .controls { display: flex; gap: 6px; flex-wrap: wrap; }
-  button {
-    background: #2d2d44; color: #fff; border: none;
-    padding: 7px 12px; border-radius: 6px; cursor: pointer;
-    font-size: 12px; transition: all 0.2s;
-    display: flex; align-items: center; gap: 5px;
-    font-family: inherit;
-  }
+  button { background: #2d2d44; color: #fff; border: none; padding: 7px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.2s; display: flex; align-items: center; gap: 5px; font-family: inherit; }
   button:hover { background: #3d3d5c; transform: translateY(-1px); }
   button.active { background: #667eea; }
   button.success { background: #27ae60; }
@@ -63,372 +26,103 @@
   button.danger:hover { background: #ff5544; }
   button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
   button:focus-visible { outline: 2px solid #ffd700; outline-offset: 2px; }
-
   .main { display: flex; flex: 1; overflow: hidden; }
   .main.quake { animation: quake 0.6s ease-in-out; }
-  @keyframes quake {
-    0%, 100% { transform: translate(0, 0); }
-    10% { transform: translate(-6px, -4px) rotate(-0.3deg); }
-    20% { transform: translate(6px, 4px) rotate(0.3deg); }
-    30% { transform: translate(-6px, 4px); }
-    40% { transform: translate(6px, -4px); }
-    50% { transform: translate(-4px, -6px) rotate(-0.2deg); }
-    60% { transform: translate(4px, 6px) rotate(0.2deg); }
-    70% { transform: translate(-4px, 6px); }
-    80% { transform: translate(4px, -6px); }
-    90% { transform: translate(-2px, 2px); }
-  }
-
-  .toolbar {
-    width: 78px; background: #16213e; padding: 10px 5px;
-    display: flex; flex-direction: column; gap: 8px; align-items: center;
-    overflow-y: auto; overflow-x: hidden;
-    scrollbar-gutter: stable;
-    scroll-behavior: smooth;
-    scrollbar-width: thin;
-    scrollbar-color: #667eea #0d1626;
-  }
+  @keyframes quake { 0%, 100% { transform: translate(0, 0); } 10% { transform: translate(-6px, -4px) rotate(-0.3deg); } 20% { transform: translate(6px, 4px) rotate(0.3deg); } 30% { transform: translate(-6px, 4px); } 40% { transform: translate(6px, -4px); } 50% { transform: translate(-4px, -6px) rotate(-0.2deg); } 60% { transform: translate(4px, 6px) rotate(0.2deg); } 70% { transform: translate(-4px, 6px); } 80% { transform: translate(4px, -6px); } 90% { transform: translate(-2px, 2px); } }
+  .toolbar { width: 78px; background: #16213e; padding: 10px 5px; display: flex; flex-direction: column; gap: 8px; align-items: center; overflow-y: auto; overflow-x: hidden; scrollbar-gutter: stable; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: #667eea #0d1626; }
   .toolbar::-webkit-scrollbar { width: 10px; }
   .toolbar::-webkit-scrollbar-track { background: #0d1626; border-radius: 5px; margin: 4px 0; }
-  .toolbar::-webkit-scrollbar-thumb { background: #667eea; border-radius: 5px; border: 2px solid #0d1626; transition: background 0.2s; }
+  .toolbar::-webkit-scrollbar-thumb { background: #667eea; border-radius: 5px; border: 2px solid #0d1626; }
   .toolbar::-webkit-scrollbar-thumb:hover { background: #8a9fef; }
-  .toolbar::-webkit-scrollbar-thumb:active { background: #ffd700; }
-
-  .tool-btn {
-    width: 52px; min-height: 50px; border-radius: 10px;
-    background: #2d2d44; color: #fff;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    font-size: 20px; cursor: pointer;
-    transition: all 0.2s;
-    border: 2px solid transparent;
-    flex-shrink: 0;
-    font-family: inherit;
-    padding: 4px;
-  }
+  .tool-btn { width: 52px; min-height: 50px; border-radius: 10px; background: #2d2d44; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; font-family: inherit; padding: 4px; }
   .tool-btn .label { font-size: 8px; margin-top: 2px; }
   .tool-btn:hover { background: #3d3d5c; }
   .tool-btn.active { border-color: #667eea; background: #3d3d5c; }
-  .tool-btn:focus-visible { outline: 2px solid #ffd700; outline-offset: 2px; }
-
   .color-pair { display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; }
   .color-pair span { font-size: 8px; color: #aaa; }
-  .color-picker {
-    width: 48px; height: 36px; border: none; border-radius: 8px;
-    cursor: pointer; background: none;
-  }
+  .color-picker { width: 48px; height: 36px; border: none; border-radius: 8px; cursor: pointer; background: none; }
   .color-picker::-webkit-color-swatch-wrapper { padding: 0; }
   .color-picker::-webkit-color-swatch { border: 2px solid #667eea; border-radius: 8px; }
-
+  .size-value { width: 50px; height: 28px; border-radius: 6px; background: #0d1626; border: 2px solid #2d2d44; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; color: #667eea; flex-shrink: 0; user-select: none; }
+  .size-value.eraser { color: #e74c3c; border-color: rgba(231, 76, 60, 0.5); }
   .size-slider { width: 48px; writing-mode: vertical-lr; direction: rtl; height: 90px; flex-shrink: 0; }
-
-  .canvas-area {
-    flex: 1; background: #0f0f1e;
-    display: flex; align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
-    padding: 20px;
-  }
-  .canvas-wrapper {
-    position: relative;
-    background: #fff;
-    box-shadow: 0 0 40px rgba(102, 126, 234, 0.3);
-  }
-  #canvas, #onionCanvas, #gridCanvas {
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%;
-    display: block;
-  }
+  .canvas-area { flex: 1; background: #0f0f1e; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 20px; }
+  .canvas-wrapper { position: relative; background: #fff; box-shadow: 0 0 40px rgba(102, 126, 234, 0.3); }
+  #canvas, #onionCanvas, #gridCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
   #onionCanvas, #gridCanvas { pointer-events: none; }
   #canvas { cursor: crosshair; touch-action: none; }
-
-  .canvas-overlay-btns {
-    position: absolute; top: 10px; right: 10px;
-    display: flex; gap: 6px; z-index: 10; flex-direction: column;
-  }
+  .canvas-overlay-btns { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 10; flex-direction: column; }
   .canvas-overlay-btns button { padding: 6px 12px; font-size: 12px; }
-
-  .timeline {
-    background: #16213e; padding: 10px;
-    border-top: 2px solid #2d2d44;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .fps-control {
-    display: flex; flex-direction: column; align-items: center; gap: 5px;
-    padding: 0 10px; border-right: 2px solid #2d2d44;
-    flex-shrink: 0;
-  }
+  .timeline { background: #16213e; padding: 10px; border-top: 2px solid #2d2d44; display: flex; align-items: center; gap: 10px; }
+  .fps-control { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 0 10px; border-right: 2px solid #2d2d44; flex-shrink: 0; }
   .fps-control label { font-size: 11px; color: #aaa; }
-  .fps-control input {
-    width: 60px; padding: 3px;
-    background: #2d2d44; color: #fff;
-    border: 1px solid #444; border-radius: 4px;
-    text-align: center; font-family: inherit;
-  }
-  .frame-actions {
-    display: flex; gap: 4px; padding: 0 10px;
-    border-right: 2px solid #2d2d44; align-items: center;
-    flex-shrink: 0;
-  }
+  .fps-control input { width: 60px; padding: 3px; background: #2d2d44; color: #fff; border: 1px solid #444; border-radius: 4px; text-align: center; font-family: inherit; }
+  .frame-actions { display: flex; gap: 4px; padding: 0 10px; border-right: 2px solid #2d2d44; align-items: center; flex-shrink: 0; }
   .frame-actions button { padding: 6px 8px; font-size: 14px; min-width: 34px; justify-content: center; }
-
   .frames-strip-wrap { flex: 1; position: relative; display: flex; min-width: 0; }
-  .frames-strip-wrap::before, .frames-strip-wrap::after {
-    content: ''; position: absolute; top: 0; bottom: 0;
-    width: 20px; pointer-events: none; z-index: 3;
-    opacity: 0; transition: opacity 0.2s;
-  }
+  .frames-strip-wrap::before, .frames-strip-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: 20px; pointer-events: none; z-index: 3; opacity: 0; transition: opacity 0.2s; }
   .frames-strip-wrap::before { left: 0; background: linear-gradient(to right, #16213e, transparent); }
   .frames-strip-wrap::after { right: 0; background: linear-gradient(to left, #16213e, transparent); }
   .frames-strip-wrap.has-overflow-left::before { opacity: 1; }
   .frames-strip-wrap.has-overflow-right::after { opacity: 1; }
-
-  .frames-container {
-    flex: 1; display: flex; gap: 6px;
-    overflow-x: auto; overflow-y: hidden;
-    padding: 5px; padding-bottom: 10px;
-    scrollbar-gutter: stable;
-    scroll-behavior: smooth;
-    scrollbar-width: thin;
-    scrollbar-color: #667eea #0d1626;
-    min-width: 0;
-  }
+  .frames-container { flex: 1; display: flex; gap: 6px; overflow-x: auto; overflow-y: hidden; padding: 5px; padding-bottom: 10px; scrollbar-width: thin; scrollbar-color: #667eea #0d1626; min-width: 0; }
   .frames-container::-webkit-scrollbar { height: 10px; }
   .frames-container::-webkit-scrollbar-track { background: #0d1626; border-radius: 5px; margin: 0 4px; }
-  .frames-container::-webkit-scrollbar-thumb { background: #667eea; border-radius: 5px; border: 2px solid #0d1626; transition: background 0.2s; }
-  .frames-container::-webkit-scrollbar-thumb:hover { background: #8a9fef; }
-  .frames-container::-webkit-scrollbar-thumb:active { background: #ffd700; }
-
-  .frame {
-    min-width: 80px; height: 80px;
-    background: #fff; border: 3px solid #2d2d44; border-radius: 6px;
-    cursor: pointer; position: relative; overflow: hidden;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    flex-shrink: 0;
-  }
+  .frames-container::-webkit-scrollbar-thumb { background: #667eea; border-radius: 5px; border: 2px solid #0d1626; }
+  .frame { min-width: 80px; height: 80px; background: #fff; border: 3px solid #2d2d44; border-radius: 6px; cursor: pointer; position: relative; overflow: hidden; flex-shrink: 0; }
   .frame:hover { border-color: #667eea; }
   .frame.active { border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.5); }
   .frame canvas { width: 100%; height: 100%; display: block; }
-  .frame .num {
-    position: absolute; bottom: 2px; left: 2px;
-    background: rgba(0,0,0,0.6); color: #fff;
-    font-size: 10px; padding: 1px 5px; border-radius: 3px;
-  }
-  .frame .hold {
-    position: absolute; bottom: 2px; right: 2px;
-    background: rgba(102, 126, 234, 0.85); color: #fff;
-    font-size: 10px; padding: 2px 6px; border-radius: 3px;
-    cursor: pointer; user-select: none;
-    transition: background 0.2s;
-  }
-  .frame .hold:hover { background: rgba(102, 126, 234, 1); }
+  .frame .num { position: absolute; bottom: 2px; left: 2px; background: rgba(0,0,0,0.6); color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 3px; }
+  .frame .hold { position: absolute; bottom: 2px; right: 2px; background: rgba(102, 126, 234, 0.85); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 3px; cursor: pointer; user-select: none; }
   .frame .hold.long { background: #f39c12; }
-  .frame .del {
-    position: absolute; top: 2px; right: 2px;
-    background: #e74c3c; color: #fff; border: none;
-    width: 20px; height: 20px; border-radius: 50%;
-    font-size: 12px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    padding: 0; opacity: 0.35;
-    transition: opacity 0.2s;
-    touch-action: manipulation;
-  }
+  .frame .del { position: absolute; top: 2px; right: 2px; background: #e74c3c; color: #fff; border: none; width: 20px; height: 20px; border-radius: 50%; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; opacity: 0.35; touch-action: manipulation; }
   .frame:hover .del, .frame.active .del { opacity: 1; }
-  .add-frame {
-    min-width: 80px; height: 80px;
-    background: #2d2d44;
-    border: 3px dashed #667eea; border-radius: 6px;
-    cursor: pointer; font-size: 30px; color: #667eea;
-    flex-shrink: 0; transition: all 0.2s;
-    font-family: inherit;
-  }
+  .add-frame { min-width: 80px; height: 80px; background: #2d2d44; border: 3px dashed #667eea; border-radius: 6px; cursor: pointer; font-size: 30px; color: #667eea; flex-shrink: 0; font-family: inherit; }
   .add-frame:hover { background: #3d3d5c; }
-
-  .modal {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.85);
-    display: none; align-items: center; justify-content: center;
-    z-index: 100;
-  }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 100; }
   .modal.show { display: flex; }
   #confirmModal { z-index: 102; }
-  .modal-content {
-    background: #1a1a2e; padding: 30px; border-radius: 12px;
-    max-width: 520px; width: calc(100% - 40px);
-    text-align: center;
-    max-height: 85vh; overflow-y: auto;
-  }
+  .modal-content { background: #1a1a2e; padding: 30px; border-radius: 12px; max-width: 520px; width: calc(100% - 40px); text-align: center; max-height: 85vh; overflow-y: auto; }
   .modal-content h2 { margin-bottom: 15px; color: #667eea; }
   .modal-content p { color: #aaa; margin-bottom: 20px; font-size: 13px; }
   .modal-content button { margin: 5px; }
-  .modal-buttons {
-    display: flex; gap: 8px;
-    justify-content: center; flex-wrap: wrap;
-    margin-top: 12px;
-  }
-  .fallback-hint {
-    font-size: 12px; color: #aaa;
-    background: rgba(102, 126, 234, 0.1);
-    border: 1px solid rgba(102, 126, 234, 0.3);
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin: 12px 0;
-    line-height: 1.5;
-    text-align: left;
-  }
+  .modal-buttons { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+  .fallback-hint { font-size: 12px; color: #aaa; background: rgba(102, 126, 234, 0.1); border: 1px solid rgba(102, 126, 234, 0.3); border-radius: 8px; padding: 10px 14px; margin: 12px 0; line-height: 1.5; text-align: left; }
   .fallback-hint strong { color: #ffd700; }
-
-  .project-list {
-    display: flex; flex-direction: column; gap: 8px;
-    max-height: 50vh; overflow-y: auto;
-    margin: 16px 0;
-    text-align: left;
-    padding-right: 4px;
-  }
-  .project-list::-webkit-scrollbar { width: 8px; }
-  .project-list::-webkit-scrollbar-track { background: #0d1626; border-radius: 4px; }
-  .project-list::-webkit-scrollbar-thumb { background: #667eea; border-radius: 4px; }
-  .project-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 14px;
-    background: #2d2d44;
-    border-radius: 8px;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .project-item:hover { background: #3d3d5c; border-color: #667eea; transform: translateX(2px); }
+  .project-list { display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; margin: 16px 0; text-align: left; padding-right: 4px; }
+  .project-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #2d2d44; border-radius: 8px; border: 2px solid transparent; cursor: pointer; }
+  .project-item:hover { background: #3d3d5c; border-color: #667eea; }
   .project-item.active { border-color: #ffd700; background: #3d3d5c; }
   .project-item .info { flex: 1; min-width: 0; }
-  .project-item .pname {
-    font-weight: bold; margin-bottom: 3px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    font-size: 14px;
-  }
+  .project-item .pname { font-weight: bold; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
   .project-item .pmeta { font-size: 11px; color: #aaa; }
-  .project-item .del-proj {
-    background: #e74c3c; color: #fff; border: none;
-    width: 36px; height: 36px; border-radius: 50%;
-    cursor: pointer; font-size: 18px; font-weight: bold;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0.85; transition: all 0.2s;
-    flex-shrink: 0;
-    padding: 0;
-    touch-action: manipulation;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  .project-item .del-proj:hover { opacity: 1; background: #ff5544; transform: scale(1.1); }
-  .project-item .del-proj:active { transform: scale(0.95); }
-  .project-empty {
-    text-align: center;
-    padding: 30px 20px;
-    color: #aaa;
-    font-size: 13px;
-    line-height: 1.6;
-  }
-
-  .new-project-input {
-    width: 100%;
-    padding: 12px 14px;
-    background: #2d2d44;
-    color: #fff;
-    border: 2px solid #667eea;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 15px;
-    margin-bottom: 16px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
+  .project-item .rename-proj, .project-item .del-proj { color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; opacity: 0.85; flex-shrink: 0; padding: 0; touch-action: manipulation; }
+  .project-item .rename-proj { background: #667eea; }
+  .project-item .rename-proj:hover { opacity: 1; background: #7a8ef0; }
+  .project-item .del-proj { background: #e74c3c; font-size: 18px; }
+  .project-item .del-proj:hover { opacity: 1; background: #ff5544; }
+  .project-empty { text-align: center; padding: 30px 20px; color: #aaa; font-size: 13px; line-height: 1.6; }
+  .new-project-input { width: 100%; padding: 12px 14px; background: #2d2d44; color: #fff; border: 2px solid #667eea; border-radius: 8px; font-family: inherit; font-size: 15px; margin-bottom: 16px; outline: none; }
   .new-project-input:focus { border-color: #ffd700; }
   .new-project-input.error { border-color: #e74c3c; }
-
-  .new-project-error {
-    font-size: 13px;
-    color: #ff6b6b;
-    background: rgba(231, 76, 60, 0.1);
-    border: 1px solid rgba(231, 76, 60, 0.4);
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin-bottom: 14px;
-    text-align: left;
-    line-height: 1.4;
-  }
+  .new-project-error { font-size: 13px; color: #ff6b6b; background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231, 76, 60, 0.4); border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; text-align: left; }
   .new-project-error.hidden { display: none; }
-
-  .storage-warning {
-    font-size: 12px;
-    color: #ff9f43;
-    background: rgba(255, 159, 67, 0.1);
-    border: 1px solid rgba(255, 159, 67, 0.4);
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin-bottom: 14px;
-    line-height: 1.5;
-    text-align: left;
-  }
-
-  .status {
-    position: absolute; bottom: 10px; left: 10px;
-    background: rgba(0,0,0,0.7);
-    padding: 5px 12px; border-radius: 20px;
-    font-size: 12px; color: #aaa;
-    pointer-events: none; z-index: 5;
-  }
-  .progress-bar {
-    width: 100%; height: 8px;
-    background: #2d2d44; border-radius: 4px;
-    overflow: hidden; margin: 15px 0;
-  }
-  .progress-bar .fill {
-    height: 100%;
-    background: linear-gradient(90deg, #667eea, #764ba2);
-    width: 0%; transition: width 0.3s;
-  }
-
-  .playback-overlay {
-    position: fixed; inset: 0; background: #000;
-    z-index: 9999; display: none;
-    align-items: center; justify-content: center;
-    cursor: pointer; animation: fadeIn 0.2s ease;
-  }
+  .storage-warning { font-size: 12px; color: #ff9f43; background: rgba(255, 159, 67, 0.1); border: 1px solid rgba(255, 159, 67, 0.4); border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; line-height: 1.5; text-align: left; }
+  .status { position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); padding: 5px 12px; border-radius: 20px; font-size: 12px; color: #aaa; pointer-events: none; z-index: 5; }
+  .progress-bar { width: 100%; height: 8px; background: #2d2d44; border-radius: 4px; overflow: hidden; margin: 15px 0; }
+  .progress-bar .fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); width: 0%; }
+  .playback-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: none; align-items: center; justify-content: center; cursor: pointer; }
   .playback-overlay.show { display: flex; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  .playback-overlay canvas {
-    max-width: 95vw; max-height: 95vh;
-    object-fit: contain;
-    box-shadow: 0 0 60px rgba(102, 126, 234, 0.4);
-    border-radius: 4px; background: #fff;
-  }
-  .playback-hint {
-    position: absolute; bottom: 24px; left: 50%;
-    transform: translateX(-50%);
-    color: rgba(255,255,255,0.65); font-size: 13px;
-    pointer-events: none; background: rgba(0,0,0,0.5);
-    padding: 8px 18px; border-radius: 20px;
-    backdrop-filter: blur(6px);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%, 100% { opacity: 0.65; } 50% { opacity: 1; } }
-
-  .toast {
-    position: fixed; bottom: 100px; left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: rgba(0, 0, 0, 0.9); color: #fff;
-    padding: 12px 24px; border-radius: 8px;
-    font-size: 14px; opacity: 0;
-    transition: all 0.3s ease;
-    pointer-events: none; z-index: 99998;
-    border: 2px solid #667eea;
-    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
-    max-width: 80vw; text-align: center;
-  }
+  .playback-overlay canvas { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 4px; background: #fff; }
+  .playback-hint { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.65); font-size: 13px; pointer-events: none; background: rgba(0,0,0,0.5); padding: 8px 18px; border-radius: 20px; }
+  .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(0, 0, 0, 0.9); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; opacity: 0; transition: all 0.3s ease; pointer-events: none; z-index: 99998; border: 2px solid #667eea; max-width: 80vw; text-align: center; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .toast.gold { border-color: #ffd700; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5); }
-
-  #confettiCanvas {
-    position: fixed; inset: 0;
-    pointer-events: none; z-index: 99999;
-  }
+  #confettiCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 99999; }
+  .tooltip { position: fixed; background: rgba(15, 15, 30, 0.98); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 12px; pointer-events: none; z-index: 100000; opacity: 0; transition: opacity 0.15s; border: 1px solid #667eea; max-width: 260px; line-height: 1.4; }
+  .tooltip.show { opacity: 1; }
+  .tooltip .tip-name { font-weight: bold; color: #ffd700; display: block; margin-bottom: 2px; }
+  .tooltip .tip-desc { color: #ccc; font-size: 11px; }
 </style>
 </head>
 <body>
@@ -436,39 +130,40 @@
 <div class="header">
   <div class="logo-group">
     <div class="logo" id="logo">🎬 <span>WAnis</span><small id="subtitle">Web Animate Studio</small></div>
-    <div class="project-badge hidden" id="projectBadge" title="Open project manager">Untitled</div>
+    <div class="project-badge hidden" id="projectBadge">Untitled</div>
   </div>
   <div class="controls">
-    <button id="projectsBtn" title="Manage projects">📁 Projects</button>
-    <button id="playBtn" class="success" title="Space">▶ Play</button>
-    <button id="stopBtn">⏹ Stop</button>
-    <button id="undoBtn" title="Ctrl+Z">↶ Undo</button>
-    <button id="redoBtn" title="Ctrl+Y">↷ Redo</button>
-    <button id="clearBtn">🗑 Clear</button>
-    <button id="exportGifBtn">🎞 GIF</button>
-    <button id="exportMp4Btn">🎥 MP4</button>
-    <button id="exportPngBtn">🖼 PNG</button>
+    <button id="projectsBtn" data-tip="Projects|Create, switch, rename, or delete projects">📁 Projects</button>
+    <button id="playBtn" class="success" data-tip="Play|Preview animation (Space)">▶ Play</button>
+    <button id="stopBtn" data-tip="Stop|Stop playback (Space / Esc)">⏹ Stop</button>
+    <button id="undoBtn" data-tip="Undo|Revert last action (Ctrl+Z)">↶ Undo</button>
+    <button id="redoBtn" data-tip="Redo|Redo undone action (Ctrl+Y)">↷ Redo</button>
+    <button id="clearBtn" data-tip="Clear frame|Erase all strokes on current frame">🗑 Clear</button>
+    <button id="exportGifBtn" data-tip="Export GIF|Save the animation as a GIF">🎞 GIF</button>
+    <button id="exportMp4Btn" data-tip="Export video|Save as MP4 (or WebM if unsupported)">🎥 MP4</button>
+    <button id="exportPngBtn" data-tip="Export PNG|Save current frame as PNG image">🖼 PNG</button>
   </div>
 </div>
 
 <div class="main" id="mainArea">
   <div class="toolbar" id="toolbar">
-    <button type="button" class="tool-btn active" data-tool="pen" aria-pressed="true"><span>✏️</span><span class="label">Pen</span></button>
-    <button type="button" class="tool-btn" data-tool="eraser" aria-pressed="false"><span>🧽</span><span class="label">Eraser</span></button>
-    <button type="button" class="tool-btn" data-tool="line" aria-pressed="false"><span>📏</span><span class="label">Line</span></button>
-    <button type="button" class="tool-btn" data-tool="rect" aria-pressed="false"><span>⬜</span><span class="label">Rect</span></button>
-    <button type="button" class="tool-btn" data-tool="circle" aria-pressed="false"><span>⭕</span><span class="label">Circle</span></button>
-    <button type="button" class="tool-btn" data-tool="fill" aria-pressed="false"><span>🪣</span><span class="label">Fill</span></button>
-    <button type="button" class="tool-btn" data-tool="text" aria-pressed="false"><span>🔤</span><span class="label">Text</span></button>
+    <button type="button" class="tool-btn active" data-tool="pen" aria-pressed="true" data-tip="Pen|Freehand brush. Shift for rainbow, wheel to resize."><span>✏️</span><span class="label">Pen</span></button>
+    <button type="button" class="tool-btn" data-tool="eraser" aria-pressed="false" data-tip="Eraser|Paint over strokes to erase."><span>🧽</span><span class="label">Eraser</span></button>
+    <button type="button" class="tool-btn" data-tool="line" aria-pressed="false" data-tip="Line|Draw a straight line."><span>📏</span><span class="label">Line</span></button>
+    <button type="button" class="tool-btn" data-tool="rect" aria-pressed="false" data-tip="Rectangle|Drag to draw a rectangle."><span>⬜</span><span class="label">Rect</span></button>
+    <button type="button" class="tool-btn" data-tool="circle" aria-pressed="false" data-tip="Circle|Drag to draw an ellipse."><span>⭕</span><span class="label">Circle</span></button>
+    <button type="button" class="tool-btn" data-tool="fill" aria-pressed="false" data-tip="Fill|Bucket-fill using the Fill color."><span>🪣</span><span class="label">Fill</span></button>
+    <button type="button" class="tool-btn" data-tool="text" aria-pressed="false" data-tip="Text|Click canvas to add text."><span>🔤</span><span class="label">Text</span></button>
     <div class="color-pair">
-      <input type="color" id="colorPicker" class="color-picker" value="#000000" title="Pen / shape color" aria-label="Pen color">
+      <input type="color" id="colorPicker" class="color-picker" value="#000000" aria-label="Pen color" data-tip="Pen color|Color for pen, shapes, and text">
       <span>Pen</span>
     </div>
     <div class="color-pair">
-      <input type="color" id="fillColorPicker" class="color-picker" value="#ff6b6b" title="Bucket fill color" aria-label="Fill color">
+      <input type="color" id="fillColorPicker" class="color-picker" value="#ff6b6b" aria-label="Fill color" data-tip="Fill color|Color for the bucket fill">
       <span>Fill</span>
     </div>
-    <input type="range" id="sizeSlider" class="size-slider" min="1" max="50" value="3" title="Brush size" aria-label="Brush size">
+    <div class="size-value" id="sizeDisplay" data-tip="Brush size|Adjust thickness. Wheel on canvas also works.">3</div>
+    <input type="range" id="sizeSlider" class="size-slider" min="1" max="50" value="3" aria-label="Brush size" data-tip="Brush size|Adjust thickness. Wheel on canvas also works.">
   </div>
 
   <div class="canvas-area" id="canvasArea">
@@ -478,28 +173,28 @@
       <canvas id="gridCanvas" width="800" height="500"></canvas>
     </div>
     <div class="canvas-overlay-btns">
-      <button id="onionBtn" class="active" title="Show ghost of prev/next frames">👁 Onion</button>
-      <button id="gridBtn" title="40px grid">▦ Grid</button>
+      <button id="onionBtn" class="active" data-tip="Onion skin|Show ghost of previous/next frame">👁 Onion</button>
+      <button id="gridBtn" data-tip="Grid|Show 40px grid with center guides">▦ Grid</button>
     </div>
     <div class="status" id="status">Frame 1/1</div>
   </div>
 </div>
 
 <div class="timeline">
-  <div class="fps-control">
+  <div class="fps-control" data-tip="FPS|Frames per second (1-60)">
     <label for="fpsInput">FPS (1–60)</label>
     <input type="number" id="fpsInput" value="12" min="1" max="60" step="1">
   </div>
   <div class="frame-actions">
-    <button id="copyFrameBtn" title="Copy frame (Ctrl+C)">📋</button>
-    <button id="pasteFrameBtn" title="Paste frame (Ctrl+V)">📄</button>
-    <button id="deleteFrameBtn" title="Delete current frame (Del)">🗑</button>
-    <button id="restoreFrameBtn" title="Restore last deleted (Alt+Z)">♻</button>
+    <button id="copyFrameBtn" aria-label="Copy frame" data-tip="Copy frame|Copy current frame (Ctrl+C)">📋</button>
+    <button id="pasteFrameBtn" aria-label="Paste frame" data-tip="Paste frame|Paste copied frame (Ctrl+V)">📄</button>
+    <button id="deleteFrameBtn" aria-label="Delete frame" data-tip="Delete frame|Remove current frame (Del)">🗑</button>
+    <button id="restoreFrameBtn" aria-label="Restore frame" data-tip="Restore|Bring back last deleted (Alt+Z)">♻</button>
   </div>
   <div class="frames-strip-wrap" id="framesStripWrap">
     <div class="frames-container" id="framesContainer"></div>
   </div>
-  <button class="add-frame" id="addFrameBtn" title="Add new frame">+</button>
+  <button class="add-frame" id="addFrameBtn" data-tip="Add frame|Insert blank frame after current">+</button>
 </div>
 
 <div class="modal" id="modal">
@@ -518,7 +213,7 @@
   <div class="modal-content">
     <h2>📁 Projects</h2>
     <p id="projectsStorageWarning" class="storage-warning" style="display:none;">
-      ⚠️ <strong>LocalStorage unavailable</strong> — projects will be kept in memory only and lost on reload.
+      ⚠️ <strong>Storage unavailable</strong> — projects will be kept in memory only and lost on reload.
     </p>
     <div id="projectList" class="project-list"></div>
     <div class="modal-buttons">
@@ -573,34 +268,99 @@ const WHITE_THRESHOLD = 240;
 const STORAGE_KEY = 'wanis_v1';
 
 const Storage = (() => {
+  const DB_NAME = 'wanis_db';
+  const DB_VERSION = 1;
+  const STORE_NAME = 'kv';
+  let db = null;
   let available = false;
   const memory = {};
-  try {
-    const test = '__wanis_test__';
-    localStorage.setItem(test, test);
-    localStorage.removeItem(test);
-    available = true;
-  } catch (_) {
-    available = false;
-  }
-  return {
-    isAvailable: () => available,
-    get: (key) => {
-      if (available) {
-        try {
-          const raw = localStorage.getItem(key);
-          return raw ? JSON.parse(raw) : null;
-        } catch (_) { return null; }
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      let req;
+      try {
+        req = indexedDB.open(DB_NAME, DB_VERSION);
+      } catch (e) {
+        reject(e);
+        return;
       }
-      return memory[key] || null;
+      req.onupgradeneeded = (e) => {
+        const database = e.target.result;
+        if (!database.objectStoreNames.contains(STORE_NAME)) {
+          database.createObjectStore(STORE_NAME);
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error || new Error('IDB open failed'));
+    });
+  }
+
+  function dbGet(key) {
+    return new Promise((resolve, reject) => {
+      try {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const req = tx.objectStore(STORE_NAME).get(key);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      } catch (e) { reject(e); }
+    });
+  }
+
+  function dbSet(key, value) {
+    return new Promise((resolve, reject) => {
+      try {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const req = tx.objectStore(STORE_NAME).put(value, key);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      } catch (e) { reject(e); }
+    });
+  }
+
+  async function migrate() {
+    let legacy = null;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) legacy = JSON.parse(raw);
+    } catch (_) {}
+    if (!legacy) return;
+    try {
+      const existing = await dbGet(STORAGE_KEY);
+      if (!existing) {
+        await dbSet(STORAGE_KEY, legacy);
+        console.log('[WAnis] Migrated legacy localStorage into IndexedDB');
+      }
+      try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+    } catch (e) {
+      console.warn('[WAnis] Migration failed:', e);
+    }
+  }
+
+  return {
+    async init() {
+      try {
+        db = await openDB();
+        available = true;
+        await migrate();
+        return true;
+      } catch (e) {
+        console.warn('[WAnis] IndexedDB unavailable, memory fallback:', e);
+        available = false;
+        return false;
+      }
     },
-    set: (key, value) => {
+    isAvailable: () => available,
+    async get(key) {
+      if (!available) return memory[key] || null;
+      try { return (await dbGet(key)) || null; } catch (_) { return null; }
+    },
+    async set(key, value) {
       if (!available) {
         memory[key] = value;
         return 'memory';
       }
       try {
-        localStorage.setItem(key, JSON.stringify(value));
+        await dbSet(key, value);
         return 'stored';
       } catch (e) {
         if (e && e.name === 'QuotaExceededError') return 'quota';
@@ -627,6 +387,8 @@ const gridBtn = document.getElementById('gridBtn');
 const framesContainer = document.getElementById('framesContainer');
 const framesStripWrap = document.getElementById('framesStripWrap');
 const projectBadge = document.getElementById('projectBadge');
+const sizeSlider = document.getElementById('sizeSlider');
+const sizeDisplay = document.getElementById('sizeDisplay');
 
 let projects = {};
 let projectOrder = [];
@@ -634,6 +396,7 @@ let activeProjectId = null;
 let autosaveTimer = null;
 let newProjectRequired = false;
 let confirmCallback = null;
+let renameTargetId = null;
 
 function projectSlug() {
   const p = projects[activeProjectId];
@@ -641,34 +404,26 @@ function projectSlug() {
   return p.name.replace(/[^a-z0-9]+/gi, '_').replace(/^_+|_+$/g, '').toLowerCase() || 'wanis';
 }
 
-function nameExists(name, exceptId = null) {
+function nameExists(name, exceptId) {
   const normalized = name.trim().toLowerCase();
   if (!normalized) return false;
-  return Object.entries(projects).some(([id, p]) =>
-    id !== exceptId && p.name.trim().toLowerCase() === normalized
-  );
+  return Object.keys(projects).some(id => {
+    if (id === exceptId) return false;
+    return projects[id].name.trim().toLowerCase() === normalized;
+  });
 }
 
 function persistAll() {
-  const data = {
-    v: 1,
-    projects,
-    order: projectOrder,
-    active: activeProjectId
-  };
-  const result = Storage.set(STORAGE_KEY, data);
-  if (result === 'quota') {
-    toast('⚠️ Storage full — project may not save properly', 4000);
-  }
+  const data = { v: 1, projects, order: projectOrder, active: activeProjectId };
+  Storage.set(STORAGE_KEY, data).then(result => {
+    if (result === 'quota') toast('⚠️ Storage full — may not save', 4000);
+  }).catch(err => console.warn('[WAnis] Persist failed:', err));
 }
 
 function saveCurrentProject() {
   if (!activeProjectId || !projects[activeProjectId]) return;
   const p = projects[activeProjectId];
-  p.frames = frames.map(f => ({
-    commands: f.commands,
-    holdDuration: f.holdDuration
-  }));
+  p.frames = frames.map(f => ({ commands: f.commands, holdDuration: f.holdDuration }));
   p.fps = getFps();
   p.currentFrame = currentFrame;
   p.updatedAt = Date.now();
@@ -691,7 +446,6 @@ function openProject(id) {
   if (activeProjectId && projects[activeProjectId]) {
     try { saveCurrentProject(); } catch (_) {}
   }
-
   const p = projects[id];
   frames = (p.frames && p.frames.length)
     ? p.frames.map(f => new Frame(f.commands || [], f.holdDuration || 1))
@@ -702,7 +456,6 @@ function openProject(id) {
   redoStack = frames.map(() => []);
   trash = [];
   activeProjectId = id;
-
   rebuildThumbnails();
   renderCurrentFrame();
   updateStatus();
@@ -713,12 +466,10 @@ function openProject(id) {
 
 function createNewProject(name) {
   const cleanName = (name || '').trim() || 'Untitled Animation';
-
-  if (nameExists(cleanName)) {
-    toast(`⚠️ A project named "${cleanName}" already exists`, 3000);
+  if (nameExists(cleanName, null)) {
+    toast('⚠️ A project named "' + cleanName + '" already exists', 3000);
     return null;
   }
-
   const id = 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
   projects[id] = {
     name: cleanName,
@@ -731,7 +482,7 @@ function createNewProject(name) {
   projectOrder.push(id);
   persistAll();
   openProject(id);
-  toast(`✅ Created "${cleanName}"`, 2200);
+  toast('✅ Created "' + cleanName + '"', 2200);
   return id;
 }
 
@@ -740,10 +491,8 @@ function deleteProject(id) {
     if (!projects[id]) return;
     const p = projects[id];
     const wasActive = id === activeProjectId;
-
     delete projects[id];
     projectOrder = projectOrder.filter(x => x !== id);
-
     if (projectOrder.length === 0) {
       activeProjectId = null;
       frames = [new Frame()];
@@ -760,16 +509,14 @@ function deleteProject(id) {
       showNewProjectModal(true);
       return;
     }
-
     if (wasActive) {
       activeProjectId = null;
       openProject(projectOrder[0]);
     }
-
     persistAll();
     renderProjectList();
     updateProjectBadge();
-    toast(`🗑 Deleted "${p.name}"`, 2000);
+    toast('🗑 Deleted "' + p.name + '"', 2000);
   } catch (err) {
     console.error('Delete failed:', err);
     toast('⚠️ Delete failed: ' + err.message, 3000);
@@ -784,78 +531,78 @@ function updateProjectBadge() {
   const p = projects[activeProjectId];
   projectBadge.classList.remove('hidden');
   projectBadge.textContent = (Storage.isAvailable() ? '' : '⚠️ ') + p.name;
-  projectBadge.title = Storage.isAvailable()
-    ? `Active project: ${p.name} — click to manage projects`
-    : `Active project: ${p.name} (session only — no persistence)`;
+  projectBadge.setAttribute('data-tip',
+    Storage.isAvailable()
+      ? 'Active project|' + p.name + ' — click to manage projects'
+      : 'Active project|' + p.name + ' (session only)'
+  );
 }
 
 function renderProjectList() {
   const list = document.getElementById('projectList');
   const warning = document.getElementById('projectsStorageWarning');
   warning.style.display = Storage.isAvailable() ? 'none' : 'block';
-
   if (projectOrder.length === 0) {
     list.innerHTML = '<div class="project-empty">No projects yet.<br>Click "New Project" to start animating!</div>';
     return;
   }
-
   list.innerHTML = '';
   projectOrder.slice().reverse().forEach(id => {
     const p = projects[id];
     if (!p) return;
-
     const item = document.createElement('div');
     item.className = 'project-item' + (id === activeProjectId ? ' active' : '');
-
     const info = document.createElement('div');
     info.className = 'info';
-
     const nameEl = document.createElement('div');
     nameEl.className = 'pname';
     nameEl.textContent = p.name;
     info.appendChild(nameEl);
-
     const meta = document.createElement('div');
     meta.className = 'pmeta';
-    const frameCount = p.frames?.length || 1;
+    const frameCount = p.frames ? p.frames.length : 1;
     const date = new Date(p.updatedAt || p.createdAt || Date.now());
-    const timeStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' ' +
-                    date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    meta.textContent = `${frameCount} frame${frameCount === 1 ? '' : 's'} · ${timeStr}`;
+    const timeStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    meta.textContent = frameCount + ' frame' + (frameCount === 1 ? '' : 's') + ' · ' + timeStr;
     info.appendChild(meta);
     item.appendChild(info);
-
+    const renameBtn = document.createElement('button');
+    renameBtn.className = 'rename-proj';
+    renameBtn.textContent = '✏️';
+    renameBtn.type = 'button';
+    renameBtn.setAttribute('data-tip', 'Rename|Change the name');
+    renameBtn.addEventListener('pointerdown', e => { e.stopPropagation(); e.preventDefault(); });
+    renameBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      showRenameModal(id);
+    });
+    item.appendChild(renameBtn);
     const del = document.createElement('button');
     del.className = 'del-proj';
     del.textContent = '×';
-    del.title = `Delete "${p.name}"`;
     del.type = 'button';
-
-    del.addEventListener('pointerdown', (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-    });
-    del.addEventListener('click', (e) => {
+    del.setAttribute('data-tip', 'Delete|Permanently delete');
+    del.addEventListener('pointerdown', e => { e.stopPropagation(); e.preventDefault(); });
+    del.addEventListener('click', e => {
       e.stopPropagation();
       e.preventDefault();
       const hasContent = (p.frames || []).some(f => f.commands && f.commands.length > 0);
       const msg = hasContent
-        ? `"${p.name}" has ${frameCount} frame${frameCount === 1 ? '' : 's'} with content. This cannot be recovered.`
-        : `"${p.name}" will be permanently deleted.`;
-      showConfirm(`Delete "${p.name}"?`, msg, () => deleteProject(id), 'Delete');
+        ? '"' + p.name + '" has ' + frameCount + ' frame' + (frameCount === 1 ? '' : 's') + ' with content. Cannot be recovered.'
+        : '"' + p.name + '" will be permanently deleted.';
+      showConfirm('Delete "' + p.name + '"?', msg, () => deleteProject(id), 'Delete');
     });
-
     item.appendChild(del);
-
-    item.addEventListener('click', (e) => {
-      if (e.target === del || del.contains(e.target)) return;
+    item.addEventListener('click', e => {
+      if (del.contains(e.target)) return;
+      if (renameBtn.contains(e.target)) return;
       closeProjectsModal();
       if (id !== activeProjectId) {
         openProject(id);
-        toast(`📂 Opened "${p.name}"`, 1800);
+        toast('📂 Opened "' + p.name + '"', 1800);
       }
     });
-
     list.appendChild(item);
   });
 }
@@ -869,11 +616,11 @@ function closeProjectsModal() {
   document.getElementById('projectsModal').classList.remove('show');
 }
 
-function showConfirm(title, text, onYes, yesLabel = 'Yes') {
+function showConfirm(title, text, onYes, yesLabel) {
   confirmCallback = onYes;
   document.getElementById('confirmTitle').textContent = title;
   document.getElementById('confirmText').textContent = text;
-  document.getElementById('confirmYes').textContent = yesLabel;
+  document.getElementById('confirmYes').textContent = yesLabel || 'Yes';
   document.getElementById('confirmModal').classList.add('show');
 }
 
@@ -882,14 +629,14 @@ function hideConfirm() {
   confirmCallback = null;
 }
 
-function showNewProjectModal(required = false) {
-  newProjectRequired = required;
+function showNewProjectModal(required) {
+  renameTargetId = null;
+  newProjectRequired = !!required;
   const title = document.getElementById('newProjectTitle');
   const subtitle = document.getElementById('newProjectSubtitle');
   const cancelBtn = document.getElementById('cancelNewProjectBtn');
   const input = document.getElementById('newProjectName');
   const error = document.getElementById('newProjectError');
-
   if (required) {
     title.textContent = 'Welcome to WAnis!';
     subtitle.textContent = 'Name your first project to get started';
@@ -899,7 +646,6 @@ function showNewProjectModal(required = false) {
     subtitle.textContent = 'Give your animation a name';
     cancelBtn.style.display = 'inline-flex';
   }
-
   input.value = '';
   input.classList.remove('error');
   error.classList.add('hidden');
@@ -908,8 +654,26 @@ function showNewProjectModal(required = false) {
   setTimeout(() => input.focus(), 100);
 }
 
+function showRenameModal(id) {
+  if (!projects[id]) return;
+  renameTargetId = id;
+  newProjectRequired = false;
+  document.getElementById('newProjectTitle').textContent = 'Rename Project';
+  document.getElementById('newProjectSubtitle').textContent = 'Enter a new name';
+  document.getElementById('cancelNewProjectBtn').style.display = 'inline-flex';
+  const input = document.getElementById('newProjectName');
+  const error = document.getElementById('newProjectError');
+  input.value = projects[id].name;
+  input.classList.remove('error');
+  error.classList.add('hidden');
+  error.textContent = '';
+  document.getElementById('newProjectModal').classList.add('show');
+  setTimeout(() => { input.focus(); input.select(); }, 100);
+}
+
 function hideNewProjectModal() {
   if (newProjectRequired) return;
+  renameTargetId = null;
   document.getElementById('newProjectModal').classList.remove('show');
 }
 
@@ -934,21 +698,37 @@ function clearNewProjectError() {
 function submitNewProject() {
   const input = document.getElementById('newProjectName');
   const name = input.value.trim() || 'Untitled Animation';
-
-  if (nameExists(name)) {
-    showNewProjectError(`A project named "${name}" already exists. Pick a different name.`);
+  if (renameTargetId) {
+    if (!projects[renameTargetId]) { renameTargetId = null; return; }
+    if (nameExists(name, renameTargetId)) {
+      showNewProjectError('A project named "' + name + '" already exists. Pick a different name.');
+      return;
+    }
+    const wasActive = renameTargetId === activeProjectId;
+    const idToRename = renameTargetId;
+    projects[idToRename].name = name;
+    projects[idToRename].updatedAt = Date.now();
+    persistAll();
+    renameTargetId = null;
+    document.getElementById('newProjectModal').classList.remove('show');
+    renderProjectList();
+    if (wasActive) updateProjectBadge();
+    toast('✏️ Renamed to "' + name + '"', 2000);
     return;
   }
-
+  if (nameExists(name, null)) {
+    showNewProjectError('A project named "' + name + '" already exists. Pick a different name.');
+    return;
+  }
   document.getElementById('newProjectModal').classList.remove('show');
   newProjectRequired = false;
   createNewProject(name);
 }
 
 class Frame {
-  constructor(commands = [], holdDuration = 1) {
-    this.commands = commands;
-    this.holdDuration = holdDuration;
+  constructor(commands, holdDuration) {
+    this.commands = commands || [];
+    this.holdDuration = holdDuration || 1;
     this._raster = null;
   }
   invalidate() { this._raster = null; }
@@ -973,6 +753,8 @@ let redoStack = [[]];
 let currentTool = 'pen';
 let currentColor = '#000000';
 let fillColor = '#ff6b6b';
+let penSize = 3;
+let eraserSize = 15;
 let currentSize = 3;
 let isDrawing = false;
 let liveStroke = null;
@@ -1041,7 +823,6 @@ function revokeAllUrls() {
 
 async function saveBlob(blob, filename) {
   const file = new File([blob], filename, { type: blob.type });
-
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try {
       await navigator.share({ files: [file], title: filename });
@@ -1050,7 +831,6 @@ async function saveBlob(blob, filename) {
       if (e.name === 'AbortError') return 'cancelled';
     }
   }
-
   const blobUrl = URL.createObjectURL(blob);
   try {
     const a = document.createElement('a');
@@ -1065,36 +845,12 @@ async function saveBlob(blob, filename) {
   } catch (e) {
     console.warn('Anchor download failed:', e);
   }
-
-  if (blob.size < 20 * 1024 * 1024) {
-    try {
-      const dataUrl = await new Promise((res, rej) => {
-        const fr = new FileReader();
-        fr.onload = () => res(fr.result);
-        fr.onerror = rej;
-        fr.readAsDataURL(blob);
-      });
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = filename;
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => a.remove(), 5000);
-      URL.revokeObjectURL(blobUrl);
-      return 'download-data-url';
-    } catch (e) {
-      console.warn('Data URL download failed:', e);
-    }
-  }
-
   try {
     const w = window.open(blobUrl, '_blank');
     if (w) return 'opened';
   } catch (e) {
     console.warn('window.open failed:', e);
   }
-
   URL.revokeObjectURL(blobUrl);
   return 'failed';
 }
@@ -1104,50 +860,39 @@ function showExportResult(blob, filename, ext, mediaType) {
   const hint = document.getElementById('modalFallbackHint');
   const buttons = document.getElementById('modalButtons');
   const text = document.getElementById('modalText');
-
   const sizeStr = blob.size > 1024 * 1024
     ? (blob.size / 1024 / 1024).toFixed(2) + ' MB'
     : Math.round(blob.size / 1024) + ' KB';
-
-  text.textContent = `${ext.toUpperCase()} ready — ${sizeStr}`;
+  text.textContent = ext.toUpperCase() + ' ready — ' + sizeStr;
   document.getElementById('progressBar').style.display = 'none';
-
   const url = trackUrl(URL.createObjectURL(blob));
-
   if (mediaType === 'image') {
-    preview.innerHTML = `<img src="${url}" alt="Preview" style="max-width:100%;max-height:50vh;border-radius:8px;margin:10px 0;display:block;margin-left:auto;margin-right:auto;">`;
+    preview.innerHTML = '<img src="' + url + '" alt="Preview" style="max-width:100%;max-height:50vh;border-radius:8px;margin:10px auto;display:block;">';
   } else {
-    preview.innerHTML = `<video src="${url}" controls loop playsinline style="max-width:100%;max-height:50vh;border-radius:8px;margin:10px 0;display:block;margin-left:auto;margin-right:auto;"></video>`;
+    preview.innerHTML = '<video src="' + url + '" controls loop playsinline style="max-width:100%;max-height:50vh;border-radius:8px;margin:10px auto;display:block;"></video>';
   }
-
   const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
   hint.style.display = 'block';
-  hint.innerHTML = isTouch
-    ? `<strong>💡 If download doesn't work:</strong><br>Tap and hold the preview above → choose <strong>Save image</strong> / <strong>Save video</strong> / <strong>Save to Files</strong>.`
-    : `<strong>💡 If download doesn't start:</strong><br>Right-click the preview above → <strong>Save image as…</strong> or <strong>Save video as…</strong>.`;
-
+  hint.textContent = isTouch
+    ? 'If download doesn\'t work: tap and hold the preview, then choose Save image/video.'
+    : 'If download doesn\'t start: right-click the preview and choose Save image/video as…';
   buttons.style.display = 'flex';
-  buttons.innerHTML = `
-    <button id="modalDownloadBtn" class="success">📥 Download</button>
-    <button id="modalOpenBtn">🔗 Open in new tab</button>
-  `;
-
+  buttons.innerHTML = '<button id="modalDownloadBtn" class="success">📥 Download</button>' +
+    '<button id="modalOpenBtn">🔗 Open in new tab</button>';
   document.getElementById('modalDownloadBtn').onclick = async () => {
     const result = await saveBlob(blob, filename);
     const messages = {
       'shared': '✅ Shared successfully',
       'cancelled': '⏸ Share cancelled',
-      'download': '📥 Download started — check your downloads folder',
-      'download-data-url': '📥 Download started (data URL method)',
-      'opened': '🔗 Opened in new tab — save from there',
+      'download': '📥 Download started',
+      'opened': '🔗 Opened in new tab',
       'failed': '⚠️ Auto-save failed — use the hint above'
     };
     text.textContent = messages[result] || messages.failed;
   };
-
   document.getElementById('modalOpenBtn').onclick = () => {
     const w = window.open(url, '_blank');
-    if (!w) toast('⚠️ Popup blocked — allow popups for this site');
+    if (!w) toast('⚠️ Popup blocked');
   };
 }
 
@@ -1168,7 +913,8 @@ function floodFillCtx(c, x, y, color) {
   const stack = [[x, y]];
   const visited = new Uint8Array(w * h);
   while (stack.length) {
-    const [cx, cy] = stack.pop();
+    const pt = stack.pop();
+    const cx = pt[0], cy = pt[1];
     if (cx < 0 || cy < 0 || cx >= w || cy >= h) continue;
     const pid = cy * w + cx;
     if (visited[pid]) continue;
@@ -1195,7 +941,7 @@ function applyCommand(cmd, c) {
       if (!pts || pts.length === 0) break;
       if (cmd.rainbow && cmd.type === 'pen' && pts.length > 1) {
         for (let i = 1; i < pts.length; i++) {
-          c.strokeStyle = `hsl(${(i*8)%360}, 80%, 55%)`;
+          c.strokeStyle = 'hsl(' + ((i*8)%360) + ', 80%, 55%)';
           c.beginPath();
           c.moveTo(pts[i-1].x, pts[i-1].y);
           c.lineTo(pts[i].x, pts[i].y);
@@ -1220,15 +966,16 @@ function applyCommand(cmd, c) {
       c.strokeRect(cmd.x1, cmd.y1, cmd.x2-cmd.x1, cmd.y2-cmd.y1);
       break;
     case 'circle': {
-      const cx=(cmd.x1+cmd.x2)/2, cy=(cmd.y1+cmd.y2)/2;
-      const rx=Math.abs(cmd.x2-cmd.x1)/2, ry=Math.abs(cmd.y2-cmd.y1)/2;
-      c.beginPath(); c.ellipse(cx, cy, rx, ry, 0, 0, Math.PI*2); c.stroke(); break;
+      const cx = (cmd.x1+cmd.x2)/2, cy = (cmd.y1+cmd.y2)/2;
+      const rx = Math.abs(cmd.x2-cmd.x1)/2, ry = Math.abs(cmd.y2-cmd.y1)/2;
+      c.beginPath(); c.ellipse(cx, cy, rx, ry, 0, 0, Math.PI*2); c.stroke();
+      break;
     }
     case 'fill':
       floodFillCtx(c, cmd.x, cmd.y, cmd.color);
       break;
     case 'text':
-      c.font = `bold ${cmd.size}px 'Segoe UI', sans-serif`;
+      c.font = 'bold ' + cmd.size + 'px "Segoe UI", sans-serif';
       c.textBaseline = 'top';
       c.fillText(cmd.text, cmd.x, cmd.y);
       break;
@@ -1360,10 +1107,7 @@ function getPos(e) {
   const rect = canvas.getBoundingClientRect();
   const sx = CANVAS_W / rect.width;
   const sy = CANVAS_H / rect.height;
-  return {
-    x: (e.clientX - rect.left) * sx,
-    y: (e.clientY - rect.top) * sy
-  };
+  return { x: (e.clientX - rect.left) * sx, y: (e.clientY - rect.top) * sy };
 }
 
 function averagePoint(buf) {
@@ -1377,21 +1121,23 @@ function startTextInput(pos) {
   const scaleX = rect.width / CANVAS_W;
   const scaleY = rect.height / CANVAS_H;
   const fontSize = Math.max(12, Math.min(200, currentSize * 4));
-
   const input = document.createElement('input');
   input.type = 'text';
   input.placeholder = 'Type text, Enter to confirm';
-  input.style.cssText = `
-    position: fixed;
-    left: ${rect.left + pos.x*scaleX}px;
-    top: ${rect.top + pos.y*scaleY}px;
-    background: rgba(0,0,0,0.9); color: ${currentColor};
-    border: 2px solid #667eea; border-radius: 4px;
-    padding: 6px 10px; font-family: 'Segoe UI', sans-serif;
-    font-weight: bold; font-size: ${Math.min(fontSize, 32)}px;
-    z-index: 500; min-width: 200px; outline: none;
-    box-shadow: 0 4px 20px rgba(102,126,234,0.5);
-  `;
+  input.style.position = 'fixed';
+  input.style.left = (rect.left + pos.x*scaleX) + 'px';
+  input.style.top = (rect.top + pos.y*scaleY) + 'px';
+  input.style.background = 'rgba(0,0,0,0.9)';
+  input.style.color = currentColor;
+  input.style.border = '2px solid #667eea';
+  input.style.borderRadius = '4px';
+  input.style.padding = '6px 10px';
+  input.style.fontFamily = 'Segoe UI, sans-serif';
+  input.style.fontWeight = 'bold';
+  input.style.fontSize = Math.min(fontSize, 32) + 'px';
+  input.style.zIndex = '500';
+  input.style.minWidth = '200px';
+  input.style.outline = 'none';
   document.body.appendChild(input);
   setTimeout(() => input.focus(), 10);
   let committed = false;
@@ -1421,11 +1167,8 @@ function startDraw(e) {
   if (e.button !== undefined && e.button !== 0) return;
   if (e.target !== canvas) return;
   const pos = getPos(e);
-
   if (currentTool === 'text') { startTextInput(pos); return; }
-
   isDrawing = true;
-
   if (currentTool === 'fill') {
     pushUndo();
     frames[currentFrame].commands.push({ type: 'fill', x: pos.x, y: pos.y, color: fillColor });
@@ -1434,13 +1177,10 @@ function startDraw(e) {
     renderCurrentFrame();
     return;
   }
-
   if (currentTool === 'pen' || currentTool === 'eraser') {
     const isRainbow = currentTool === 'pen' && e.shiftKey;
     const color = currentTool === 'eraser' ? '#ffffff' : currentColor;
-    liveStroke = {
-      type: currentTool, color, rainbow: isRainbow, size: currentSize, points: [pos]
-    };
+    liveStroke = { type: currentTool, color: color, rainbow: isRainbow, size: currentSize, points: [pos] };
     liveStrokeMeta = { startTime: performance.now(), totalDist: 0 };
     smoothBuffer = [pos];
     ctx.fillStyle = isRainbow ? 'hsl(0, 80%, 55%)' : color;
@@ -1459,7 +1199,6 @@ function startDraw(e) {
 function draw(e) {
   if (!isDrawing || isPlaying) return;
   const pos = getPos(e);
-
   if (liveStroke) {
     smoothBuffer.push(pos);
     if (smoothBuffer.length > SMOOTH_WINDOW) smoothBuffer.shift();
@@ -1469,12 +1208,11 @@ function draw(e) {
     if (dist < 0.4) return;
     liveStroke.points.push(avg);
     liveStrokeMeta.totalDist += dist;
-
     ctx.lineWidth = liveStroke.size;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.strokeStyle = liveStroke.rainbow
-      ? `hsl(${(liveStroke.points.length * 8) % 360}, 80%, 55%)`
+      ? 'hsl(' + ((liveStroke.points.length * 8) % 360) + ', 80%, 55%)'
       : liveStroke.color;
     ctx.beginPath();
     ctx.moveTo(last.x, last.y);
@@ -1493,7 +1231,6 @@ function draw(e) {
 function endDraw() {
   if (!isDrawing) return;
   isDrawing = false;
-
   if (liveStroke) {
     pushUndo();
     const duration = performance.now() - liveStrokeMeta.startTime;
@@ -1567,7 +1304,7 @@ function addFrame() {
 
 function deleteFrame(index) {
   if (frames.length === 1) { toast('🤷 Cannot delete the only frame'); return; }
-  trash.push({ frame: cloneFrame(frames[index]), index });
+  trash.push({ frame: cloneFrame(frames[index]), index: index });
   frames.splice(index, 1);
   undoStack.splice(index, 1);
   redoStack.splice(index, 1);
@@ -1582,9 +1319,9 @@ function deleteFrame(index) {
 
 function restoreFrame() {
   if (trash.length === 0) { toast('🤷 Nothing to restore'); return; }
-  const { frame, index } = trash.pop();
-  const insertIdx = Math.min(index, frames.length);
-  frames.splice(insertIdx, 0, frame);
+  const entry = trash.pop();
+  const insertIdx = Math.min(entry.index, frames.length);
+  frames.splice(insertIdx, 0, entry.frame);
   undoStack.splice(insertIdx, 0, []);
   redoStack.splice(insertIdx, 0, []);
   rebuildThumbnails();
@@ -1615,14 +1352,18 @@ function pasteFrame() {
 function updateTrashButton() {
   const btn = document.getElementById('restoreFrameBtn');
   btn.disabled = trash.length === 0;
-  btn.title = trash.length === 0 ? 'No deleted frames' : `Restore (${trash.length} in trash, Alt+Z)`;
-  btn.textContent = trash.length > 0 ? `♻${trash.length}` : '♻';
+  btn.setAttribute('data-tip', trash.length === 0
+    ? 'Restore|No deleted frames to restore'
+    : 'Restore|Bring back last deleted (' + trash.length + ' in trash, Alt+Z)'
+  );
+  btn.textContent = trash.length > 0 ? '♻' + trash.length : '♻';
 }
 
 function selectFrame(index) {
   if (index < 0 || index >= frames.length) return;
   currentFrame = index;
-  document.querySelectorAll('.frame').forEach((el, i) => el.classList.toggle('active', i === index));
+  const frameEls = document.querySelectorAll('.frame');
+  frameEls.forEach((el, i) => el.classList.toggle('active', i === index));
   renderCurrentFrame();
   updateStatus();
   scrollFrameIntoView(index);
@@ -1671,16 +1412,16 @@ function rebuildThumbnails() {
     div.appendChild(num);
     const hold = document.createElement('div');
     hold.className = 'hold';
-    hold.title = 'Left-click +1 hold, right-click -1 hold';
     hold.textContent = '×' + frame.holdDuration;
     if (frame.holdDuration > 1) hold.classList.add('long');
+    hold.setAttribute('data-tip', 'Hold duration|Left-click +1, right-click −1');
     hold.onclick = e => { e.stopPropagation(); cycleHold(i, 1); };
     hold.oncontextmenu = e => { e.preventDefault(); e.stopPropagation(); cycleHold(i, -1); };
     div.appendChild(hold);
     const del = document.createElement('button');
     del.className = 'del';
     del.textContent = '×';
-    del.title = 'Delete frame';
+    del.setAttribute('data-tip', 'Delete frame|Remove this frame');
     del.onclick = e => { e.stopPropagation(); deleteFrame(i); };
     div.appendChild(del);
     div.onclick = () => { if (!isPlaying) selectFrame(i); };
@@ -1697,10 +1438,7 @@ function rebuildThumbnails() {
 function play() {
   if (isPlaying) return;
   const totalTicks = frames.reduce((s, f) => s + f.holdDuration, 0);
-  if (totalTicks < 2) {
-    toast('🖼 Need at least 2 total frames — that is just a picture!', 3000);
-    return;
-  }
+  if (totalTicks < 2) { toast('🖼 Need at least 2 total frames', 3000); return; }
   playFps = getFps();
   playRenderedFrames = frames.map(f => f.getRaster());
   playbackCanvas.width = CANVAS_W;
@@ -1749,7 +1487,6 @@ function setExportBusy(busy) {
 
 function openModal(titleText, textText) {
   revokeAllUrls();
-  const modal = document.getElementById('modal');
   document.getElementById('modalTitle').textContent = titleText;
   document.getElementById('modalText').textContent = textText;
   document.getElementById('modalPreview').innerHTML = '';
@@ -1758,7 +1495,7 @@ function openModal(titleText, textText) {
   document.getElementById('modalButtons').innerHTML = '';
   document.getElementById('progressBar').style.display = 'block';
   document.getElementById('progressFill').style.width = '0%';
-  modal.classList.add('show');
+  document.getElementById('modal').classList.add('show');
 }
 
 function closeModal() {
@@ -1770,7 +1507,6 @@ function exportPNG() {
   if (exportInProgress) return;
   setExportBusy(true);
   openModal('PNG ready', 'Preparing preview...');
-
   try {
     frames[currentFrame].getRaster().toBlob(blob => {
       if (!blob) {
@@ -1779,7 +1515,7 @@ function exportPNG() {
         setExportBusy(false);
         return;
       }
-      showExportResult(blob, `${projectSlug()}_frame_${currentFrame + 1}.png`, 'png', 'image');
+      showExportResult(blob, projectSlug() + '_frame_' + (currentFrame + 1) + '.png', 'png', 'image');
       setExportBusy(false);
     }, 'image/png');
   } catch (e) {
@@ -1793,11 +1529,11 @@ async function loadModule(paths, validate) {
   let lastErr;
   for (const u of paths) {
     try {
-      const mod_ = await import(u);
-      if (validate(mod_)) return mod_;
+      const m = await import(u);
+      if (validate(m)) return m;
     } catch (e) { lastErr = e; }
   }
-  throw lastErr || new Error('Failed to load module from any CDN');
+  throw lastErr || new Error('Failed to load module');
 }
 
 const loadGifenc = () => loadModule([
@@ -1814,14 +1550,15 @@ const loadMediabunny = () => loadModule([
 
 async function exportGIF() {
   if (exportInProgress) return;
-  if (frames.length < 1) return;
   setExportBusy(true);
   openModal('Creating GIF', 'Loading GIF library...');
   const modalText = document.getElementById('modalText');
   const progressFill = document.getElementById('progressFill');
-
   try {
-    const { GIFEncoder, quantize, applyPalette } = await loadGifenc();
+    const gifenc = await loadGifenc();
+    const GIFEncoder = gifenc.GIFEncoder;
+    const quantize = gifenc.quantize;
+    const applyPalette = gifenc.applyPalette;
     const fps = getFps();
     const gif = GIFEncoder();
     for (let i = 0; i < frames.length; i++) {
@@ -1832,15 +1569,15 @@ async function exportGIF() {
       const img = c.getContext('2d').getImageData(0, 0, CANVAS_W, CANVAS_H);
       const palette = quantize(img.data, 256);
       const index = applyPalette(img.data, palette);
-      gif.writeFrame(index, CANVAS_W, CANVAS_H, { palette, delay });
+      gif.writeFrame(index, CANVAS_W, CANVAS_H, { palette: palette, delay: delay });
       const pct = Math.round(((i+1) / frames.length) * 100);
       progressFill.style.width = pct + '%';
-      modalText.textContent = `Encoding frame ${i+1} / ${frames.length}... ${pct}%`;
+      modalText.textContent = 'Encoding frame ' + (i+1) + ' / ' + frames.length + '... ' + pct + '%';
       await new Promise(r => setTimeout(r, 0));
     }
     gif.finish();
     const blob = new Blob([gif.bytes()], { type: 'image/gif' });
-    showExportResult(blob, `${projectSlug()}_${Date.now()}.gif`, 'gif', 'image');
+    showExportResult(blob, projectSlug() + '_' + Date.now() + '.gif', 'gif', 'image');
   } catch (err) {
     console.error(err);
     modalText.textContent = 'GIF export failed: ' + err.message;
@@ -1852,19 +1589,16 @@ async function exportGIF() {
 
 async function exportMP4() {
   if (exportInProgress) return;
-  if (frames.length < 1) return;
   setExportBusy(true);
   openModal('Creating video', 'Loading video encoder...');
   const modalText = document.getElementById('modalText');
   const progressFill = document.getElementById('progressFill');
-
   if (!window.VideoEncoder) {
     modalText.textContent = 'WebCodecs not available. Use a recent Chrome, Edge, or Safari.';
     document.getElementById('progressBar').style.display = 'none';
     setExportBusy(false);
     return;
   }
-
   let mb;
   try { mb = await loadMediabunny(); }
   catch (err) {
@@ -1873,15 +1607,18 @@ async function exportMP4() {
     setExportBusy(false);
     return;
   }
-  const { Output, Mp4OutputFormat, WebMOutputFormat, BufferTarget, CanvasSource, QUALITY_HIGH } = mb;
-
+  const Output = mb.Output;
+  const Mp4OutputFormat = mb.Mp4OutputFormat;
+  const WebMOutputFormat = mb.WebMOutputFormat;
+  const BufferTarget = mb.BufferTarget;
+  const CanvasSource = mb.CanvasSource;
+  const QUALITY_HIGH = mb.QUALITY_HIGH;
   const fps = getFps();
   const recCanvas = makeTempCanvas();
   const rctx = recCanvas.getContext('2d');
-
   async function tryEncode(OutputFormat, codec, ext, mimeType) {
     const output = new Output({ format: new OutputFormat(), target: new BufferTarget() });
-    const vs = new CanvasSource(recCanvas, { codec, bitrate: QUALITY_HIGH });
+    const vs = new CanvasSource(recCanvas, { codec: codec, bitrate: QUALITY_HIGH });
     output.addVideoTrack(vs);
     await output.start();
     let t = 0;
@@ -1895,13 +1632,12 @@ async function exportMP4() {
       t += dur;
       const pct = Math.round(((i+1) / frames.length) * 100);
       progressFill.style.width = pct + '%';
-      modalText.textContent = `${ext.toUpperCase()} frame ${i+1} / ${frames.length}... ${pct}%`;
+      modalText.textContent = ext.toUpperCase() + ' frame ' + (i+1) + ' / ' + frames.length + '... ' + pct + '%';
     }
     await output.finalize();
     if (!output.target.buffer) throw new Error('No output buffer');
     return new Blob([output.target.buffer], { type: mimeType });
   }
-
   try {
     let blob, ext;
     try {
@@ -1913,7 +1649,7 @@ async function exportMP4() {
       blob = await tryEncode(WebMOutputFormat, 'vp9', 'webm', 'video/webm');
       ext = 'webm';
     }
-    showExportResult(blob, `${projectSlug()}_${Date.now()}.${ext}`, ext, 'video');
+    showExportResult(blob, projectSlug() + '_' + Date.now() + '.' + ext, ext, 'video');
   } catch (err) {
     console.error(err);
     modalText.textContent = 'Video export failed: ' + err.message;
@@ -1923,7 +1659,8 @@ async function exportMP4() {
   }
 }
 
-function toast(msg, duration = 2200) {
+function toast(msg, duration) {
+  duration = duration || 2200;
   const t = document.createElement('div');
   t.className = 'toast';
   t.textContent = msg;
@@ -1947,12 +1684,13 @@ function resizeConfetti() {
 resizeConfetti();
 window.addEventListener('resize', () => { resizeConfetti(); layoutCanvas(); });
 
-function spawnBurst(x, y, count, colorFn, speed, gravity = 0.35) {
+function spawnBurst(x, y, count, colorFn, speed, gravity) {
+  gravity = gravity || 0.35;
   for (let i = 0; i < count; i++) {
     const angle = Math.random() * Math.PI * 2;
     const v = speed * (0.4 + Math.random());
     confettiParticles.push({
-      x, y,
+      x: x, y: y,
       vx: Math.cos(angle) * v,
       vy: Math.sin(angle) * v - speed * 0.25,
       size: 4 + Math.random() * 8,
@@ -1960,20 +1698,20 @@ function spawnBurst(x, y, count, colorFn, speed, gravity = 0.35) {
       life: 1,
       rotation: Math.random() * Math.PI * 2,
       spin: (Math.random() - 0.5) * 0.4,
-      gravity
+      gravity: gravity
     });
   }
   if (!confettiRunning) { confettiRunning = true; confettiLoop(); }
 }
 
-function spawnConfetti(count = 150) {
-  spawnBurst(window.innerWidth/2, window.innerHeight/2, count,
-    () => `hsl(${Math.random()*360}, 85%, 60%)`, 14, 0.35);
+function spawnConfetti(count) {
+  spawnBurst(window.innerWidth/2, window.innerHeight/2, count || 150,
+    function() { return 'hsl(' + (Math.random()*360) + ', 85%, 60%)'; }, 14, 0.35);
 }
 
-function spawnSparkles(x, y, count = 35) {
-  spawnBurst(x, y, count,
-    () => `hsl(${40 + Math.random()*50}, 95%, ${55 + Math.random()*25}%)`, 7, 0.08);
+function spawnSparkles(x, y, count) {
+  spawnBurst(x, y, count || 35,
+    function() { return 'hsl(' + (40 + Math.random()*50) + ', 95%, ' + (55 + Math.random()*25) + '%)'; }, 7, 0.08);
 }
 
 function confettiLoop() {
@@ -2004,23 +1742,102 @@ function showSizeIndicator(x, y, size) {
   if (sizeIndicatorEl) sizeIndicatorEl.remove();
   clearTimeout(sizeIndicatorTimer);
   sizeIndicatorEl = document.createElement('div');
-  sizeIndicatorEl.textContent = 'Size: ' + size;
-  sizeIndicatorEl.style.cssText = `
-    position: fixed; left: ${x + 18}px; top: ${y - 12}px;
-    background: rgba(0,0,0,0.9); color: #fff; padding: 6px 12px;
-    border-radius: 6px; font-size: 13px; font-weight: bold;
-    border: 2px solid #667eea; pointer-events: none; z-index: 99997;
-    box-shadow: 0 4px 15px rgba(102,126,234,0.5);
-    transition: opacity 0.3s, transform 0.3s;
-  `;
+  sizeIndicatorEl.textContent = (currentTool === 'eraser' ? 'Eraser: ' : 'Size: ') + size;
+  sizeIndicatorEl.style.position = 'fixed';
+  sizeIndicatorEl.style.left = (x + 18) + 'px';
+  sizeIndicatorEl.style.top = (y - 12) + 'px';
+  sizeIndicatorEl.style.background = 'rgba(0,0,0,0.9)';
+  sizeIndicatorEl.style.color = '#fff';
+  sizeIndicatorEl.style.padding = '6px 12px';
+  sizeIndicatorEl.style.borderRadius = '6px';
+  sizeIndicatorEl.style.fontSize = '13px';
+  sizeIndicatorEl.style.fontWeight = 'bold';
+  sizeIndicatorEl.style.border = '2px solid ' + (currentTool === 'eraser' ? '#e74c3c' : '#667eea');
+  sizeIndicatorEl.style.pointerEvents = 'none';
+  sizeIndicatorEl.style.zIndex = '99997';
   document.body.appendChild(sizeIndicatorEl);
   sizeIndicatorTimer = setTimeout(() => {
     if (sizeIndicatorEl) {
       sizeIndicatorEl.style.opacity = '0';
-      sizeIndicatorEl.style.transform = 'translateY(-10px)';
       setTimeout(() => { if (sizeIndicatorEl) { sizeIndicatorEl.remove(); sizeIndicatorEl = null; } }, 350);
     }
   }, 600);
+}
+
+function updateSizeUI() {
+  const isEraser = currentTool === 'eraser';
+  sizeDisplay.textContent = currentSize;
+  sizeDisplay.classList.toggle('eraser', isEraser);
+  sizeSlider.value = currentSize;
+  const tip = isEraser
+    ? 'Eraser size|Adjust eraser radius. Wheel on canvas also works.'
+    : 'Brush size|Adjust thickness. Wheel on canvas also works.';
+  sizeDisplay.setAttribute('data-tip', tip);
+  sizeSlider.setAttribute('data-tip', tip);
+}
+
+const tooltipEl = document.createElement('div');
+tooltipEl.className = 'tooltip';
+document.body.appendChild(tooltipEl);
+let tooltipTarget = null;
+const supportsHover = window.matchMedia('(hover: hover)').matches;
+
+function positionTooltip(x, y) {
+  const rect = tooltipEl.getBoundingClientRect();
+  const pad = 14;
+  let left = x + pad;
+  let top = y + pad;
+  if (left + rect.width > window.innerWidth - 8) left = x - rect.width - pad;
+  if (top + rect.height > window.innerHeight - 8) top = y - rect.height - pad;
+  left = Math.max(8, left);
+  top = Math.max(8, top);
+  tooltipEl.style.left = left + 'px';
+  tooltipEl.style.top = top + 'px';
+}
+
+function showTooltip(target, x, y) {
+  const raw = target.getAttribute('data-tip') || '';
+  const parts = raw.split('|');
+  const name = parts[0] || '';
+  const desc = parts[1] || '';
+  tooltipEl.innerHTML = '';
+  const nameEl = document.createElement('div');
+  nameEl.className = 'tip-name';
+  nameEl.textContent = name;
+  tooltipEl.appendChild(nameEl);
+  if (desc) {
+    const descEl = document.createElement('div');
+    descEl.className = 'tip-desc';
+    descEl.textContent = desc;
+    tooltipEl.appendChild(descEl);
+  }
+  positionTooltip(x, y);
+  tooltipEl.classList.add('show');
+}
+
+function hideTooltip() {
+  tooltipTarget = null;
+  tooltipEl.classList.remove('show');
+}
+
+if (supportsHover) {
+  document.addEventListener('mouseover', (e) => {
+    const target = e.target.closest('[data-tip]');
+    if (!target) return;
+    if (target === tooltipTarget) return;
+    if (target.disabled) return;
+    tooltipTarget = target;
+    showTooltip(target, e.clientX, e.clientY);
+  });
+  document.addEventListener('mouseout', (e) => {
+    if (!tooltipTarget) return;
+    const related = e.relatedTarget;
+    if (related && tooltipTarget.contains(related)) return;
+    hideTooltip();
+  });
+  document.addEventListener('click', hideTooltip, true);
+  document.addEventListener('scroll', hideTooltip, true);
+  window.addEventListener('resize', hideTooltip);
 }
 
 canvas.addEventListener('pointerdown', (e) => {
@@ -2035,7 +1852,7 @@ canvas.addEventListener('contextmenu', (e) => {
   e.preventDefault();
   if (isPlaying) return;
   spawnBurst(e.clientX, e.clientY, 20,
-    () => `hsl(${Math.random()*360}, 85%, 65%)`, 5, 0.2);
+    function() { return 'hsl(' + (Math.random()*360) + ', 85%, 65%)'; }, 5, 0.2);
   toast('🎨 Right-click sparkle', 1500);
 });
 
@@ -2043,7 +1860,9 @@ canvas.addEventListener('wheel', (e) => {
   e.preventDefault();
   const dir = e.deltaY > 0 ? -1 : 1;
   currentSize = Math.max(1, Math.min(50, currentSize + dir));
-  document.getElementById('sizeSlider').value = currentSize;
+  if (currentTool === 'eraser') eraserSize = currentSize;
+  else penSize = currentSize;
+  updateSizeUI();
   updateStatus();
   showSizeIndicator(e.clientX, e.clientY, currentSize);
 }, { passive: false });
@@ -2079,7 +1898,7 @@ canvas.addEventListener('mousemove', (e) => {
 const ANIMATION_FACTS = [
   '🎬 The first animated film was Fantasmagorie (1908), made of 700 drawings!',
   '🎬 At 24 fps, one second of animation = 24 individual drawings.',
-  '🎬 Studio Ghibli has produced over 140,000 hand-drawn frames for Spirited Away.',
+  '🎬 Studio Ghibli produced over 140,000 frames for Spirited Away.',
   '🎬 "Onion skinning" is named after the translucent onion paper animators used.',
   '🎬 The bouncing ball is the very first animation exercise animators learn.',
   '🎬 Snow White used over 2 million individual drawings.',
@@ -2141,7 +1960,7 @@ document.addEventListener('keydown', (e) => {
 
 canvas.addEventListener('pointerdown', (e) => {
   if (e.button === 1) return;
-  if (!canvas.hasPointerCapture?.(e.pointerId)) {
+  if (!canvas.hasPointerCapture || !canvas.hasPointerCapture(e.pointerId)) {
     try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
   }
   startDraw(e);
@@ -2151,15 +1970,22 @@ canvas.addEventListener('pointerup', endDraw);
 canvas.addEventListener('pointercancel', endDraw);
 canvas.addEventListener('lostpointercapture', () => { if (isDrawing) endDraw(); });
 
-document.querySelectorAll('.tool-btn').forEach(btn => {
+const toolButtons = document.querySelectorAll('.tool-btn');
+toolButtons.forEach(btn => {
   btn.onclick = () => {
-    document.querySelectorAll('.tool-btn').forEach(b => {
+    const newTool = btn.dataset.tool;
+    if (newTool === currentTool) return;
+    if (currentTool === 'eraser') eraserSize = currentSize;
+    else penSize = currentSize;
+    toolButtons.forEach(b => {
       b.classList.remove('active');
       b.setAttribute('aria-pressed', 'false');
     });
     btn.classList.add('active');
     btn.setAttribute('aria-pressed', 'true');
-    currentTool = btn.dataset.tool;
+    currentTool = newTool;
+    currentSize = newTool === 'eraser' ? eraserSize : penSize;
+    updateSizeUI();
     updateStatus();
     btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
@@ -2167,8 +1993,11 @@ document.querySelectorAll('.tool-btn').forEach(btn => {
 
 document.getElementById('colorPicker').oninput = e => currentColor = e.target.value;
 document.getElementById('fillColorPicker').oninput = e => fillColor = e.target.value;
-document.getElementById('sizeSlider').oninput = e => {
+sizeSlider.oninput = e => {
   currentSize = parseInt(e.target.value);
+  if (currentTool === 'eraser') eraserSize = currentSize;
+  else penSize = currentSize;
+  updateSizeUI();
   updateStatus();
 };
 
@@ -2205,7 +2034,6 @@ document.getElementById('exportPngBtn').onclick = exportPNG;
 document.getElementById('exportGifBtn').onclick = exportGIF;
 document.getElementById('exportMp4Btn').onclick = exportMP4;
 document.getElementById('modalCloseBtn').onclick = closeModal;
-
 document.getElementById('modal').addEventListener('click', (e) => {
   if (e.target.id === 'modal') closeModal();
 });
@@ -2228,9 +2056,7 @@ document.getElementById('cancelNewProjectBtn').onclick = hideNewProjectModal;
 document.getElementById('newProjectModal').addEventListener('click', (e) => {
   if (e.target.id === 'newProjectModal') hideNewProjectModal();
 });
-document.getElementById('newProjectName').addEventListener('input', () => {
-  clearNewProjectError();
-});
+document.getElementById('newProjectName').addEventListener('input', clearNewProjectError);
 document.getElementById('newProjectName').addEventListener('keydown', (e) => {
   e.stopPropagation();
   if (e.key === 'Enter') { e.preventDefault(); submitNewProject(); }
@@ -2255,21 +2081,14 @@ document.getElementById('confirmModal').addEventListener('click', (e) => {
 document.addEventListener('keydown', e => {
   const inInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
   if (inInput) return;
-
   if (e.key === 'Escape') {
-    if (document.getElementById('confirmModal').classList.contains('show')) {
-      e.preventDefault(); hideConfirm(); return;
-    }
+    if (document.getElementById('confirmModal').classList.contains('show')) { e.preventDefault(); hideConfirm(); return; }
     if (document.getElementById('newProjectModal').classList.contains('show')) {
       if (!newProjectRequired) { e.preventDefault(); hideNewProjectModal(); }
       return;
     }
-    if (document.getElementById('projectsModal').classList.contains('show')) {
-      e.preventDefault(); closeProjectsModal(); return;
-    }
-    if (document.getElementById('modal').classList.contains('show')) {
-      e.preventDefault(); closeModal(); return;
-    }
+    if (document.getElementById('projectsModal').classList.contains('show')) { e.preventDefault(); closeProjectsModal(); return; }
+    if (document.getElementById('modal').classList.contains('show')) { e.preventDefault(); closeModal(); return; }
     if (isPlaying) { e.preventDefault(); stop(); return; }
   }
   if (mod(e) && e.key === 'z') { e.preventDefault(); undo(); }
@@ -2280,7 +2099,7 @@ document.addEventListener('keydown', e => {
   if (e.altKey && e.key === 'z') { e.preventDefault(); restoreFrame(); }
   if (e.key === ' ' && !document.getElementById('modal').classList.contains('show')) {
     e.preventDefault();
-    isPlaying ? stop() : play();
+    if (isPlaying) stop(); else play();
   }
   if (!isPlaying && e.key === 'ArrowRight' && currentFrame < frames.length - 1) selectFrame(currentFrame + 1);
   if (!isPlaying && e.key === 'ArrowLeft' && currentFrame > 0) selectFrame(currentFrame - 1);
@@ -2309,43 +2128,46 @@ document.addEventListener('visibilitychange', () => {
 function updateStatus() {
   const total = frames.reduce((s, f) => s + f.holdDuration, 0);
   const dur = (total / getFps()).toFixed(2);
+  const toolLabel = currentTool === 'eraser' ? 'eraser' : currentTool;
   const hint = currentTool === 'pen' ? ' (Shift = 🌈, wheel = size)' : currentTool === 'text' ? ' (click canvas)' : '';
   document.getElementById('status').textContent =
-    `Frame ${currentFrame + 1}/${frames.length} | ${currentTool}${hint} | Size: ${currentSize} | ${dur}s`;
+    'Frame ' + (currentFrame + 1) + '/' + frames.length + ' | ' + toolLabel + hint + ' | Size: ' + currentSize + ' | ' + dur + 's';
 }
 
-function initProjectSystem() {
-  let data = null;
-  try { data = Storage.get(STORAGE_KEY); } catch (_) {}
-
-  if (data && data.projects && data.order) {
-    projects = data.projects;
-    projectOrder = data.order.filter(id => projects[id]);
-    if (projectOrder.length === 0) {
+async function initProjectSystem() {
+  try {
+    await Storage.init();
+    let data = null;
+    try { data = await Storage.get(STORAGE_KEY); } catch (_) {}
+    if (data && data.projects && data.order) {
+      projects = data.projects;
+      projectOrder = data.order.filter(id => projects[id]);
+      if (projectOrder.length === 0) {
+        showNewProjectModal(true);
+        return;
+      }
+      const active = (data.active && projects[data.active]) ? data.active : projectOrder[0];
+      openProject(active);
+    } else {
       showNewProjectModal(true);
-      return;
     }
-    const active = (data.active && projects[data.active]) ? data.active : projectOrder[0];
-    openProject(active);
-  } else {
+    if (!Storage.isAvailable()) {
+      setTimeout(() => {
+        toast("⚠️ Storage unavailable — projects won't persist across reloads", 5000);
+      }, 1500);
+    }
+  } catch (err) {
+    console.error('[WAnis] Init failed:', err);
     showNewProjectModal(true);
   }
-
-  if (!Storage.isAvailable()) {
-    setTimeout(() => {
-      toast("⚠️ LocalStorage unavailable — projects won't persist across reloads", 5000);
-    }, 1500);
-  }
 }
 
+updateSizeUI();
 layoutCanvas();
 drawGrid();
 updateStatus();
 updateTrashButton();
-initProjectSystem();
-
-setTimeout(() => toast('💡 Tip: hold Shift while drawing for rainbow pen', 3500), 800);
-setTimeout(() => toast('🖱 Try middle-click, right-click, scroll, or shake the mouse on the canvas', 4000), 5000);
+initProjectSystem().catch(err => console.error('[WAnis] Init rejected:', err));
 </script>
 
 </body>
