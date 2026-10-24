@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>WAnis - Web Animate Studio</title>
+<!-- Added QRCode.js for offline QR generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   :root {
     --glass-bg: rgba(25, 25, 45, 0.55);
-    --glass-bg-hover: rgba(50, 50, 75, 0.75);
     --glass-border: rgba(255, 255, 255, 0.09);
-    --glass-border-hover: rgba(255, 255, 255, 0.18);
     --glass-highlight: rgba(255, 255, 255, 0.06);
     --accent: #667eea;
     --accent-glow: rgba(102, 126, 234, 0.4);
@@ -31,8 +31,6 @@
       #0a0a14;
     background-attachment: fixed;
   }
-
-  /* ============ HEADER ============ */
   .header {
     padding: 10px 20px;
     display: flex; justify-content: space-between; align-items: center;
@@ -60,8 +58,6 @@
   .project-badge:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.35); }
   .project-badge.hidden { display: none; }
   .controls { display: flex; gap: 6px; flex-wrap: wrap; }
-
-  /* ============ BUTTONS ============ */
   button {
     position: relative; overflow: hidden;
     background: rgba(45, 45, 70, 0.55);
@@ -79,9 +75,8 @@
   }
   button:hover:not(:disabled) {
     background: rgba(60, 60, 95, 0.7);
-    border-color: var(--glass-border-hover);
+    border-color: rgba(255, 255, 255, 0.18);
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
   }
   button:active:not(:disabled) { transform: translateY(0); }
   button.active {
@@ -92,14 +87,11 @@
   button.success {
     background: linear-gradient(135deg, rgba(39, 174, 96, 0.85), rgba(30, 140, 75, 0.85));
     border-color: rgba(60, 200, 110, 0.4);
-    box-shadow: 0 4px 16px rgba(39, 174, 96, 0.3), inset 0 1px 0 rgba(255,255,255,0.15);
   }
-  button.success:hover:not(:disabled) { background: linear-gradient(135deg, rgba(45, 200, 110, 0.95), rgba(35, 165, 90, 0.95)); }
   button.danger {
     background: linear-gradient(135deg, rgba(231, 76, 60, 0.85), rgba(200, 55, 40, 0.85));
     border-color: rgba(255, 100, 80, 0.4);
   }
-  button.danger:hover:not(:disabled) { background: linear-gradient(135deg, rgba(255, 85, 68, 0.95), rgba(220, 60, 45, 0.95)); }
   button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
   button:focus-visible { outline: 2px solid #ffd700; outline-offset: 2px; }
   .ripple {
@@ -108,11 +100,7 @@
     transform: scale(0); animation: ripple-anim 0.6s ease-out;
   }
   @keyframes ripple-anim { to { transform: scale(2.5); opacity: 0; } }
-
-  /* ============ MAIN LAYOUT ============ */
   .main { display: flex; flex: 1; overflow: hidden; }
-
-  /* ============ TOOLBAR ============ */
   .toolbar {
     width: 82px; padding: 10px 5px;
     display: flex; flex-direction: column; gap: 8px; align-items: center;
@@ -125,7 +113,6 @@
   }
   .toolbar::-webkit-scrollbar { width: 6px; }
   .toolbar::-webkit-scrollbar-thumb { background: rgba(102,126,234,0.5); border-radius: 3px; }
-
   .tool-btn {
     width: 54px; min-height: 52px; border-radius: 12px;
     background: rgba(45, 45, 70, 0.55);
@@ -142,7 +129,7 @@
   }
   .tool-btn .label { font-size: 8px; margin-top: 2px; color: var(--text-secondary); }
   .tool-btn .kbd-badge { position: absolute; top: 3px; right: 5px; font-size: 8px; color: var(--accent); font-weight: bold; opacity: 0.5; }
-  .tool-btn:hover { background: rgba(60, 60, 95, 0.7); transform: translateY(-1px); border-color: var(--glass-border-hover); }
+  .tool-btn:hover { background: rgba(60, 60, 95, 0.7); transform: translateY(-1px); }
   .tool-btn.active {
     background: linear-gradient(135deg, rgba(102, 126, 234, 0.85), rgba(118, 75, 162, 0.85));
     border-color: rgba(255,255,255,0.3);
@@ -150,7 +137,6 @@
   }
   .tool-btn.active .kbd-badge { color: #ffd700; opacity: 1; }
   .tool-btn.active .label { color: var(--text-primary); }
-
   .color-pair { display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; }
   .color-pair span { font-size: 9px; color: var(--text-secondary); }
   .color-picker {
@@ -158,8 +144,7 @@
     border: 1px solid var(--glass-border);
     border-radius: 10px; cursor: pointer;
     background: rgba(20, 20, 35, 0.6);
-    backdrop-filter: blur(10px);
-    padding: 2px;
+    backdrop-filter: blur(10px); padding: 2px;
   }
   .color-picker::-webkit-color-swatch-wrapper { padding: 0; }
   .color-picker::-webkit-color-swatch { border: none; border-radius: 7px; }
@@ -172,25 +157,19 @@
     width: 14px; height: 14px;
     border: 1px solid rgba(255,255,255,0.25);
     border-radius: 4px; cursor: pointer; padding: 0;
-    transition: transform 0.1s, border-color 0.1s;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    transition: transform 0.1s;
   }
   .recent-color:hover { transform: scale(1.3); border-color: #ffd700; z-index: 2; }
   .size-value {
-    width: 52px; height: 30px;
-    border-radius: 8px;
+    width: 52px; height: 30px; border-radius: 8px;
     background: rgba(15, 15, 30, 0.6);
     border: 1px solid var(--glass-border);
     display: flex; align-items: center; justify-content: center;
     font-size: 13px; font-weight: bold; color: var(--accent);
     flex-shrink: 0; user-select: none;
-    backdrop-filter: blur(10px);
-    transition: all 0.2s;
   }
   .size-value.eraser { color: var(--danger); border-color: rgba(231,76,60,0.4); }
   .size-slider { width: 48px; writing-mode: vertical-lr; direction: rtl; height: 90px; flex-shrink: 0; accent-color: var(--accent); }
-
-  /* ============ CANVAS AREA ============ */
   .canvas-area {
     flex: 1; padding: 20px;
     display: flex; align-items: center; justify-content: center;
@@ -199,25 +178,14 @@
   }
   .canvas-wrapper {
     position: relative; background: #fff;
-    box-shadow:
-      0 0 60px rgba(102, 126, 234, 0.25),
-      0 20px 60px rgba(0, 0, 0, 0.5);
-    border-radius: 4px;
-    overflow: hidden;
+    box-shadow: 0 0 60px rgba(102, 126, 234, 0.25), 0 20px 60px rgba(0, 0, 0, 0.5);
+    border-radius: 4px; overflow: hidden;
   }
-  #canvas, #onionCanvas, #gridCanvas {
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%; display: block;
-  }
+  #canvas, #onionCanvas, #gridCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
   #onionCanvas, #gridCanvas { pointer-events: none; }
   #canvas { cursor: crosshair; touch-action: none; outline: none; }
-
-  .canvas-overlay-btns {
-    position: absolute; top: 10px; right: 10px;
-    display: flex; gap: 6px; z-index: 10; flex-direction: column;
-  }
+  .canvas-overlay-btns { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 10; flex-direction: column; }
   .canvas-overlay-btns button { padding: 6px 12px; font-size: 12px; }
-
   .status {
     position: absolute; bottom: 10px; left: 10px;
     background: rgba(15, 15, 30, 0.75);
@@ -230,18 +198,13 @@
   .status-flash {
     position: absolute; bottom: 45px; left: 10px;
     background: linear-gradient(135deg, #ffd700, #ffb300);
-    color: #1a1a2e;
-    font-weight: bold;
-    padding: 6px 14px; border-radius: 20px;
-    font-size: 12px;
+    color: #1a1a2e; font-weight: bold;
+    padding: 6px 14px; border-radius: 20px; font-size: 12px;
     opacity: 0; transform: translateY(10px);
     transition: opacity 0.25s, transform 0.25s;
     pointer-events: none; z-index: 6;
-    box-shadow: 0 4px 16px rgba(255, 215, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.5);
   }
   .status-flash.show { opacity: 1; transform: translateY(0); }
-
-  /* ============ TIMELINE ============ */
   .timeline {
     padding: 10px;
     display: flex; align-items: center; gap: 10px;
@@ -253,27 +216,18 @@
   }
   .fps-control {
     display: flex; flex-direction: column; align-items: center; gap: 5px;
-    padding: 0 10px; border-right: 1px solid var(--glass-border);
-    flex-shrink: 0;
+    padding: 0 10px; border-right: 1px solid var(--glass-border); flex-shrink: 0;
   }
   .fps-control label { font-size: 11px; color: var(--text-secondary); }
   .fps-control input {
     width: 60px; padding: 5px;
-    background: rgba(15, 15, 30, 0.6);
-    color: var(--text-primary);
-    border: 1px solid var(--glass-border);
-    border-radius: 6px; text-align: center; font-family: inherit;
-    backdrop-filter: blur(10px);
+    background: rgba(15, 15, 30, 0.6); color: var(--text-primary);
+    border: 1px solid var(--glass-border); border-radius: 6px;
+    text-align: center; font-family: inherit;
   }
-  .fps-control input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
-
-  .frame-actions {
-    display: flex; gap: 4px; padding: 0 10px;
-    border-right: 1px solid var(--glass-border);
-    align-items: center; flex-shrink: 0;
-  }
+  .fps-control input:focus { outline: none; border-color: var(--accent); }
+  .frame-actions { display: flex; gap: 4px; padding: 0 10px; border-right: 1px solid var(--glass-border); align-items: center; flex-shrink: 0; }
   .frame-actions button { padding: 7px 9px; font-size: 14px; min-width: 36px; justify-content: center; }
-
   .frames-strip-wrap { flex: 1; position: relative; display: flex; min-width: 0; }
   .frames-strip-wrap::before, .frames-strip-wrap::after {
     content: ''; position: absolute; top: 0; bottom: 0; width: 24px;
@@ -283,7 +237,6 @@
   .frames-strip-wrap::after { right: 0; background: linear-gradient(to left, rgba(22,33,62,0.9), transparent); }
   .frames-strip-wrap.has-overflow-left::before { opacity: 1; }
   .frames-strip-wrap.has-overflow-right::after { opacity: 1; }
-
   .frames-container {
     flex: 1; display: flex; gap: 6px;
     overflow-x: auto; overflow-y: hidden;
@@ -294,11 +247,8 @@
   .frames-container::-webkit-scrollbar { height: 8px; }
   .frames-container::-webkit-scrollbar-track { background: rgba(15,15,30,0.5); border-radius: 4px; }
   .frames-container::-webkit-scrollbar-thumb { background: rgba(102,126,234,0.6); border-radius: 4px; }
-  .frames-container::-webkit-scrollbar-thumb:hover { background: rgba(102,126,234,0.9); }
-
   .frame {
-    min-width: 80px; height: 80px;
-    background: #fff;
+    min-width: 80px; height: 80px; background: #fff;
     border: 2px solid rgba(255,255,255,0.15);
     border-radius: 8px; cursor: pointer;
     position: relative; overflow: hidden; flex-shrink: 0;
@@ -306,17 +256,12 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
   }
   .frame:hover { border-color: rgba(102,126,234,0.7); transform: translateY(-1px); }
-  .frame.active {
-    border-color: #ffd700;
-    box-shadow: 0 0 12px rgba(255,215,0,0.5), 0 4px 12px rgba(0,0,0,0.4);
-  }
+  .frame.active { border-color: #ffd700; box-shadow: 0 0 12px rgba(255,215,0,0.5); }
   .frame canvas { width: 100%; height: 100%; display: block; }
   .frame .num {
     position: absolute; bottom: 2px; left: 2px;
-    background: rgba(0,0,0,0.65);
-    backdrop-filter: blur(4px);
-    color: #fff; font-size: 10px;
-    padding: 1px 5px; border-radius: 4px;
+    background: rgba(0,0,0,0.65); color: #fff;
+    font-size: 10px; padding: 1px 5px; border-radius: 4px;
   }
   .frame .hold {
     position: absolute; bottom: 2px; right: 2px;
@@ -324,18 +269,11 @@
     color: #fff; font-size: 10px; font-weight: bold;
     padding: 2px 6px; border-radius: 4px;
     cursor: pointer; user-select: none;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    transition: transform 0.1s;
   }
-  .frame .hold:hover { transform: scale(1.1); }
-  .frame .hold.long {
-    background: linear-gradient(135deg, #f39c12, #e67e22);
-    color: #1a1a2e;
-  }
+  .frame .hold.long { background: linear-gradient(135deg, #f39c12, #e67e22); color: #1a1a2e; }
   .frame .del {
     position: absolute; top: 2px; right: 2px;
-    background: rgba(231, 76, 60, 0.9);
-    color: #fff; border: none;
+    background: rgba(231, 76, 60, 0.9); color: #fff; border: none;
     width: 20px; height: 20px; border-radius: 50%;
     font-size: 12px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
@@ -343,7 +281,6 @@
     touch-action: manipulation;
   }
   .frame:hover .del, .frame.active .del { opacity: 1; }
-
   .add-frame {
     min-width: 80px; height: 80px;
     background: rgba(45, 45, 70, 0.5);
@@ -351,36 +288,25 @@
     border-radius: 8px; cursor: pointer;
     font-size: 30px; color: var(--accent);
     flex-shrink: 0; font-family: inherit;
-    backdrop-filter: blur(10px);
-    transition: all 0.2s;
     display: flex; align-items: center; justify-content: center;
   }
-  .add-frame:hover { background: rgba(60, 60, 95, 0.7); border-color: var(--accent); transform: translateY(-1px); }
-
-  /* ============ MODALS ============ */
+  .add-frame:hover { background: rgba(60, 60, 95, 0.7); }
   .modal {
     position: fixed; inset: 0;
     background: rgba(5, 5, 15, 0.5);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
-    display: none; align-items: center; justify-content: center;
-    z-index: 100;
-    animation: modal-fade 0.2s ease;
+    display: none; align-items: center; justify-content: center; z-index: 100;
   }
   .modal.show { display: flex; }
-  @keyframes modal-fade { from { opacity: 0; } to { opacity: 1; } }
   #confirmModal { z-index: 102; }
   .modal-content {
     background: rgba(25, 25, 45, 0.78);
     backdrop-filter: blur(30px) saturate(180%);
     -webkit-backdrop-filter: blur(30px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow:
-      0 24px 64px rgba(0, 0, 0, 0.6),
-      inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.3);
-    padding: 30px;
-    border-radius: 18px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    padding: 30px; border-radius: 18px;
     max-width: 520px; width: calc(100% - 40px);
     text-align: center;
     max-height: 85vh; overflow-y: auto;
@@ -388,27 +314,15 @@
   .modal-content h2 { margin-bottom: 15px; color: var(--text-primary); font-weight: 600; }
   .modal-content p { color: var(--text-secondary); margin-bottom: 20px; font-size: 13px; line-height: 1.5; }
   .modal-content button { margin: 5px; }
-  .modal-buttons {
-    display: flex; gap: 8px;
-    justify-content: center; flex-wrap: wrap;
-    margin-top: 16px;
-  }
-
+  .modal-buttons { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
   .fallback-hint {
     font-size: 12px; color: var(--text-secondary);
     background: rgba(102, 126, 234, 0.1);
     border: 1px solid rgba(102, 126, 234, 0.3);
-    border-radius: 10px;
-    padding: 10px 14px; margin: 12px 0;
+    border-radius: 10px; padding: 10px 14px; margin: 12px 0;
     line-height: 1.5; text-align: left;
   }
-
-  /* ============ PROJECT LIST ============ */
-  .project-list {
-    display: flex; flex-direction: column; gap: 8px;
-    max-height: 50vh; overflow-y: auto;
-    margin: 16px 0; text-align: left; padding-right: 4px;
-  }
+  .project-list { display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; margin: 16px 0; text-align: left; }
   .project-item {
     display: flex; align-items: center; gap: 10px;
     padding: 12px 14px;
@@ -416,13 +330,11 @@
     border-radius: 12px;
     border: 1px solid var(--glass-border);
     cursor: pointer;
-    backdrop-filter: blur(10px);
-    transition: all 0.2s;
   }
-  .project-item:hover { background: rgba(60, 60, 95, 0.7); border-color: rgba(102,126,234,0.6); transform: translateY(-1px); }
-  .project-item.active { border-color: #ffd700; background: rgba(60, 60, 95, 0.7); box-shadow: 0 0 12px rgba(255,215,0,0.2); }
+  .project-item:hover { background: rgba(60, 60, 95, 0.7); border-color: rgba(102,126,234,0.6); }
+  .project-item.active { border-color: #ffd700; background: rgba(60, 60, 95, 0.7); }
   .project-item .info { flex: 1; min-width: 0; }
-  .project-item .pname { font-weight: 600; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; color: var(--text-primary); }
+  .project-item .pname { font-weight: 600; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
   .project-item .pmeta { font-size: 11px; color: var(--text-muted); }
   .project-item .rename-proj, .project-item .del-proj {
     color: #fff; border: none;
@@ -430,125 +342,80 @@
     cursor: pointer; font-size: 16px;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; padding: 0;
-    touch-action: manipulation;
-    transition: transform 0.15s;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   }
   .project-item .rename-proj { background: linear-gradient(135deg, var(--accent), #7a8ef0); }
-  .project-item .rename-proj:hover { transform: scale(1.1); }
   .project-item .del-proj { background: linear-gradient(135deg, var(--danger), #c93e2d); font-size: 18px; }
-  .project-item .del-proj:hover { transform: scale(1.1); }
   .project-empty { text-align: center; padding: 30px 20px; color: var(--text-secondary); font-size: 13px; line-height: 1.6; }
-
-  /* ============ INPUTS ============ */
-  .new-project-input, .share-input, .size-inputs input {
+  .new-project-input, .share-input {
     width: 100%; padding: 12px 14px;
     background: rgba(15, 15, 30, 0.6);
-    backdrop-filter: blur(10px);
     color: var(--text-primary);
     border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 10px;
-    font-family: inherit; font-size: 15px;
+    border-radius: 10px; font-family: inherit; font-size: 15px;
     margin-bottom: 14px; outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  .new-project-input:focus, .share-input:focus, .size-inputs input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow);
-  }
+  .new-project-input:focus, .share-input:focus { border-color: var(--accent); }
   .new-project-input.error { border-color: var(--danger); }
   .new-project-error {
     font-size: 13px; color: #ff8080;
     background: rgba(231, 76, 60, 0.15);
     border: 1px solid rgba(231, 76, 60, 0.4);
-    border-radius: 10px;
-    padding: 10px 14px; margin-bottom: 14px; text-align: left;
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; text-align: left;
   }
   .new-project-error.hidden { display: none; }
-
   .storage-warning {
     font-size: 12px; color: #ffb86b;
     background: rgba(255, 159, 67, 0.12);
     border: 1px solid rgba(255, 159, 67, 0.35);
-    border-radius: 10px;
-    padding: 10px 14px; margin-bottom: 14px;
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 14px;
     line-height: 1.5; text-align: left;
   }
-
-  /* ============ CANVAS SIZE MODAL ============ */
-  .preset-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-    margin-bottom: 16px;
-  }
-  .preset-grid button {
-    padding: 12px; font-size: 13px;
-    justify-content: center; flex-direction: column; gap: 2px;
-    text-align: center;
-  }
+  .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .preset-grid button { padding: 12px; font-size: 13px; justify-content: center; flex-direction: column; gap: 2px; text-align: center; }
   .preset-grid button small { font-size: 10px; color: var(--text-muted); font-weight: normal; }
   .size-inputs { display: flex; gap: 10px; margin-bottom: 12px; }
-  .size-inputs label {
-    flex: 1; display: flex; flex-direction: column; gap: 4px;
-    text-align: left; font-size: 12px; color: var(--text-secondary);
-  }
-  .size-inputs input { margin-bottom: 0; }
-  .modal-content .hint {
-    font-size: 12px; color: var(--text-muted);
-    line-height: 1.5; margin-bottom: 12px;
-  }
-
-  /* ============ MISC ============ */
+  .size-inputs label { flex: 1; display: flex; flex-direction: column; gap: 4px; text-align: left; font-size: 12px; color: var(--text-secondary); }
+  .size-inputs input { width: 100%; padding: 10px; background: rgba(15, 15, 30, 0.6); color: var(--text-primary); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; font-family: inherit; font-size: 14px; outline: none; }
+  .size-inputs input:focus { border-color: var(--accent); }
+  .modal-content .hint { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
   .progress-bar { width: 100%; height: 8px; background: rgba(15,15,30,0.6); border-radius: 4px; overflow: hidden; margin: 15px 0; }
   .progress-bar .fill { height: 100%; background: linear-gradient(90deg, var(--accent), #764ba2); width: 0%; transition: width 0.15s; }
-
   .playback-overlay {
     position: fixed; inset: 0; background: #000;
     z-index: 9999; display: none; align-items: center; justify-content: center;
     cursor: pointer;
   }
   .playback-overlay.show { display: flex; }
-  .playback-overlay canvas { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 6px; background: #fff; box-shadow: 0 0 80px rgba(102,126,234,0.3); }
+  .playback-overlay canvas { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 6px; background: #fff; }
   .playback-hint {
     position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
     color: rgba(255,255,255,0.65); font-size: 13px;
     pointer-events: none;
-    background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
-    padding: 8px 18px; border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.5); padding: 8px 18px; border-radius: 20px;
   }
-
   .toast {
     position: fixed; bottom: 100px; left: 50%;
     transform: translateX(-50%) translateY(20px);
     background: rgba(25, 25, 45, 0.85);
     backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
     color: var(--text-primary);
     padding: 12px 24px; border-radius: 12px;
     font-size: 14px; opacity: 0;
     transition: all 0.3s ease;
     pointer-events: none; z-index: 99998;
     border: 1px solid rgba(102, 126, 234, 0.4);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 40px rgba(102, 126, 234, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
     max-width: 80vw; text-align: center;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
   .tooltip {
     position: fixed;
     background: rgba(15, 15, 30, 0.9);
     backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
     color: var(--text-primary);
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 12px;
-    pointer-events: none;
-    z-index: 100000;
-    opacity: 0;
-    transition: opacity 0.15s;
+    padding: 10px 14px; border-radius: 10px; font-size: 12px;
+    pointer-events: none; z-index: 100000;
+    opacity: 0; transition: opacity 0.15s;
     border: 1px solid rgba(102, 126, 234, 0.4);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.08);
     max-width: 260px; line-height: 1.4;
   }
   .tooltip.show { opacity: 1; }
@@ -561,6 +428,43 @@
     font-size: 10px; font-weight: bold;
     margin-left: 4px;
   }
+  .share-actions { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+  .share-actions button { width: 100%; justify-content: center; padding: 12px; font-size: 14px; }
+  
+  /* QR Code container */
+  .qr-box {
+    display: flex; flex-direction: column; align-items: center;
+    background: #fff; padding: 12px; border-radius: 12px;
+    margin: 12px auto; width: fit-content;
+  }
+  .qr-box canvas, .qr-box img { display: block; width: 200px !important; height: 200px !important; }
+  .qr-box small { color: #333; font-size: 11px; margin-top: 8px; text-align: center; }
+
+  /* ═══ SIMPLE UI MODE ═══ */
+  body.simple-ui .header, body.simple-ui .toolbar, body.simple-ui .timeline { background: #16213e !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important; border-color: #2d2d44 !important; }
+  body.simple-ui, body.simple-ui .canvas-area { background: #0f0f1e !important; background-image: none !important; }
+  body.simple-ui .modal { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: rgba(0,0,0,0.85) !important; }
+  body.simple-ui .modal-content, body.simple-ui .toast, body.simple-ui .tooltip, body.simple-ui .project-item, body.simple-ui .status, body.simple-ui .status-flash { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important; background: #1a1a2e !important; border: 1px solid #444 !important; transition: none !important; }
+  body.simple-ui .status-flash { background: #ffd700 !important; color: #1a1a2e !important; }
+  body.simple-ui button, body.simple-ui .tool-btn, body.simple-ui input, body.simple-ui .color-picker { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; box-shadow: none !important; background: #2d2d44 !important; border: 1px solid #444 !important; transition: none !important; transform: none !important; }
+  body.simple-ui button.active, body.simple-ui .tool-btn.active, body.simple-ui button.success { background: #667eea !important; border-color: #667eea !important; box-shadow: none !important; }
+  body.simple-ui button.danger, body.simple-ui .project-item .del-proj { background: #e74c3c !important; }
+  body.simple-ui .ripple { display: none !important; }
+  body.simple-ui .frame.active { box-shadow: none !important; outline: 3px solid #ffd700; }
+  body.simple-ui .frame .hold { background: #667eea !important; }
+  body.simple-ui .frame .hold.long { background: #f39c12 !important; }
+  body.simple-ui .tool-btn .kbd-badge { display: none !important; }
+  body.simple-ui .canvas-wrapper { box-shadow: none !important; }
+  body.simple-ui * { animation: none !important; }
+
+  body.touch-ui button { min-height: 44px; padding: 10px 14px; }
+  body.touch-ui .tool-btn { width: 60px; min-height: 58px; font-size: 22px; }
+  body.touch-ui .toolbar { width: 92px; }
+  body.touch-ui .tool-btn .label { font-size: 10px; }
+  body.touch-ui .frame { min-width: 90px; height: 90px; }
+  body.touch-ui .frames-container { gap: 8px; }
+  body.touch-ui .frame .del { opacity: 1; width: 24px; height: 24px; font-size: 14px; }
+  body.touch-ui .project-item .rename-proj, body.touch-ui .project-item .del-proj { width: 44px; height: 44px; font-size: 18px; }
 </style>
 </head>
 <body>
@@ -572,16 +476,17 @@
   </div>
   <div class="controls">
     <button id="projectsBtn" data-tip="Projects|Create, switch, rename, or delete projects">📁 Projects</button>
-    <button id="shareBtn" data-tip="Share|Copy a link anyone can open|Get the fun started">📤 Share</button>
+    <button id="shareBtn" data-tip="Share|Get a link anyone can open">📤 Share</button>
     <button id="sizeBtn" data-tip="Canvas size|Change width and height">📐 Size</button>
+    <button id="uiToggleBtn" data-tip="UI mode|Switch between glass and simple"><span id="uiToggleIcon">✨</span></button>
     <button id="playBtn" class="success" data-tip="Play|Preview your animation|Space">▶ Play</button>
     <button id="stopBtn" data-tip="Stop|Stop playback|Space">⏹ Stop</button>
     <button id="undoBtn" data-tip="Undo|Take back the last thing|Ctrl+Z">↶ Undo</button>
     <button id="redoBtn" data-tip="Redo|Put it back|Ctrl+Y">↷ Redo</button>
     <button id="clearBtn" data-tip="Clear|Clear current frame or all frames">🗑 Clear</button>
     <button id="exportGifBtn" data-tip="GIF|Save animation as a GIF|Shift+click = instant download">🎞 GIF</button>
-    <button id="exportMp4Btn" data-tip="Video|Save as MP4 (or WebM if needed)|Shift+click = instant download">🎥 MP4</button>
-    <button id="exportPngBtn" data-tip="PNG|Save current frame as image|Shift+click = instant download">🖼 PNG</button>
+    <button id="exportMp4Btn" data-tip="Video|Save as MP4 (or WebM if needed)|Shift+click = instant">🎥 MP4</button>
+    <button id="exportPngBtn" data-tip="PNG|Save current frame as image|Shift+click = instant">🖼 PNG</button>
   </div>
 </div>
 
@@ -589,17 +494,17 @@
   <div class="toolbar" id="toolbar">
     <button type="button" class="tool-btn active" data-tool="pen" aria-pressed="true" data-tip="Pen|Draw freehand|B"><span>✏️</span><span class="label">Pen</span><span class="kbd-badge">B</span></button>
     <button type="button" class="tool-btn" data-tool="eraser" aria-pressed="false" data-tip="Eraser|Paint to erase strokes|E"><span>🧽</span><span class="label">Eraser</span><span class="kbd-badge">E</span></button>
-    <button type="button" class="tool-btn" data-tool="line" aria-pressed="false" data-tip="Line|Straight line between two points|L"><span>📏</span><span class="label">Line</span><span class="kbd-badge">L</span></button>
+    <button type="button" class="tool-btn" data-tool="line" aria-pressed="false" data-tip="Line|Straight line|L"><span>📏</span><span class="label">Line</span><span class="kbd-badge">L</span></button>
     <button type="button" class="tool-btn" data-tool="rect" aria-pressed="false" data-tip="Rectangle|Drag to draw a box|R"><span>⬜</span><span class="label">Rect</span><span class="kbd-badge">R</span></button>
     <button type="button" class="tool-btn" data-tool="circle" aria-pressed="false" data-tip="Circle|Drag to draw an ellipse|C"><span>⭕</span><span class="label">Circle</span><span class="kbd-badge">C</span></button>
     <button type="button" class="tool-btn" data-tool="fill" aria-pressed="false" data-tip="Fill|Bucket-fill a region|F"><span>🪣</span><span class="label">Fill</span><span class="kbd-badge">F</span></button>
-    <button type="button" class="tool-btn" data-tool="text" aria-pressed="false" data-tip="Text|Click empty space to add text. Drag existing text to move it|T"><span>🔤</span><span class="label">Text</span><span class="kbd-badge">T</span></button>
+    <button type="button" class="tool-btn" data-tool="text" aria-pressed="false" data-tip="Text|Click empty space to add, drag text to move|T"><span>🔤</span><span class="label">Text</span><span class="kbd-badge">T</span></button>
     <div class="color-pair">
       <input type="color" id="colorPicker" class="color-picker" value="#000000" aria-label="Pen color" data-tip="Pen color|Used by pen, shapes, and text">
       <span>Pen</span>
     </div>
     <div class="color-pair">
-      <input type="color" id="fillColorPicker" class="color-picker" value="#ff6b6b" aria-label="Fill color" data-tip="Fill color|Used by the bucket tool">
+      <input type="color" id="fillColorPicker" class="color-picker" value="#ff6b6b" aria-label="Fill color" data-tip="Fill color|Used by bucket tool">
       <span>Fill</span>
     </div>
     <div class="recent-colors" id="recentColors"></div>
@@ -614,8 +519,9 @@
       <canvas id="gridCanvas" width="800" height="500"></canvas>
     </div>
     <div class="canvas-overlay-btns">
+      <!-- ONION AND GRID ARE NOW ACTIVE BY DEFAULT -->
       <button id="onionBtn" class="active" data-tip="Onion skin|Faintly show prev/next frame">👁 Onion</button>
-      <button id="gridBtn" data-tip="Grid|Show alignment grid">▦ Grid</button>
+      <button id="gridBtn" class="active" data-tip="Grid|Show alignment grid">▦ Grid</button>
     </div>
     <div class="status" id="status">Frame 1/1</div>
     <div class="status-flash" id="statusFlash"></div>
@@ -714,11 +620,12 @@
 
 <div class="modal" id="shareModal">
   <div class="modal-content">
-    <h2>🔗 Share Project</h2>
-    <p id="shareStatus">Preparing link…</p>
-    <input type="text" id="shareUrlInput" class="share-input" readonly onclick="this.select()">
+    <h2>📤 Share Project</h2>
+    <p id="shareStatus">Preparing…</p>
+    <input type="text" id="shareUrlInput" class="share-input" readonly onclick="this.select()" style="display:none;">
+    <div id="shareQrBox" class="qr-box" style="display:none;"></div>
+    <div id="shareActions" class="share-actions"></div>
     <div class="modal-buttons">
-      <button id="copyShareUrlBtn" class="success">📋 Copy link</button>
       <button id="closeShareBtn">Close</button>
     </div>
   </div>
@@ -730,21 +637,66 @@
 </div>
 
 <script type="module">
-// ============ CONSTANTS ============
+// ═══════════════ DEVICE DETECTION ═══════════════
+const DeviceProfile = (() => {
+  const ua = (navigator.userAgent || '').toLowerCase();
+  const isTV = /web0s|webos|tizen|smart-tv|smarttv|bravia|aft[bm]|fire tv|firetv|roku|appletv|android tv|googletv|tvos|hbbtv|netcast|viera|opera tv|pov_tv|crkey|playstation|xbox/i.test(ua);
+  const cores = navigator.hardwareConcurrency || 4;
+  const mem = navigator.deviceMemory || 4;
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hasBackdropFilter = (() => {
+    if (typeof CSS === 'undefined' || !CSS.supports) return false;
+    return CSS.supports('backdrop-filter', 'blur(10px)') || CSS.supports('-webkit-backdrop-filter', 'blur(10px)');
+  })();
+  let benchMs = 0;
+  try {
+    const t0 = performance.now();
+    let acc = 0;
+    for (let i = 0; i < 50000; i++) acc += Math.sqrt(i);
+    benchMs = performance.now() - t0;
+  } catch (_) { benchMs = 999; }
+
+  let stored = null;
+  try { stored = localStorage.getItem('wanis_ui_mode'); } catch (_) {}
+  const forceSimple = stored === 'simple';
+  const forceRich = stored === 'rich';
+  let simple = false;
+  const reasons = [];
+  if (forceSimple) { simple = true; reasons.push('manual-simple'); }
+  else if (forceRich) { simple = false; reasons.push('manual-rich'); }
+  else {
+    if (isTV) { simple = true; reasons.push('tv'); }
+    if (cores <= 2) { simple = true; reasons.push('cores=' + cores); }
+    if (mem <= 2) { simple = true; reasons.push('mem=' + mem + 'GB'); }
+    if (!hasBackdropFilter) { simple = true; reasons.push('no-backdrop'); }
+    if (reducedMotion) { simple = true; reasons.push('reduced-motion'); }
+    if (benchMs > 25) { simple = true; reasons.push('slow=' + benchMs.toFixed(1) + 'ms'); }
+  }
+  return { simple, reasons, isTV, cores, mem, benchMs, hasBackdropFilter, reducedMotion };
+})();
+
+function applyDeviceProfile() {
+  document.body.classList.toggle('simple-ui', DeviceProfile.simple);
+  document.body.classList.toggle('touch-ui', DeviceProfile.isTV || ('ontouchstart' in window));
+  const icon = document.getElementById('uiToggleIcon');
+  if (icon) icon.textContent = DeviceProfile.simple ? '🎨' : '✨';
+}
+
+// ═══════════════ CONSTANTS ═══════════════
 let CANVAS_W = 800;
 let CANVAS_H = 500;
 const THUMB_SIZE = 80;
 const GRID_STEP = 40;
 const MAX_HOLD = 20;
-const MAX_UNDO = 100;
-const SMOOTH_WINDOW = 4;
+const MAX_UNDO = DeviceProfile.simple ? 30 : 100;
+const SMOOTH_WINDOW = DeviceProfile.simple ? 3 : 4;
 const WHITE_THRESHOLD = 240;
 const STORAGE_KEY = 'wanis_v1';
 const MAX_RECENT_COLORS = 8;
 const MIN_CANVAS = 100;
 const MAX_CANVAS = 3000;
 
-// ============ STORAGE (IDB + memory fallback) ============
+// ═══════════════ STORAGE ═══════════════
 const Storage = (() => {
   const DB_NAME = 'wanis_db';
   const DB_VERSION = 1;
@@ -752,7 +704,6 @@ const Storage = (() => {
   let db = null;
   let available = false;
   const memory = {};
-
   function openDB() {
     return new Promise((resolve, reject) => {
       let req;
@@ -796,15 +747,10 @@ const Storage = (() => {
       try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
     } catch (_) {}
   }
-
   return {
     async init() {
-      try {
-        db = await openDB();
-        available = true;
-        await migrate();
-        return true;
-      } catch (e) { available = false; return false; }
+      try { db = await openDB(); available = true; await migrate(); return true; }
+      catch (e) { available = false; return false; }
     },
     isAvailable: () => available,
     async get(key) {
@@ -822,7 +768,7 @@ const Storage = (() => {
   };
 })();
 
-// ============ DOM ============
+// ═══════════════ DOM REFS ═══════════════
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const onionCanvas = document.getElementById('onionCanvas');
@@ -847,7 +793,7 @@ const fillColorPicker = document.getElementById('fillColorPicker');
 const recentColorsEl = document.getElementById('recentColors');
 const statusFlashEl = document.getElementById('statusFlash');
 
-// ============ STATE ============
+// ═══════════════ STATE ═══════════════
 let projects = {};
 let projectOrder = [];
 let activeProjectId = null;
@@ -892,15 +838,424 @@ function scheduleAutosave() {
   autosaveTimer = setTimeout(() => {
     autosaveTimer = null;
     try { saveCurrentProject(); } catch (_) {}
-  }, 800);
+  }, DeviceProfile.simple ? 1500 : 800);
 }
 function markDirty() { scheduleAutosave(); }
 
+// ═══════════════ COMPACT ENCODING ═══════════════
+function compactCommand(cmd) {
+  switch (cmd.type) {
+    case 'pen':
+    case 'eraser': {
+      const flat = [];
+      for (const p of cmd.points) flat.push(Math.round(p.x), Math.round(p.y));
+      return [cmd.type === 'pen' ? 'p' : 'e', cmd.color, Math.round(cmd.size), flat];
+    }
+    case 'line':
+      return ['l', cmd.color, Math.round(cmd.size), Math.round(cmd.x1), Math.round(cmd.y1), Math.round(cmd.x2), Math.round(cmd.y2)];
+    case 'rect':
+      return ['r', cmd.color, Math.round(cmd.size), Math.round(cmd.x1), Math.round(cmd.y1), Math.round(cmd.x2), Math.round(cmd.y2)];
+    case 'circle':
+      return ['o', cmd.color, Math.round(cmd.size), Math.round(cmd.x1), Math.round(cmd.y1), Math.round(cmd.x2), Math.round(cmd.y2)];
+    case 'fill':
+      return ['f', cmd.color, Math.round(cmd.x), Math.round(cmd.y)];
+    case 'text':
+      return ['t', cmd.color, Math.round(cmd.size), Math.round(cmd.x), Math.round(cmd.y), cmd.text];
+    default: return null;
+  }
+}
+function expandCommand(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  switch (arr[0]) {
+    case 'p':
+    case 'e': {
+      const pts = [];
+      const flat = arr[3] || [];
+      for (let i = 0; i < flat.length; i += 2) pts.push({ x: flat[i], y: flat[i+1] });
+      return { type: arr[0] === 'p' ? 'pen' : 'eraser', color: arr[1], size: arr[2], points: pts };
+    }
+    case 'l': return { type: 'line', color: arr[1], size: arr[2], x1: arr[3], y1: arr[4], x2: arr[5], y2: arr[6] };
+    case 'r': return { type: 'rect', color: arr[1], size: arr[2], x1: arr[3], y1: arr[4], x2: arr[5], y2: arr[6] };
+    case 'o': return { type: 'circle', color: arr[1], size: arr[2], x1: arr[3], y1: arr[4], x2: arr[5], y2: arr[6] };
+    case 'f': return { type: 'fill', color: arr[1], x: arr[2], y: arr[3] };
+    case 't': return { type: 'text', color: arr[1], size: arr[2], x: arr[3], y: arr[4], text: arr[5] };
+    default: return null;
+  }
+}
+
+async function encodeProject(payload) {
+  const compacted = {
+    v: 2,
+    name: payload.name,
+    fps: payload.fps,
+    w: payload.canvasW,
+    h: payload.canvasH,
+    f: payload.frames.map(f => ({
+      c: (f.commands || []).map(compactCommand).filter(Boolean),
+      h: f.holdDuration
+    }))
+  };
+  const json = JSON.stringify(compacted);
+  const data = new TextEncoder().encode(json);
+  let outBytes, prefix;
+  if (typeof CompressionStream !== 'undefined') {
+    const cs = new CompressionStream('gzip');
+    const writer = cs.writable.getWriter();
+    writer.write(data);
+    writer.close();
+    const compressed = await new Response(cs.readable).arrayBuffer();
+    outBytes = new Uint8Array(compressed);
+    prefix = 'gz.';
+  } else {
+    outBytes = data;
+    prefix = 'raw.';
+  }
+  let bin = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < outBytes.length; i += chunk) {
+    bin += String.fromCharCode.apply(null, outBytes.subarray(i, i + chunk));
+  }
+  return prefix + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+async function decodeProject(hash) {
+  let prefix, b64;
+  if (hash.startsWith('gz.')) { prefix = 'gz'; b64 = hash.slice(3); }
+  else if (hash.startsWith('raw.')) { prefix = 'raw'; b64 = hash.slice(4); }
+  else throw new Error('Unknown format');
+  const b64Std = b64.replace(/-/g, '+').replace(/_/g, '/');
+  const bin = atob(b64Std);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  let outBytes;
+  if (prefix === 'gz') {
+    if (typeof DecompressionStream === 'undefined') throw new Error('Decompression not supported');
+    const ds = new DecompressionStream('gzip');
+    const writer = ds.writable.getWriter();
+    writer.write(bytes);
+    writer.close();
+    const decompressed = await new Response(ds.readable).arrayBuffer();
+    outBytes = new Uint8Array(decompressed);
+  } else {
+    outBytes = bytes;
+  }
+  const parsed = JSON.parse(new TextDecoder().decode(outBytes));
+  if (parsed.v === 2 && Array.isArray(parsed.f)) {
+    return {
+      name: parsed.name, fps: parsed.fps,
+      canvasW: parsed.w, canvasH: parsed.h,
+      frames: parsed.f.map(f => ({
+        commands: (f.c || []).map(expandCommand).filter(Boolean),
+        holdDuration: f.h || 1
+      }))
+    };
+  }
+  return parsed;
+}
+
+// ═══════════════ PASTE SERVICE ═══════════════
+async function uploadToPaste(payload) {
+  try {
+    const res = await fetch('https://paste.rs', {
+      method: 'POST',
+      body: payload,
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    });
+    if (res.ok) {
+      const text = (await res.text()).trim();
+      if (/^https?:\/\//.test(text)) return { url: text, service: 'paste.rs' };
+    }
+  } catch (e) { console.warn('[WAnis] paste.rs failed:', e); }
+
+  try {
+    const res = await fetch('https://dpaste.com/api/v2/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'content=' + encodeURIComponent(payload) + '&syntax=text&expiry_days=7'
+    });
+    if (res.ok) {
+      const text = (await res.text()).trim();
+      if (/^https?:\/\//.test(text)) return { url: text, service: 'dpaste' };
+    }
+  } catch (e) { console.warn('[WAnis] dpaste failed:', e); }
+
+  throw new Error('Both paste services are unreachable right now');
+}
+
+async function fetchFromPaste(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  let text = await res.text();
+  if (text.trim().startsWith('{')) {
+    try {
+      const j = JSON.parse(text);
+      if (j.data) text = j.data;
+    } catch (_) {}
+  }
+  return text.trim();
+}
+
+// ═══════════════ SHARE ═══════════════
+async function copyTextToClipboard(text) {
+  try { await navigator.clipboard.writeText(text); toast('Copied! 📋', 1800); return true; }
+  catch (_) {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false;
+    try { document.execCommand('copy'); toast('Copied! 📋', 1800); ok = true; }
+    catch (e) { toast("Couldn't copy — select and copy manually", 3000); }
+    ta.remove();
+    return ok;
+  }
+}
+
+async function shareCurrentProject() {
+  if (!activeProjectId) { toast('Open a project first! 📂', 2500); return; }
+  saveCurrentProject();
+  const p = projects[activeProjectId];
+  const modal = document.getElementById('shareModal');
+  const status = document.getElementById('shareStatus');
+  const urlInput = document.getElementById('shareUrlInput');
+  const qrBox = document.getElementById('shareQrBox');
+  const actionsEl = document.getElementById('shareActions');
+
+  status.textContent = 'Packing your project… 📦';
+  urlInput.style.display = 'none';
+  urlInput.value = '';
+  qrBox.style.display = 'none';
+  qrBox.innerHTML = '';
+  actionsEl.innerHTML = '';
+  modal.classList.add('show');
+
+  try {
+    const hash = await encodeProject({
+      name: p.name, fps: p.fps,
+      canvasW: p.canvasW || CANVAS_W,
+      canvasH: p.canvasH || CANVAS_H,
+      frames: p.frames
+    });
+
+    const baseUrl = new URL(location.pathname, location.origin).href;
+    const directUrl = baseUrl + '#share=' + hash;
+    const urlFits = directUrl.length < 8000;
+    const kb = (hash.length / 1024).toFixed(1);
+
+    if (urlFits) {
+      urlInput.style.display = 'block';
+      urlInput.value = directUrl;
+      status.textContent = `✅ Link ready! ${kb} KB — anyone can open it`;
+      
+      actionsEl.innerHTML = `
+        <button id="copyShareUrlBtn" class="success">📋 Copy link</button>
+        <button id="qrShareBtn">📱 Show QR code</button>
+      `;
+      
+      document.getElementById('copyShareUrlBtn').onclick = () => copyTextToClipboard(directUrl);
+      
+      document.getElementById('qrShareBtn').onclick = () => {
+        const box = document.getElementById('shareQrBox');
+        if (box.style.display === 'flex') {
+          box.style.display = 'none';
+          document.getElementById('qrShareBtn').textContent = '📱 Show QR code';
+        } else {
+          showQr(directUrl);
+          document.getElementById('qrShareBtn').textContent = '❌ Hide QR';
+        }
+      };
+    } else {
+      status.textContent = `⚠️ Project is ${kb} KB — too big for a plain link. Upload it so anyone can open it (no download needed):`;
+      actionsEl.innerHTML = '<button id="uploadPasteBtn" class="success">☁️ Upload & get shareable link</button><button id="manualCopyBtn">📝 Copy raw data manually</button>';
+      
+      document.getElementById('uploadPasteBtn').onclick = async () => {
+        const btn = document.getElementById('uploadPasteBtn');
+        btn.disabled = true; btn.textContent = '☁️ Uploading…';
+        try {
+          const { url } = await uploadToPaste(hash);
+          const importUrl = baseUrl + '#paste=' + encodeURIComponent(url);
+          urlInput.style.display = 'block';
+          urlInput.value = importUrl;
+          status.textContent = '✅ Uploaded! Share this link:';
+          actionsEl.innerHTML = `
+            <button id="copyShareUrlBtn" class="success">📋 Copy link</button>
+            <button id="qrShareBtn">📱 Show QR code</button>
+            <p style="font-size:11px;color:#888;margin:8px 0;text-align:center;">Backup: <a href="${url}" target="_blank" style="color:#667eea;">${url}</a></p>
+          `;
+          document.getElementById('copyShareUrlBtn').onclick = () => copyTextToClipboard(importUrl);
+          document.getElementById('qrShareBtn').onclick = () => showQr(importUrl);
+          toast('Uploaded! Share the link or scan the QR 📱', 3000);
+        } catch (e) {
+          btn.disabled = false; btn.textContent = '☁️ Upload & get shareable link';
+          status.textContent = '❌ Upload failed: ' + e.message + ' — try the manual copy option';
+        }
+      };
+      document.getElementById('manualCopyBtn').onclick = () => copyTextToClipboard(hash);
+    }
+  } catch (e) {
+    status.textContent = '❌ Couldn\'t pack the project: ' + e.message;
+  }
+}
+
+function showQr(text) {
+  const qrBox = document.getElementById('shareQrBox');
+  if (text.length > 2000) {
+    toast('Link is too long for a QR code — use Copy instead', 3000);
+    return;
+  }
+  
+  qrBox.innerHTML = `<div id="qrcode-canvas"></div><small>Scan with phone camera → opens and imports automatically</small><button id="downloadQrBtn" class="success" style="margin-top:8px;width:100%;font-size:12px;padding:6px;">📥 Save QR as Image</button>`;
+  qrBox.style.display = 'flex';
+
+  // Use local qrcode.js instead of external API
+  new QRCode(document.getElementById("qrcode-canvas"), {
+    text: text,
+    width: 200,
+    height: 200,
+    colorDark : "#000000",
+    colorLight : "#ffffff",
+    correctLevel : QRCode.CorrectLevel.L
+  });
+
+  document.getElementById('downloadQrBtn').onclick = () => {
+    try {
+      const canvas = qrBox.querySelector('canvas');
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url; a.download = 'wanis_share_qr.png';
+      document.body.appendChild(a); a.click();
+      setTimeout(() => { a.remove(); }, 1000);
+    } catch (e) {
+      toast("Couldn't download QR code — take a screenshot instead 📸", 3000);
+    }
+  };
+}
+
+async function tryLoadFromShareHash() {
+  if (location.hash.startsWith('#paste=')) {
+    const pasteUrl = decodeURIComponent(location.hash.slice(7));
+    history.replaceState(null, '', location.pathname + location.search);
+    try {
+      const text = await fetchFromPaste(pasteUrl);
+      return await importFromEncoded(text);
+    } catch (e) {
+      console.warn('[WAnis] Paste fetch failed:', e);
+      showManualImportPrompt(pasteUrl);
+      return true;
+    }
+  }
+  if (location.hash.startsWith('#share=')) {
+    const hashVal = location.hash.slice(7);
+    history.replaceState(null, '', location.pathname + location.search);
+    try { return await importFromEncoded(hashVal); }
+    catch (e) {
+      console.error('[WAnis] Share decode failed:', e);
+      toast('This share link is invalid 😕', 4000);
+      return false;
+    }
+  }
+  return false;
+}
+
+async function importFromEncoded(encoded) {
+  const proj = await decodeProject(encoded);
+  if (!proj || !Array.isArray(proj.frames) || proj.frames.length === 0) throw new Error('Empty project');
+  const sanitized = proj.frames.map(f => ({
+    commands: (Array.isArray(f.commands) ? f.commands : []).filter(c => c && typeof c.type === 'string'),
+    holdDuration: Math.max(1, Math.min(MAX_HOLD, parseInt(f.holdDuration) || 1))
+  }));
+  const id = 'shared_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+  let cleanName = (typeof proj.name === 'string' ? proj.name : 'Shared').slice(0, 60).trim() || 'Shared';
+  let uniqueName = cleanName;
+  let n = 2;
+  while (nameExists(uniqueName, null)) { uniqueName = cleanName + ' (' + n + ')'; n++; }
+  const newW = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, parseInt(proj.canvasW) || CANVAS_W));
+  const newH = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, parseInt(proj.canvasH) || CANVAS_H));
+  projects[id] = {
+    name: uniqueName, createdAt: Date.now(), updatedAt: Date.now(),
+    frames: sanitized,
+    fps: Math.max(1, Math.min(60, parseInt(proj.fps) || 12)),
+    canvasW: newW, canvasH: newH,
+    currentFrame: 0, recentColors: []
+  };
+  projectOrder.push(id);
+  persistAll();
+  openProject(id);
+  toast('Imported "' + uniqueName + '" ✨', 3500);
+  return true;
+}
+
+function showManualImportPrompt(pasteUrl) {
+  const modal = document.getElementById('modal');
+  document.getElementById('modalTitle').textContent = '📥 Manual Import';
+  document.getElementById('modalText').textContent = 'Auto-fetch was blocked (CORS). Open the link below in a new tab, copy everything, then paste it here:';
+  document.getElementById('modalPreview').innerHTML =
+    '<a href="' + pasteUrl + '" target="_blank" style="display:block; word-break:break-all; color:#667eea; margin:12px 0; font-size:13px;">' + pasteUrl + '</a>' +
+    '<textarea id="manualImportText" style="width:100%; height:150px; background:#0d1626; color:#fff; border:1px solid #667eea; border-radius:8px; padding:10px; font-family:monospace; font-size:11px; margin-top:8px;" placeholder="Paste the encoded data here..."></textarea>';
+  document.getElementById('modalFallbackHint').style.display = 'none';
+  document.getElementById('progressBar').style.display = 'none';
+  document.getElementById('modalButtons').style.display = 'flex';
+  document.getElementById('modalButtons').innerHTML = '<button id="manualImportBtn" class="success">📥 Import</button>';
+  document.getElementById('manualImportBtn').onclick = async () => {
+    const text = document.getElementById('manualImportText').value.trim();
+    if (!text) { toast('Paste the data first!', 2000); return; }
+    try { await importFromEncoded(text); closeModal(); }
+    catch (e) { toast('Import failed: ' + e.message, 4000); }
+  };
+  modal.classList.add('show');
+}
+
+// ═══════════════ CANVAS SIZE ═══════════════
+function applyCanvasSize(w, h, opts) {
+  opts = opts || {};
+  w = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, Math.floor(w)));
+  h = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, Math.floor(h)));
+  if (w === CANVAS_W && h === CANVAS_H) return false;
+  CANVAS_W = w; CANVAS_H = h;
+  canvas.width = w; canvas.height = h;
+  onionCanvas.width = w; onionCanvas.height = h;
+  gridCanvas.width = w; gridCanvas.height = h;
+  playbackCanvas.width = w; playbackCanvas.height = h;
+  frames.forEach(f => f.invalidate());
+  if (activeProjectId && projects[activeProjectId]) {
+    projects[activeProjectId].canvasW = w;
+    projects[activeProjectId].canvasH = h;
+  }
+  if (!opts.skipRender) {
+    layoutCanvas(); drawGrid(); rebuildThumbnails(); renderCurrentFrame(); updateStatus();
+  }
+  if (!opts.skipSave) markDirty();
+  return true;
+}
+
+function openCanvasSizeModal() {
+  document.getElementById('canvasSizeCurrent').textContent = CANVAS_W + ' × ' + CANVAS_H;
+  document.getElementById('canvasWInput').value = CANVAS_W;
+  document.getElementById('canvasHInput').value = CANVAS_H;
+  document.getElementById('canvasSizeModal').classList.add('show');
+}
+function closeCanvasSizeModal() {
+  document.getElementById('canvasSizeModal').classList.remove('show');
+  restoreFocus();
+}
+function submitCanvasSize() {
+  let w = parseInt(document.getElementById('canvasWInput').value, 10);
+  let h = parseInt(document.getElementById('canvasHInput').value, 10);
+  if (isNaN(w) || isNaN(h) || w < MIN_CANVAS || h < MIN_CANVAS || w > MAX_CANVAS || h > MAX_CANVAS) {
+    toast('Width and height must be between ' + MIN_CANVAS + ' and ' + MAX_CANVAS + ' pixels 📐', 3500);
+    return;
+  }
+  if (w === CANVAS_W && h === CANVAS_H) { closeCanvasSizeModal(); toast('Already ' + w + ' × ' + h, 2000); return; }
+  applyCanvasSize(w, h);
+  closeCanvasSizeModal();
+  toast('Canvas resized to ' + w + ' × ' + h + ' 🖼️', 2500);
+  flashStatus('Canvas: ' + w + ' × ' + h);
+}
+
+// ═══════════════ PROJECTS ═══════════════
 function openProject(id) {
   if (!projects[id]) return;
   if (activeProjectId && projects[activeProjectId]) { try { saveCurrentProject(); } catch (_) {} }
   const p = projects[id];
-  // Apply canvas size first (before loading frames)
   const w = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, parseInt(p.canvasW) || 800));
   const h = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, parseInt(p.canvasH) || 500));
   applyCanvasSize(w, h, { skipRender: true, skipSave: true });
@@ -928,15 +1283,10 @@ function createNewProject(name) {
   if (nameExists(clean, null)) { toast('"' + clean + '" is already taken — try another name 🙂', 3000); return null; }
   const id = 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
   projects[id] = {
-    name: clean,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
+    name: clean, createdAt: Date.now(), updatedAt: Date.now(),
     frames: [{ commands: [], holdDuration: 1 }],
-    fps: 12,
-    canvasW: CANVAS_W,
-    canvasH: CANVAS_H,
-    currentFrame: 0,
-    recentColors: []
+    fps: 12, canvasW: CANVAS_W, canvasH: CANVAS_H,
+    currentFrame: 0, recentColors: []
   };
   projectOrder.push(id);
   persistAll();
@@ -954,26 +1304,18 @@ function deleteProject(id) {
     projectOrder = projectOrder.filter(x => x !== id);
     if (projectOrder.length === 0) {
       activeProjectId = null;
-      frames = [new Frame()];
-      currentFrame = 0;
+      frames = [new Frame()]; currentFrame = 0;
       undoStack = [[]]; redoStack = [[]]; trash = [];
       recentColors = [];
-      persistAll();
-      updateProjectBadge();
-      closeProjectsModal();
-      rebuildThumbnails();
-      renderRecentColors();
-      renderCurrentFrame();
-      updateStatus();
+      persistAll(); updateProjectBadge(); closeProjectsModal();
+      rebuildThumbnails(); renderRecentColors(); renderCurrentFrame(); updateStatus();
       showNewProjectModal(true);
       return;
     }
     if (wasActive) { activeProjectId = null; openProject(projectOrder[0]); }
-    persistAll();
-    renderProjectList();
-    updateProjectBadge();
-    toast('Deleted "' + p.name + '" — hope you meant that! 🗑️', 2400);
-  } catch (err) { toast('Couldn\'t delete that project 😕', 3000); }
+    persistAll(); renderProjectList(); updateProjectBadge();
+    toast('Deleted "' + p.name + '" 🗑️', 2400);
+  } catch (err) { toast("Couldn't delete that project 😕", 3000); }
 }
 
 function updateProjectBadge() {
@@ -981,10 +1323,6 @@ function updateProjectBadge() {
   const p = projects[activeProjectId];
   projectBadge.classList.remove('hidden');
   projectBadge.textContent = (Storage.isAvailable() ? '' : '⚠️ ') + p.name;
-  projectBadge.setAttribute('data-tip',
-    Storage.isAvailable()
-      ? 'Active project|' + p.name + ' — click to manage'
-      : 'Active project|' + p.name + ' (session only — no save)');
 }
 
 function renderProjectList() {
@@ -1028,7 +1366,7 @@ function renderProjectList() {
       e.stopPropagation(); e.preventDefault();
       const hasContent = (p.frames || []).some(f => f.commands && f.commands.length > 0);
       const msg = hasContent
-        ? '"' + p.name + '" has ' + frameCount + ' frame(s) with art on them. This cannot be undone.'
+        ? '"' + p.name + '" has ' + frameCount + ' frame(s) with art. Can\'t be undone.'
         : '"' + p.name + '" is empty — safe to delete.';
       showConfirm('Delete "' + p.name + '"?', msg, () => deleteProject(id), 'Delete');
     });
@@ -1052,18 +1390,13 @@ function showConfirm(title, text, onYes, yesLabel, onThird, thirdLabel) {
   document.getElementById('confirmText').textContent = text;
   document.getElementById('confirmYes').textContent = yesLabel || 'Yes';
   const thirdBtn = document.getElementById('confirmThird');
-  if (onThird) {
-    thirdBtn.textContent = thirdLabel || 'Alternative';
-    thirdBtn.classList.remove('hidden');
-  } else {
-    thirdBtn.classList.add('hidden');
-  }
+  if (onThird) { thirdBtn.textContent = thirdLabel || 'Alternative'; thirdBtn.classList.remove('hidden'); }
+  else thirdBtn.classList.add('hidden');
   document.getElementById('confirmModal').classList.add('show');
 }
 function hideConfirm() {
   document.getElementById('confirmModal').classList.remove('show');
-  confirmYesCallback = null;
-  confirmThirdCallback = null;
+  confirmYesCallback = null; confirmThirdCallback = null;
   restoreFocus();
 }
 
@@ -1090,7 +1423,6 @@ function showNewProjectModal(required) {
   document.getElementById('newProjectModal').classList.add('show');
   setTimeout(() => input.focus(), 100);
 }
-
 function showRenameModal(id) {
   if (!projects[id]) return;
   renameTargetId = id;
@@ -1128,7 +1460,7 @@ function submitNewProject() {
   const name = input.value.trim() || 'Untitled Animation';
   if (renameTargetId) {
     if (!projects[renameTargetId]) { renameTargetId = null; return; }
-    if (nameExists(name, renameTargetId)) { showNewProjectError('"' + name + '" is already used by another project.'); return; }
+    if (nameExists(name, renameTargetId)) { showNewProjectError('"' + name + '" is used by another project.'); return; }
     const wasActive = renameTargetId === activeProjectId;
     projects[renameTargetId].name = name;
     projects[renameTargetId].updatedAt = Date.now();
@@ -1152,186 +1484,7 @@ function restoreFocus() {
   if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) active.blur();
 }
 
-// ============ CANVAS SIZE ============
-function applyCanvasSize(w, h, opts) {
-  opts = opts || {};
-  w = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, Math.floor(w)));
-  h = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, Math.floor(h)));
-  if (w === CANVAS_W && h === CANVAS_H) return false;
-  CANVAS_W = w; CANVAS_H = h;
-  canvas.width = w; canvas.height = h;
-  onionCanvas.width = w; onionCanvas.height = h;
-  gridCanvas.width = w; gridCanvas.height = h;
-  playbackCanvas.width = w; playbackCanvas.height = h;
-  frames.forEach(f => f.invalidate());
-  if (activeProjectId && projects[activeProjectId]) {
-    projects[activeProjectId].canvasW = w;
-    projects[activeProjectId].canvasH = h;
-  }
-  if (!opts.skipRender) {
-    layoutCanvas();
-    drawGrid();
-    rebuildThumbnails();
-    renderCurrentFrame();
-    updateStatus();
-  }
-  if (!opts.skipSave) markDirty();
-  return true;
-}
-
-function openCanvasSizeModal() {
-  document.getElementById('canvasSizeCurrent').textContent = CANVAS_W + ' × ' + CANVAS_H;
-  document.getElementById('canvasWInput').value = CANVAS_W;
-  document.getElementById('canvasHInput').value = CANVAS_H;
-  document.getElementById('canvasSizeModal').classList.add('show');
-}
-function closeCanvasSizeModal() {
-  document.getElementById('canvasSizeModal').classList.remove('show');
-  restoreFocus();
-}
-function submitCanvasSize() {
-  let w = parseInt(document.getElementById('canvasWInput').value, 10);
-  let h = parseInt(document.getElementById('canvasHInput').value, 10);
-  if (isNaN(w) || isNaN(h) || w < MIN_CANVAS || h < MIN_CANVAS || w > MAX_CANVAS || h > MAX_CANVAS) {
-    toast('Width and height must be between ' + MIN_CANVAS + ' and ' + MAX_CANVAS + ' pixels 📐', 3500);
-    return;
-  }
-  if (w === CANVAS_W && h === CANVAS_H) {
-    closeCanvasSizeModal();
-    toast('Already ' + w + ' × ' + h + ' — no change needed 🙂', 2000);
-    return;
-  }
-  applyCanvasSize(w, h);
-  closeCanvasSizeModal();
-  toast('Canvas resized to ' + w + ' × ' + h + ' — your art is intact 🖼️', 2500);
-  flashStatus('Canvas: ' + w + ' × ' + h);
-}
-
-// ============ SHARE ============
-async function encodeProject(payload) {
-  const json = JSON.stringify(payload);
-  const data = new TextEncoder().encode(json);
-  let outBytes;
-  let prefix;
-  if (typeof CompressionStream !== 'undefined') {
-    const cs = new CompressionStream('gzip');
-    const writer = cs.writable.getWriter();
-    writer.write(data);
-    writer.close();
-    const compressed = await new Response(cs.readable).arrayBuffer();
-    outBytes = new Uint8Array(compressed);
-    prefix = 'gz.';
-  } else {
-    outBytes = data;
-    prefix = 'raw.';
-  }
-  let bin = '';
-  const chunk = 0x8000;
-  for (let i = 0; i < outBytes.length; i += chunk) {
-    bin += String.fromCharCode.apply(null, outBytes.subarray(i, i + chunk));
-  }
-  return prefix + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
-
-async function decodeProject(hash) {
-  let prefix, b64;
-  if (hash.startsWith('gz.')) { prefix = 'gz'; b64 = hash.slice(3); }
-  else if (hash.startsWith('raw.')) { prefix = 'raw'; b64 = hash.slice(4); }
-  else throw new Error('Unknown format');
-  const b64Std = b64.replace(/-/g, '+').replace(/_/g, '/');
-  const bin = atob(b64Std);
-  const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  let outBytes;
-  if (prefix === 'gz') {
-    if (typeof DecompressionStream === 'undefined') throw new Error('Decompression not supported');
-    const ds = new DecompressionStream('gzip');
-    const writer = ds.writable.getWriter();
-    writer.write(bytes);
-    writer.close();
-    const decompressed = await new Response(ds.readable).arrayBuffer();
-    outBytes = new Uint8Array(decompressed);
-  } else {
-    outBytes = bytes;
-  }
-  return JSON.parse(new TextDecoder().decode(outBytes));
-}
-
-async function shareCurrentProject() {
-  if (!activeProjectId) { toast('Open a project first! 📂', 2500); return; }
-  saveCurrentProject();
-  const p = projects[activeProjectId];
-  const shareModal = document.getElementById('shareModal');
-  const status = document.getElementById('shareStatus');
-  const urlInput = document.getElementById('shareUrlInput');
-  status.textContent = 'Packing your project… 📦';
-  urlInput.value = '';
-  shareModal.classList.add('show');
-
-  try {
-    const payload = {
-      name: p.name,
-      fps: p.fps,
-      canvasW: p.canvasW || CANVAS_W,
-      canvasH: p.canvasH || CANVAS_H,
-      frames: p.frames
-    };
-    const hash = await encodeProject(payload);
-    const url = location.origin + location.pathname + '#share=' + hash;
-    if (url.length > 32000) {
-      status.textContent = 'Project is too big for a link (' + Math.round(url.length/1024) + ' KB) — try exporting instead 💾';
-      urlInput.value = '';
-      return;
-    }
-    urlInput.value = url;
-    status.textContent = 'Link ready! Size: ' + (Math.max(1, Math.round(url.length/1024*10)/10)) + ' KB — anyone who opens it gets a copy ✨';
-  } catch (e) {
-    status.textContent = 'Couldn\'t create the link: ' + e.message;
-  }
-}
-
-async function tryLoadFromShareHash() {
-  if (!location.hash.startsWith('#share=')) return false;
-  const hashVal = location.hash.slice(7);
-  history.replaceState(null, '', location.pathname + location.search);
-  try {
-    const proj = await decodeProject(hashVal);
-    if (!proj || !Array.isArray(proj.frames) || proj.frames.length === 0) throw new Error('Empty');
-    const sanitized = proj.frames.map(f => ({
-      commands: (Array.isArray(f.commands) ? f.commands : []).filter(c => c && typeof c.type === 'string'),
-      holdDuration: Math.max(1, Math.min(MAX_HOLD, parseInt(f.holdDuration) || 1))
-    }));
-    const id = 'shared_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-    let cleanName = (typeof proj.name === 'string' ? proj.name : 'Shared').slice(0, 60).trim() || 'Shared';
-    let uniqueName = cleanName;
-    let n = 2;
-    while (nameExists(uniqueName, null)) { uniqueName = cleanName + ' (' + n + ')'; n++; }
-    const newW = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, parseInt(proj.canvasW) || CANVAS_W));
-    const newH = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, parseInt(proj.canvasH) || CANVAS_H));
-    projects[id] = {
-      name: uniqueName,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      frames: sanitized,
-      fps: Math.max(1, Math.min(60, parseInt(proj.fps) || 12)),
-      canvasW: newW,
-      canvasH: newH,
-      currentFrame: 0,
-      recentColors: []
-    };
-    projectOrder.push(id);
-    persistAll();
-    openProject(id);
-    toast('Someone shared "' + uniqueName + '" with you ✨', 3500);
-    return true;
-  } catch (e) {
-    console.error('Share load failed:', e);
-    toast('This share link got mangled 😕 Try opening it again.', 4000);
-    return false;
-  }
-}
-
-// ============ RECENT COLORS ============
+// ═══════════════ RECENT COLORS ═══════════════
 let recentColorTimer = null;
 function scheduleAddRecentColor(hex) {
   if (recentColorTimer) clearTimeout(recentColorTimer);
@@ -1367,7 +1520,7 @@ function renderRecentColors() {
   });
 }
 
-// ============ STATUS FLASH ============
+// ═══════════════ STATUS FLASH ═══════════════
 let statusFlashTimer = null;
 function flashStatus(msg, duration) {
   duration = duration || 1500;
@@ -1377,13 +1530,10 @@ function flashStatus(msg, duration) {
   statusFlashTimer = setTimeout(() => statusFlashEl.classList.remove('show'), duration);
 }
 function cmdTypeLabel(type) {
-  return ({
-    pen: 'stroke', eraser: 'eraser', line: 'line',
-    rect: 'rectangle', circle: 'circle', fill: 'fill', text: 'text'
-  }[type] || 'action');
+  return ({ pen: 'stroke', eraser: 'eraser', line: 'line', rect: 'rectangle', circle: 'circle', fill: 'fill', text: 'text' }[type] || 'action');
 }
 
-// ============ FRAME CLASS ============
+// ═══════════════ FRAME CLASS ═══════════════
 class Frame {
   constructor(commands, holdDuration) {
     this.commands = commands || [];
@@ -1404,7 +1554,7 @@ class Frame {
   }
 }
 
-// ============ RUNTIME STATE ============
+// ═══════════════ RUNTIME STATE ═══════════════
 let frames = [new Frame()];
 let currentFrame = 0;
 let undoStack = [[]];
@@ -1464,7 +1614,7 @@ function revokeAllUrls() {
   activeObjectUrls.clear();
 }
 
-// ============ SAVE / DOWNLOAD ============
+// ═══════════════ DOWNLOAD (with TV fallbacks) ═══════════════
 async function saveBlob(blob, filename) {
   const file = new File([blob], filename, { type: blob.type });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -1481,6 +1631,24 @@ async function saveBlob(blob, filename) {
     setTimeout(() => { a.remove(); URL.revokeObjectURL(blobUrl); }, 30000);
     return 'download';
   } catch (e) {}
+  if (blob.size < 5 * 1024 * 1024) {
+    try {
+      const dataUrl = await new Promise((res, rej) => {
+        const fr = new FileReader();
+        fr.onload = () => res(fr.result);
+        fr.onerror = rej;
+        fr.readAsDataURL(blob);
+      });
+      const a = document.createElement('a');
+      a.href = dataUrl; a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => a.remove(), 5000);
+      URL.revokeObjectURL(blobUrl);
+      return 'download-dataurl';
+    } catch (e) {}
+  }
   try {
     const w = window.open(blobUrl, '_blank');
     if (w) return 'opened';
@@ -1499,35 +1667,35 @@ function showExportResult(blob, filename, ext, mediaType) {
   document.getElementById('progressBar').style.display = 'none';
   const url = trackUrl(URL.createObjectURL(blob));
   if (mediaType === 'image') {
-    preview.innerHTML = '<img src="' + url + '" alt="Preview" style="max-width:100%;max-height:50vh;border-radius:10px;margin:10px auto;display:block;box-shadow:0 8px 24px rgba(0,0,0,0.3);">';
+    preview.innerHTML = '<img src="' + url + '" alt="Preview" style="max-width:100%;max-height:50vh;border-radius:10px;margin:10px auto;display:block;">';
   } else {
-    preview.innerHTML = '<video src="' + url + '" controls loop playsinline style="max-width:100%;max-height:50vh;border-radius:10px;margin:10px auto;display:block;box-shadow:0 8px 24px rgba(0,0,0,0.3);"></video>';
+    preview.innerHTML = '<video src="' + url + '" controls loop playsinline style="max-width:100%;max-height:50vh;border-radius:10px;margin:10px auto;display:block;"></video>';
   }
   const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
   hint.style.display = 'block';
   hint.textContent = isTouch
-    ? 'If the download doesn\'t work: tap and hold the preview, then choose Save image/video.'
-    : 'If the download doesn\'t start: right-click the preview and choose Save image/video as…';
+    ? "If the download doesn't work: tap and hold the preview, then choose Save image/video."
+    : "If the download doesn't start: right-click the preview and choose Save image/video as…";
   buttons.style.display = 'flex';
   buttons.innerHTML = '<button id="modalDownloadBtn" class="success">📥 Download</button><button id="modalOpenBtn">🔗 Open in new tab</button>';
   document.getElementById('modalDownloadBtn').onclick = async () => {
     const result = await saveBlob(blob, filename);
     const msgs = {
-      shared: '✅ Shared! Nice.',
-      cancelled: '⏸ Share cancelled.',
-      download: '📥 Download started — check your downloads folder!',
-      opened: '🔗 Opened in a new tab — save from there!',
-      failed: '⚠️ Auto-save didn\'t work — use the hint above.'
+      shared: '✅ Shared!', cancelled: '⏸ Cancelled',
+      download: '📥 Download started!',
+      'download-dataurl': '📥 Download started (data URL method)!',
+      opened: '🔗 Opened in new tab — save from there!',
+      failed: "⚠️ Auto-save didn't work — use the hint above."
     };
     text.textContent = msgs[result] || msgs.failed;
   };
   document.getElementById('modalOpenBtn').onclick = () => {
     const w = window.open(url, '_blank');
-    if (!w) toast('Popup blocked — try the Download button instead 🙂', 2500);
+    if (!w) toast('Popup blocked — try Download instead 🙂', 2500);
   };
 }
 
-// ============ RENDERING ============
+// ═══════════════ RENDERING ═══════════════
 function floodFillCtx(c, x, y, color) {
   const w = c.canvas.width, h = c.canvas.height;
   x = Math.floor(x); y = Math.floor(y);
@@ -1618,9 +1786,7 @@ function findTextAt(commands, pos) {
     const b = getTextBounds(cmd);
     const pad = 6;
     if (pos.x >= b.x - pad && pos.x <= b.x + b.w + pad &&
-        pos.y >= b.y - pad && pos.y <= b.y + b.h + pad) {
-      return i;
-    }
+        pos.y >= b.y - pad && pos.y <= b.y + b.h + pad) return i;
   }
   return -1;
 }
@@ -1739,9 +1905,9 @@ function startTextInput(pos) {
   input.type = 'text';
   input.placeholder = 'Type text, Enter to confirm';
   input.style.cssText = 'position:fixed;left:' + (rect.left + pos.x*scaleX) + 'px;top:' + (rect.top + pos.y*scaleY) +
-    'px;background:rgba(20,20,35,0.92);backdrop-filter:blur(20px);color:' + currentColor + ';border:2px solid #667eea;' +
-    'border-radius:10px;padding:8px 12px;font-family:Segoe UI,sans-serif;font-weight:bold;font-size:' + Math.min(fontSize, 32) +
-    'px;z-index:500;min-width:200px;outline:none;box-shadow:0 8px 32px rgba(0,0,0,0.5);';
+    'px;background:rgba(20,20,35,0.92);color:' + currentColor + ';border:2px solid #667eea;border-radius:10px;' +
+    'padding:8px 12px;font-family:Segoe UI,sans-serif;font-weight:bold;font-size:' + Math.min(fontSize, 32) +
+    'px;z-index:500;min-width:200px;outline:none;';
   document.body.appendChild(input);
   setTimeout(() => input.focus(), 10);
   let committed = false;
@@ -1780,8 +1946,7 @@ function startDraw(e) {
       const preDrag = frames[currentFrame].commands.slice();
       preDrag[idx] = originalCmd;
       draggingText = {
-        idx,
-        cmd: cmdCopy,
+        idx, cmd: cmdCopy,
         offsetX: pos.x - originalCmd.x,
         offsetY: pos.y - originalCmd.y,
         preDragCommands: preDrag,
@@ -1789,6 +1954,7 @@ function startDraw(e) {
       };
       cancelTextDrag = false;
       isDrawing = true;
+      canvas.style.cursor = 'grabbing';
       return;
     }
     startTextInput(pos);
@@ -1809,7 +1975,7 @@ function startDraw(e) {
 
   if (currentTool === 'pen' || currentTool === 'eraser') {
     const color = currentTool === 'eraser' ? '#ffffff' : currentColor;
-    liveStroke = { type: currentTool, color: color, size: currentSize, points: [pos] };
+    liveStroke = { type: currentTool, color, size: currentSize, points: [pos] };
     smoothBuffer = [pos];
     ctx.fillStyle = color;
     ctx.beginPath();
@@ -1865,6 +2031,7 @@ function draw(e) {
 function endDraw() {
   if (!isDrawing) return;
   isDrawing = false;
+  canvas.style.cursor = 'crosshair';
 
   if (draggingText) {
     if (cancelTextDrag) {
@@ -1906,7 +2073,7 @@ function endDraw() {
   }
 }
 
-// ============ UNDO ============
+// ═══════════════ UNDO ═══════════════
 function pushUndo() {
   if (!undoStack[currentFrame]) undoStack[currentFrame] = [];
   if (!redoStack[currentFrame]) redoStack[currentFrame] = [];
@@ -1950,15 +2117,13 @@ function updateUndoRedoButtons() {
   document.getElementById('redoBtn').disabled = !redoStack[currentFrame] || redoStack[currentFrame].length === 0;
 }
 
-// ============ FRAMES ============
+// ═══════════════ FRAMES ═══════════════
 function addFrame() {
   frames.splice(currentFrame + 1, 0, new Frame());
   undoStack.splice(currentFrame + 1, 0, []);
   redoStack.splice(currentFrame + 1, 0, []);
   currentFrame++;
-  rebuildThumbnails();
-  renderCurrentFrame();
-  updateStatus();
+  rebuildThumbnails(); renderCurrentFrame(); updateStatus();
   scrollFrameIntoView(currentFrame);
 }
 function doDeleteFrame(index) {
@@ -1968,18 +2133,15 @@ function doDeleteFrame(index) {
   redoStack.splice(index, 1);
   if (currentFrame > index) currentFrame--;
   else if (currentFrame >= frames.length) currentFrame = frames.length - 1;
-  rebuildThumbnails();
-  renderCurrentFrame();
-  updateStatus();
-  updateTrashButton();
-  scrollFrameIntoView(currentFrame);
+  rebuildThumbnails(); renderCurrentFrame(); updateStatus();
+  updateTrashButton(); scrollFrameIntoView(currentFrame);
 }
 function deleteFrame(index) {
-  if (frames.length === 1) { toast('Whoa! You need at least one frame — otherwise there\'s nothing to animate 🐎', 3000); return; }
+  if (frames.length === 1) { toast('You need at least one frame 🐎', 3000); return; }
   const hasContent = frames[index].commands.length > 0;
   if (hasContent) {
     showConfirm('Delete frame ' + (index + 1) + '?',
-      'It has art on it! (You can undo with Alt+Z.)',
+      "It has art on it! (You can undo with Alt+Z.)",
       () => doDeleteFrame(index), 'Delete it');
   } else {
     doDeleteFrame(index);
@@ -1987,56 +2149,45 @@ function deleteFrame(index) {
   }
 }
 function restoreFrame() {
-  if (trash.length === 0) { toast('Trash is empty — nothing to bring back ✨', 2500); return; }
+  if (trash.length === 0) { toast('Trash is empty ✨', 2500); return; }
   const entry = trash.pop();
   const insertIdx = Math.min(entry.index, frames.length);
   frames.splice(insertIdx, 0, entry.frame);
   undoStack.splice(insertIdx, 0, []);
   redoStack.splice(insertIdx, 0, []);
-  rebuildThumbnails();
-  selectFrame(insertIdx);
-  updateStatus();
-  updateTrashButton();
+  rebuildThumbnails(); selectFrame(insertIdx);
+  updateStatus(); updateTrashButton();
   toast('Frame is back! ♻', 2000);
 }
 function copyFrame() {
   clipboardFrame = cloneFrame(frames[currentFrame]);
-  toast('Frame copied! Ready to paste 📋', 2000);
+  toast('Frame copied! 📋', 2000);
 }
 function pasteFrame() {
-  if (!clipboardFrame) { toast('Clipboard is empty — copy a frame first! 📋', 2500); return; }
+  if (!clipboardFrame) { toast('Clipboard is empty 📋', 2500); return; }
   frames.splice(currentFrame + 1, 0, cloneFrame(clipboardFrame));
   undoStack.splice(currentFrame + 1, 0, []);
   redoStack.splice(currentFrame + 1, 0, []);
   currentFrame++;
-  rebuildThumbnails();
-  renderCurrentFrame();
-  updateStatus();
+  rebuildThumbnails(); renderCurrentFrame(); updateStatus();
   scrollFrameIntoView(currentFrame);
   toast('Frame pasted! 🎯', 2000);
 }
 function updateTrashButton() {
   const btn = document.getElementById('restoreFrameBtn');
   btn.disabled = trash.length === 0;
-  btn.setAttribute('data-tip', trash.length === 0
-    ? 'Restore|Trash is empty'
-    : 'Restore|Bring back last deleted (' + trash.length + ' in trash)|Alt+Z');
   btn.textContent = trash.length > 0 ? '♻' + trash.length : '♻';
 }
 function selectFrame(index) {
   if (index < 0 || index >= frames.length) return;
   currentFrame = index;
   document.querySelectorAll('.frame').forEach((el, i) => el.classList.toggle('active', i === index));
-  renderCurrentFrame();
-  updateStatus();
-  scrollFrameIntoView(index);
+  renderCurrentFrame(); updateStatus(); scrollFrameIntoView(index);
 }
 function cycleHold(index, delta) {
   const f = frames[index];
   f.holdDuration = Math.max(1, Math.min(MAX_HOLD, f.holdDuration + delta));
-  updateHoldBadge(index);
-  updateStatus();
-  markDirty();
+  updateHoldBadge(index); updateStatus(); markDirty();
 }
 function updateHoldBadge(index) {
   const frameEl = document.querySelectorAll('.frame')[index];
@@ -2072,14 +2223,12 @@ function rebuildThumbnails() {
     hold.className = 'hold';
     hold.textContent = '×' + frame.holdDuration;
     if (frame.holdDuration > 1) hold.classList.add('long');
-    hold.setAttribute('data-tip', 'Hold duration|Left-click +1, right-click −1');
     hold.onclick = e => { e.stopPropagation(); cycleHold(i, 1); };
     hold.oncontextmenu = e => { e.preventDefault(); e.stopPropagation(); cycleHold(i, -1); };
     div.appendChild(hold);
     const del = document.createElement('button');
     del.className = 'del';
     del.textContent = '×';
-    del.setAttribute('data-tip', 'Delete frame|Remove this frame');
     del.onclick = e => { e.stopPropagation(); deleteFrame(i); };
     div.appendChild(del);
     div.onclick = () => { if (!isPlaying) selectFrame(i); };
@@ -2090,11 +2239,11 @@ function rebuildThumbnails() {
   requestAnimationFrame(() => { updateFrameScrollIndicators(); scrollFrameIntoView(currentFrame); });
 }
 
-// ============ PLAYBACK ============
+// ═══════════════ PLAYBACK ═══════════════
 function play() {
   if (isPlaying) return;
   const totalTicks = frames.reduce((s, f) => s + f.holdDuration, 0);
-  if (totalTicks < 2) { toast('A 1-frame animation is just… a picture 😅 Add another frame!', 3500); return; }
+  if (totalTicks < 2) { toast('A 1-frame animation is just a picture 😅 Add another frame!', 3500); return; }
   playFps = getFps();
   playRenderedFrames = frames.map(f => f.getRaster());
   playbackCanvas.width = CANVAS_W; playbackCanvas.height = CANVAS_H;
@@ -2131,7 +2280,7 @@ function stop() {
   renderCurrentFrame();
 }
 
-// ============ EXPORT ============
+// ═══════════════ EXPORT ═══════════════
 function setExportBusy(busy) {
   exportInProgress = busy;
   ['exportGifBtn', 'exportMp4Btn', 'exportPngBtn'].forEach(id => { document.getElementById(id).disabled = busy; });
@@ -2181,7 +2330,7 @@ async function exportPNG(quick) {
     frames[currentFrame].getRaster().toBlob(async blob => {
       if (!blob) {
         if (!quick) {
-          document.getElementById('modalText').textContent = 'Couldn\'t create the PNG 😕';
+          document.getElementById('modalText').textContent = "Couldn't create the PNG 😕";
           document.getElementById('progressBar').style.display = 'none';
         }
         setExportBusy(false);
@@ -2192,9 +2341,9 @@ async function exportPNG(quick) {
         const result = await saveBlob(blob, filename);
         setExportBusy(false);
         if (result === 'failed') {
-          openModal('PNG ready', 'Quick download didn\'t take — here\'s the manual option 👇');
+          openModal('PNG ready', "Quick download didn't take — use the button 👇");
           showExportResult(blob, filename, 'png', 'image');
-        } else if (result === 'download' || result === 'opened') {
+        } else if (result === 'download' || result === 'download-dataurl' || result === 'opened') {
           flashStatus('PNG downloaded 📥');
         }
       } else {
@@ -2245,10 +2394,10 @@ async function exportGIF(quick) {
       const result = await saveBlob(blob, filename);
       if (result === 'failed') {
         showExportResult(blob, filename, 'gif', 'image');
-        modalText.textContent = 'Quick save didn\'t take — try the button below 👇';
+        modalText.textContent = "Quick save didn't take — use the button 👇";
       } else {
         closeModal();
-        if (result === 'download' || result === 'opened') flashStatus('GIF downloaded 📥');
+        if (result === 'download' || result === 'download-dataurl' || result === 'opened') flashStatus('GIF downloaded 📥');
       }
     } else {
       showExportResult(blob, filename, 'gif', 'image');
@@ -2276,7 +2425,7 @@ async function exportMP4(quick) {
   let mb;
   try { mb = await loadMediabunny(); }
   catch (err) {
-    modalText.textContent = 'Couldn\'t load the encoder: ' + err.message;
+    modalText.textContent = "Couldn't load encoder: " + err.message;
     document.getElementById('progressBar').style.display = 'none';
     setExportBusy(false);
     return;
@@ -2323,10 +2472,10 @@ async function exportMP4(quick) {
       const result = await saveBlob(blob, filename);
       if (result === 'failed') {
         showExportResult(blob, filename, ext, 'video');
-        modalText.textContent = 'Quick save didn\'t take — try the button below 👇';
+        modalText.textContent = "Quick save didn't take — use the button 👇";
       } else {
         closeModal();
-        if (result === 'download' || result === 'opened') flashStatus(ext.toUpperCase() + ' downloaded 📥');
+        if (result === 'download' || result === 'download-dataurl' || result === 'opened') flashStatus(ext.toUpperCase() + ' downloaded 📥');
       }
     } else {
       showExportResult(blob, filename, ext, 'video');
@@ -2339,7 +2488,7 @@ async function exportMP4(quick) {
   }
 }
 
-// ============ TOAST + MISC UI ============
+// ═══════════════ MISC UI ═══════════════
 function toast(msg, duration) {
   duration = duration || 2400;
   const t = document.createElement('div');
@@ -2358,9 +2507,9 @@ function showSizeIndicator(x, y, size) {
   sizeIndicatorEl = document.createElement('div');
   sizeIndicatorEl.textContent = (currentTool === 'eraser' ? 'Eraser: ' : 'Size: ') + size;
   sizeIndicatorEl.style.cssText = 'position:fixed;left:' + (x+18) + 'px;top:' + (y-12) +
-    'px;background:rgba(15,15,30,0.9);backdrop-filter:blur(20px);color:#fff;padding:6px 12px;border-radius:8px;' +
+    'px;background:rgba(15,15,30,0.9);color:#fff;padding:6px 12px;border-radius:8px;' +
     'font-size:13px;font-weight:bold;border:1px solid ' + (currentTool === 'eraser' ? 'rgba(231,76,60,0.6)' : 'rgba(102,126,234,0.6)') +
-    ';pointer-events:none;z-index:99997;box-shadow:0 4px 15px rgba(0,0,0,0.4);';
+    ';pointer-events:none;z-index:99997;';
   document.body.appendChild(sizeIndicatorEl);
   sizeIndicatorTimer = setTimeout(() => { if (sizeIndicatorEl) { sizeIndicatorEl.remove(); sizeIndicatorEl = null; } }, 800);
 }
@@ -2369,12 +2518,9 @@ function updateSizeUI() {
   sizeDisplay.textContent = currentSize;
   sizeDisplay.classList.toggle('eraser', isEraser);
   sizeSlider.value = currentSize;
-  const tip = isEraser ? 'Eraser size|Adjust eraser radius' : 'Brush size|Adjust thickness';
-  sizeDisplay.setAttribute('data-tip', tip);
-  sizeSlider.setAttribute('data-tip', tip);
 }
 
-// ============ TOOLTIP ============
+// ═══════════════ TOOLTIP ═══════════════
 const tooltipEl = document.createElement('div');
 tooltipEl.className = 'tooltip';
 document.body.appendChild(tooltipEl);
@@ -2415,12 +2561,10 @@ function showTooltip(target, x, y) {
 }
 function hideTooltip() { tooltipTarget = null; tooltipEl.classList.remove('show'); }
 
-if (supportsHover) {
+if (supportsHover && !DeviceProfile.simple) {
   document.addEventListener('mouseover', (e) => {
     const target = e.target.closest('[data-tip]');
-    if (!target) return;
-    if (target === tooltipTarget) return;
-    if (target.disabled) return;
+    if (!target || target === tooltipTarget || target.disabled) return;
     tooltipTarget = target;
     showTooltip(target, e.clientX, e.clientY);
   });
@@ -2430,22 +2574,24 @@ if (supportsHover) {
   window.addEventListener('resize', hideTooltip);
 }
 
-// ============ RIPPLE ============
-document.addEventListener('pointerdown', (e) => {
-  const btn = e.target.closest('button');
-  if (!btn || btn.disabled) return;
-  const rect = btn.getBoundingClientRect();
-  const size = Math.max(rect.width, rect.height);
-  const x = e.clientX - rect.left - size/2;
-  const y = e.clientY - rect.top - size/2;
-  const ripple = document.createElement('span');
-  ripple.className = 'ripple';
-  ripple.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + 'px;top:' + y + 'px;';
-  btn.appendChild(ripple);
-  setTimeout(() => ripple.remove(), 600);
-});
+// ═══════════════ RIPPLE (disabled in simple mode) ═══════════════
+if (!DeviceProfile.simple) {
+  document.addEventListener('pointerdown', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn || btn.disabled) return;
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = e.clientX - rect.left - size/2;
+    const y = e.clientY - rect.top - size/2;
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    ripple.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + 'px;top:' + y + 'px;';
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  });
+}
 
-// ============ CANVAS INTERACTION ============
+// ═══════════════ CANVAS INTERACTION ═══════════════
 canvas.addEventListener('pointerdown', (e) => {
   if (e.button !== 0) return;
   try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
@@ -2465,8 +2611,6 @@ canvas.addEventListener('wheel', (e) => {
   updateSizeUI(); updateStatus();
   showSizeIndicator(e.clientX, e.clientY, currentSize);
 }, { passive: false });
-
-// Hover cursor for text tool
 canvas.addEventListener('mousemove', (e) => {
   if (isDrawing || draggingText || isPlaying) return;
   if (currentTool === 'text') {
@@ -2477,9 +2621,8 @@ canvas.addEventListener('mousemove', (e) => {
     canvas.style.cursor = 'crosshair';
   }
 });
-canvas.addEventListener('pointerdown', () => { if (draggingText) canvas.style.cursor = 'grabbing'; });
 
-// ============ TOOLS ============
+// ═══════════════ TOOLS ═══════════════
 const toolButtons = document.querySelectorAll('.tool-btn');
 function switchTool(newTool) {
   if (newTool === currentTool) return;
@@ -2511,11 +2654,10 @@ sizeSlider.oninput = e => {
   currentSize = parseInt(e.target.value);
   if (currentTool === 'eraser') eraserSize = currentSize;
   else penSize = currentSize;
-  updateSizeUI();
-  updateStatus();
+  updateSizeUI(); updateStatus();
 };
 
-// ============ BUTTON WIRING ============
+// ═══════════════ BUTTON WIRING ═══════════════
 document.getElementById('addFrameBtn').onclick = addFrame;
 document.getElementById('playBtn').onclick = play;
 document.getElementById('stopBtn').onclick = stop;
@@ -2529,7 +2671,7 @@ document.getElementById('restoreFrameBtn').onclick = restoreFrame;
 document.getElementById('clearBtn').onclick = () => {
   const currentHasContent = frames[currentFrame].commands.length > 0;
   const anyHasContent = frames.some(f => f.commands.length > 0);
-  if (!anyHasContent) { toast('Everything\'s already blank — nothing to clear ✨', 2500); return; }
+  if (!anyHasContent) { toast("Everything's blank — nothing to clear ✨", 2500); return; }
   const clearCurrent = () => {
     pushUndo();
     frames[currentFrame].commands = [];
@@ -2541,23 +2683,15 @@ document.getElementById('clearBtn').onclick = () => {
     frames.forEach(f => { f.commands = []; f.invalidate(); });
     undoStack = frames.map(() => []);
     redoStack = frames.map(() => []);
-    rebuildThumbnails();
-    renderCurrentFrame();
+    rebuildThumbnails(); renderCurrentFrame();
     flashStatus('Cleared all ' + frames.length + ' frames 🧹');
   };
   if (currentHasContent) {
-    showConfirm(
-      'Clear?',
-      'Clear this frame, or wipe all ' + frames.length + ' frames clean?',
-      clearCurrent, 'This frame',
-      clearAll, 'All frames'
-    );
+    showConfirm('Clear?', 'Clear this frame, or wipe all ' + frames.length + ' frames?',
+      clearCurrent, 'This frame', clearAll, 'All frames');
   } else {
-    showConfirm(
-      'Clear all frames?',
-      'The current frame is already blank. Wipe all ' + frames.length + ' frames?',
-      clearAll, 'All frames'
-    );
+    showConfirm('Clear all frames?', 'Current is blank. Wipe all ' + frames.length + ' frames?',
+      clearAll, 'All frames');
   }
 };
 
@@ -2569,7 +2703,6 @@ document.getElementById('exportGifBtn').onclick = (e) => exportGIF(e.shiftKey);
 document.getElementById('exportMp4Btn').onclick = (e) => exportMP4(e.shiftKey);
 document.getElementById('modalCloseBtn').onclick = closeModal;
 document.getElementById('modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
-
 playbackOverlay.onclick = () => { if (isPlaying) stop(); };
 
 document.getElementById('projectsBtn').onclick = openProjectsModal;
@@ -2597,18 +2730,6 @@ document.getElementById('closeShareBtn').onclick = () => {
   document.getElementById('shareModal').classList.remove('show');
   restoreFocus();
 };
-document.getElementById('copyShareUrlBtn').onclick = async () => {
-  const url = document.getElementById('shareUrlInput').value;
-  if (!url) return;
-  try {
-    await navigator.clipboard.writeText(url);
-    toast('Link copied! Share it anywhere 🌍', 2500);
-  } catch (_) {
-    document.getElementById('shareUrlInput').select();
-    try { document.execCommand('copy'); toast('Link copied! 🌍', 2500); }
-    catch (e) { toast('Select and copy the link manually, please 🙂', 2500); }
-  }
-};
 
 // Canvas size
 document.getElementById('sizeBtn').onclick = openCanvasSizeModal;
@@ -2622,26 +2743,32 @@ document.querySelectorAll('.preset-grid button').forEach(btn => {
   };
 });
 
+// UI mode toggle
+document.getElementById('uiToggleBtn').onclick = () => {
+  const simple = document.body.classList.toggle('simple-ui');
+  try { localStorage.setItem('wanis_ui_mode', simple ? 'simple' : 'rich'); } catch (_) {}
+  const icon = document.getElementById('uiToggleIcon');
+  if (icon) icon.textContent = simple ? '🎨' : '✨';
+  toast(simple ? 'Simple UI on — lightweight mode 🎨' : 'Glass UI on — full pretty mode ✨', 2400);
+};
+
 // Confirm
 document.getElementById('confirmYes').onclick = () => {
   const cb = confirmYesCallback;
   hideConfirm();
-  if (cb) { try { cb(); } catch (_) { toast('Something went wrong there 😕', 3000); } }
+  if (cb) { try { cb(); } catch (_) { toast('Something went wrong 😕', 3000); } }
 };
 document.getElementById('confirmThird').onclick = () => {
   const cb = confirmThirdCallback;
   hideConfirm();
-  if (cb) { try { cb(); } catch (_) { toast('Something went wrong there 😕', 3000); } }
+  if (cb) { try { cb(); } catch (_) { toast('Something went wrong 😕', 3000); } }
 };
 document.getElementById('confirmNo').onclick = hideConfirm;
 document.getElementById('confirmModal').addEventListener('click', (e) => { if (e.target.id === 'confirmModal') hideConfirm(); });
 
-// ============ KEYBOARD ============
+// ═══════════════ KEYBOARD ═══════════════
 document.addEventListener('keydown', e => {
-  if (draggingText && e.key === 'Escape') {
-    cancelTextDrag = true;
-    return;
-  }
+  if (draggingText && e.key === 'Escape') { cancelTextDrag = true; return; }
   const inInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
   if (inInput) return;
 
@@ -2690,7 +2817,6 @@ window.addEventListener('beforeunload', (e) => {
     e.preventDefault(); e.returnValue = '';
   }
 });
-
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden' && autosaveTimer) {
     clearTimeout(autosaveTimer); autosaveTimer = null;
@@ -2698,7 +2824,7 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-// ============ STATUS ============
+// ═══════════════ STATUS ═══════════════
 function updateStatus() {
   const total = frames.reduce((s, f) => s + f.holdDuration, 0);
   const dur = (total / getFps()).toFixed(2);
@@ -2708,7 +2834,7 @@ function updateStatus() {
     dims + ' · Frame ' + (currentFrame + 1) + '/' + frames.length + ' · ' + currentTool + hint + ' · Size ' + currentSize + ' · ' + dur + 's';
 }
 
-// ============ INIT ============
+// ═══════════════ INIT ═══════════════
 async function initProjectSystem() {
   try {
     await Storage.init();
@@ -2718,24 +2844,20 @@ async function initProjectSystem() {
       projects = data.projects;
       projectOrder = data.order.filter(id => projects[id]);
     }
-
-    // Check for shared URL
     const shareLoaded = await tryLoadFromShareHash();
     if (shareLoaded) {
       if (!Storage.isAvailable()) {
-        setTimeout(() => toast('Storage unavailable — projects won\'t survive a reload. Keep this tab open! 🔒', 5000), 2000);
+        setTimeout(() => toast('Storage unavailable — keep this tab open! 🔒', 5000), 2000);
       }
       return;
     }
-
-    if (projectOrder.length === 0) {
-      showNewProjectModal(true);
-    } else {
+    if (projectOrder.length === 0) showNewProjectModal(true);
+    else {
       const active = (data && data.active && projects[data.active]) ? data.active : projectOrder[0];
       openProject(active);
     }
     if (!Storage.isAvailable()) {
-      setTimeout(() => toast('Storage unavailable — projects won\'t survive a reload. Keep this tab open! 🔒', 5000), 1500);
+      setTimeout(() => toast('Storage unavailable — keep this tab open! 🔒', 5000), 1500);
     }
   } catch (err) {
     console.error('[WAnis] Init failed:', err);
@@ -2743,13 +2865,26 @@ async function initProjectSystem() {
   }
 }
 
+applyDeviceProfile();
 updateSizeUI();
 layoutCanvas();
+
+// Ensure both Onion and Grid are drawn on startup
+onionBtn.classList.add('active');
+gridBtn.classList.add('active');
+updateOnionSkin();
 drawGrid();
+
 updateStatus();
 updateTrashButton();
 renderRecentColors();
 initProjectSystem();
+
+if (DeviceProfile.simple) {
+  setTimeout(() => {
+    toast('🎨 Simple UI on (' + DeviceProfile.reasons.join(', ') + ') — toggle with ✨ in the header', 5500);
+  }, 1200);
+}
 </script>
 
 </body>
