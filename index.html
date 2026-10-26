@@ -4,13 +4,11 @@
 <meta charset="UTF-8">
 <title>WAnis - Web Animate Studio</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<!-- ═══ ANIMATION FONTS (Google Fonts) ═══ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Bubblegum+Sans&family=Chewy&family=Fredoka+One&family=Luckiest+Guy&family=Permanent+Marker&family=Shantell+Sans:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* GitHub Dark Theme Colors */
     --bg-main: #0d1117;
     --bg-panel: #161b22;
     --bg-btn: #21262d;
@@ -32,7 +30,6 @@
     display: flex; flex-direction: column;
   }
 
-  /* ═══ HEADER ═══ */
   .header {
     padding: 10px 20px;
     display: flex; justify-content: space-between; align-items: center;
@@ -57,8 +54,7 @@
   .project-badge:hover { background: rgba(110, 118, 129, 0.6); color: #fff; }
   .project-badge.hidden { display: none !important; }
   .controls { display: flex; gap: 6px; flex-wrap: wrap; }
-  
-  /* ═══ BUTTONS ═══ */
+
   button {
     position: relative; overflow: hidden;
     background: var(--bg-btn);
@@ -81,10 +77,8 @@
   button:disabled { opacity: 0.5; cursor: not-allowed; }
   button:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; }
 
-  /* ═══ MAIN LAYOUT ═══ */
   .main { display: flex; flex: 1; overflow: hidden; }
 
-  /* ═══ TOOLBAR ═══ */
   .toolbar {
     width: 82px; padding: 10px 5px;
     display: flex; flex-direction: column; gap: 8px; align-items: center;
@@ -142,7 +136,6 @@
   .size-value.eraser { color: var(--danger); }
   .size-slider { width: 44px; writing-mode: vertical-lr; direction: rtl; height: 90px; flex-shrink: 0; accent-color: var(--accent); }
 
-  /* ═══ CANVAS AREA ═══ */
   .canvas-area {
     flex: 1; padding: 20px;
     display: flex; align-items: center; justify-content: center;
@@ -158,7 +151,7 @@
   #onionCanvas, #gridCanvas { pointer-events: none; }
   #canvas { cursor: crosshair; touch-action: none; outline: none; }
   .canvas-overlay-btns { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 10; flex-direction: column; }
-  
+
   .status {
     position: absolute; bottom: 10px; left: 10px;
     background: rgba(13, 17, 23, 0.9);
@@ -178,7 +171,6 @@
   }
   .status-flash.show { opacity: 1; transform: translateY(0); }
 
-  /* ═══ TIMELINE ═══ */
   .timeline {
     padding: 10px;
     display: flex; align-items: center; gap: 10px;
@@ -199,7 +191,7 @@
   .fps-control input:focus { outline: none; border-color: var(--accent); }
   .frame-actions { display: flex; gap: 4px; padding: 0 10px; border-right: 1px solid var(--border); align-items: center; flex-shrink: 0; }
   .frame-actions button { padding: 5px 8px; font-size: 14px; min-width: 32px; justify-content: center; }
-  
+
   .frames-strip-wrap { flex: 1; position: relative; display: flex; min-width: 0; }
   .frames-strip-wrap::before, .frames-strip-wrap::after {
     content: ''; position: absolute; top: 0; bottom: 0; width: 24px;
@@ -220,7 +212,7 @@
   .frames-container::-webkit-scrollbar { height: 6px; }
   .frames-container::-webkit-scrollbar-track { background: transparent; }
   .frames-container::-webkit-scrollbar-thumb { background: #484f58; border-radius: 3px; }
-  
+
   .frame {
     min-width: 74px; height: 74px; background: #fff;
     border: 2px solid var(--border); border-radius: 4px;
@@ -252,7 +244,7 @@
   }
   .frame .del svg { pointer-events: none; display: block; }
   .frame:hover .del, .frame.active .del { opacity: 1; }
-  
+
   .add-frame {
     min-width: 74px; height: 74px;
     background: var(--bg-btn); border: 1px dashed var(--border);
@@ -263,7 +255,6 @@
   }
   .add-frame:hover { background: var(--bg-btn-hover); color: var(--text-primary); border-color: var(--text-secondary); }
 
-  /* ═══ MODALS ═══ */
   .modal {
     position: fixed; inset: 0;
     background: rgba(1, 4, 9, 0.8);
@@ -292,7 +283,7 @@
     border-radius: 6px; padding: 10px 14px; margin: 12px 0;
     line-height: 1.5; text-align: left;
   }
-  
+
   .project-list { display: flex; flex-direction: column; gap: 6px; max-height: 50vh; overflow-y: auto; margin: 16px 0; text-align: left; }
   .project-item {
     display: flex; align-items: center; gap: 10px;
@@ -314,7 +305,7 @@
   .project-item .del-proj:hover { background: var(--bg-btn); color: var(--danger); }
   .project-item .del-proj svg { pointer-events: none; display: block; }
   .project-empty { text-align: center; padding: 30px 20px; color: var(--text-secondary); font-size: 13px; }
-  
+
   .new-project-input, .share-input {
     width: 100%; padding: 10px 12px;
     background: var(--bg-main); color: var(--text-primary);
@@ -345,10 +336,10 @@
   .size-inputs input { width: 100%; padding: 8px 10px; background: var(--bg-main); color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; font-family: inherit; font-size: 14px; outline: none; }
   .size-inputs input:focus { border-color: var(--accent); }
   .modal-content .hint { font-size: 11px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px; }
-  
+
   .progress-bar { width: 100%; height: 6px; background: var(--bg-main); border-radius: 3px; overflow: hidden; margin: 15px 0; border: 1px solid var(--border); }
   .progress-bar .fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.15s; }
-  
+
   .playback-overlay {
     position: fixed; inset: 0; background: #000;
     z-index: 9999; display: none; align-items: center; justify-content: center; cursor: pointer;
@@ -362,7 +353,6 @@
     border: 1px solid var(--border);
   }
 
-  /* Single Reused Toast */
   .toast {
     position: fixed; bottom: 100px; left: 50%;
     transform: translateX(-50%) translateY(20px);
@@ -373,7 +363,7 @@
     max-width: 80vw; text-align: center;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  
+
   .tooltip {
     position: fixed; background: var(--bg-panel); color: var(--text-primary);
     padding: 8px 12px; border-radius: 6px; font-size: 12px;
@@ -389,7 +379,7 @@
     color: var(--text-primary); padding: 1px 6px; border-radius: 4px;
     font-size: 10px; font-weight: bold; margin-left: 4px; border: 1px solid var(--border);
   }
-  
+
   .share-actions { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
   .share-actions button { width: 100%; justify-content: center; padding: 10px; font-size: 13px; }
   .qr-box {
@@ -400,7 +390,6 @@
   .qr-box canvas, .qr-box img { display: block; width: 200px !important; height: 200px !important; }
   .qr-box small { color: #333; font-size: 11px; margin-top: 8px; text-align: center; }
 
-  /* ═══ FLOATING TEXT TOOLBAR ═══ */
   .text-toolbar {
     position: fixed; z-index: 500;
     background: var(--bg-panel); border: 1px solid var(--border);
@@ -415,7 +404,7 @@
     outline: none; width: 200px;
   }
   .text-toolbar input:focus { border-color: var(--accent); }
-  
+
   .custom-select { position: relative; user-select: none; width: 100%; }
   .custom-select-trigger {
     background: var(--bg-btn); border: 1px solid var(--border);
@@ -435,6 +424,93 @@
   }
   .custom-option:last-child { border-bottom: none; }
   .custom-option:hover { background: var(--bg-btn-hover); color: #fff; }
+
+  .import-tabs {
+    display: flex; gap: 4px; margin-bottom: 12px;
+    background: var(--bg-main); padding: 4px; border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .import-tab {
+    flex: 1; padding: 8px 10px; border-radius: 4px;
+    background: transparent; border: none; color: var(--text-secondary);
+    font-family: inherit; font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: 0.15s; justify-content: center;
+  }
+  .import-tab:hover { color: var(--text-primary); background: var(--bg-btn); }
+  .import-tab.active { background: var(--bg-btn); color: var(--text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+  .import-tab-panel { display: none; text-align: left; }
+  .import-tab-panel.active { display: block; }
+  .import-textarea {
+    width: 100%; height: 140px; padding: 10px 12px;
+    background: var(--bg-main); color: var(--text-primary);
+    border: 1px solid var(--border); border-radius: 6px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px;
+    line-height: 1.5; resize: vertical; outline: none;
+  }
+  .import-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.25); }
+  .import-file-drop {
+    border: 2px dashed var(--border); border-radius: 8px;
+    padding: 28px 20px; text-align: center; cursor: pointer;
+    transition: 0.15s; color: var(--text-secondary); font-size: 13px;
+    background: var(--bg-main);
+  }
+  .import-file-drop:hover, .import-file-drop.dragover {
+    border-color: var(--accent); background: rgba(88, 166, 255, 0.08); color: var(--text-primary);
+  }
+  .import-file-drop .big-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+  .import-file-drop .filename { color: var(--accent); font-weight: 600; margin-top: 8px; display: block; word-break: break-all; }
+  .import-file-input { display: none; }
+  .import-error {
+    font-size: 12px; color: #ff7b72;
+    background: rgba(218, 54, 51, 0.1);
+    border: 1px solid rgba(218, 54, 51, 0.5);
+    border-radius: 6px; padding: 10px 14px; margin: 12px 0;
+    text-align: left; line-height: 1.6; display: none;
+  }
+  .import-error.show { display: block; }
+  .import-error strong { display: block; margin-bottom: 4px; }
+  .import-error .err-step {
+    display: inline-block; background: rgba(255, 123, 114, 0.15);
+    padding: 1px 6px; border-radius: 3px; font-size: 10px;
+    font-weight: bold; text-transform: uppercase; margin-right: 4px;
+    letter-spacing: 0.5px;
+  }
+  .import-error code {
+    display: block; margin-top: 6px; padding: 6px 8px;
+    background: rgba(0,0,0,0.3); border-radius: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 10px; color: #ffa198; word-break: break-all;
+  }
+  .import-hint { font-size: 11px; color: var(--text-secondary); line-height: 1.5; margin-top: 8px; }
+  .import-progress {
+    margin: 14px 0; padding: 12px;
+    background: var(--bg-main); border-radius: 6px;
+    border: 1px solid var(--border); display: none;
+  }
+  .import-progress.show { display: block; }
+  .import-progress .step-label {
+    font-size: 12px; color: var(--text-primary); font-weight: 500;
+    margin-bottom: 8px; display: flex; justify-content: space-between;
+    align-items: center;
+  }
+  .import-progress .step-label .pct { color: var(--accent); font-weight: 600; }
+  .import-progress .bar {
+    height: 6px; background: var(--bg-panel); border-radius: 3px;
+    overflow: hidden; border: 1px solid var(--border);
+  }
+  .import-progress .bar .fill {
+    height: 100%; background: var(--accent);
+    width: 0%; transition: width 0.2s;
+  }
+  .import-progress .steps-log {
+    margin-top: 10px; font-size: 11px; color: var(--text-secondary);
+    max-height: 100px; overflow-y: auto;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .import-progress .steps-log div { padding: 2px 0; }
+  .import-progress .steps-log .ok::before { content: '✓ '; color: #3fb950; }
+  .import-progress .steps-log .fail::before { content: '✗ '; color: #f85149; }
+  .import-progress .steps-log .run::before { content: '⋯ '; color: var(--accent); }
 </style>
 </head>
 <body>
@@ -446,6 +522,7 @@
   </div>
   <div class="controls">
     <button id="projectsBtn" data-tip="Projects|Create, switch, rename, or delete projects">Projects</button>
+    <button id="importBtn" data-tip="Import|Open a .wanis file, paste data, or load from URL|I">📥 Import</button>
     <button id="shareBtn" data-tip="Share|Get a link anyone can open">Share</button>
     <button id="sizeBtn" data-tip="Canvas size|Change width and height">Size</button>
     <button id="playBtn" class="success" data-tip="Play|Preview your animation|Space">▶ Play</button>
@@ -599,6 +676,54 @@
   </div>
 </div>
 
+<div class="modal" id="importModal">
+  <div class="modal-content">
+    <h2>📥 Import Project</h2>
+    <p>Bring in a project from a <code>.wanis</code> file, pasted data, or a share URL.</p>
+
+    <div class="import-tabs">
+      <button class="import-tab active" data-import-tab="file">📁 File</button>
+      <button class="import-tab" data-import-tab="paste">📋 Paste</button>
+      <button class="import-tab" data-import-tab="url">🔗 URL</button>
+    </div>
+
+    <div class="import-tab-panel active" data-import-panel="file">
+      <div class="import-file-drop" id="importFileDrop">
+        <span class="big-icon">📁</span>
+        Drop a <strong>.wanis</strong> or <strong>.txt</strong> file here, or click to browse
+        <span class="filename" id="importFileName" style="display:none;"></span>
+      </div>
+      <input type="file" id="importFileInput" class="import-file-input" accept=".wanis,.txt,.json,application/json,text/plain">
+    </div>
+
+    <div class="import-tab-panel" data-import-panel="paste">
+      <textarea id="importPasteText" class="import-textarea" placeholder="Paste the encoded project data here (starts with gz. or raw.)..."></textarea>
+      <div class="import-hint">Tip: use <strong>Share → Copy raw data manually</strong> to get this string from another project.</div>
+    </div>
+
+    <div class="import-tab-panel" data-import-panel="url">
+      <input type="url" id="importUrlInput" class="share-input" placeholder="https://paste.rs/abc123 or full share link">
+      <div class="import-hint">Accepts a paste.rs / dpaste URL, or a full <code>#share=</code> link.</div>
+    </div>
+
+    <div class="import-progress" id="importProgress">
+      <div class="step-label">
+        <span id="importStepLabel">Preparing…</span>
+        <span class="pct" id="importStepPct">0%</span>
+      </div>
+      <div class="bar"><div class="fill" id="importProgressFill"></div></div>
+      <div class="steps-log" id="importStepsLog"></div>
+    </div>
+
+    <div class="import-error" id="importError"></div>
+
+    <div class="modal-buttons">
+      <button id="importSubmitBtn" class="success">📥 Import</button>
+      <button id="importCancelBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <div class="playback-overlay" id="playbackOverlay">
   <canvas id="playbackCanvas" width="800" height="500"></canvas>
   <div class="playback-hint">Press ESC or click anywhere to close</div>
@@ -607,7 +732,6 @@
 <div class="toast" id="toastEl"></div>
 
 <script type="module">
-// ═══════════════ CONSTANTS ═══════════════
 let CANVAS_W = 800;
 let CANVAS_H = 500;
 const THUMB_SIZE = 74;
@@ -620,8 +744,9 @@ const STORAGE_KEY = 'wanis_v1';
 const MAX_RECENT_COLORS = 8;
 const MIN_CANVAS = 100;
 const MAX_CANVAS = 3000;
+const UPLOAD_TIMEOUT_MS = 15000;
+const HAS_HOVER = window.matchMedia('(hover: hover)').matches;
 
-// ═══════════════ STORAGE ═══════════════
 const Storage = (() => {
   const DB_NAME = 'wanis_db';
   const DB_VERSION = 1;
@@ -693,7 +818,6 @@ const Storage = (() => {
   };
 })();
 
-// ═══════════════ DOM REFS ═══════════════
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const onionCanvas = document.getElementById('onionCanvas');
@@ -719,7 +843,6 @@ const recentColorsEl = document.getElementById('recentColors');
 const statusFlashEl = document.getElementById('statusFlash');
 const toastEl = document.getElementById('toastEl');
 
-// ═══════════════ STATE ═══════════════
 let projects = {};
 let projectOrder = [];
 let activeProjectId = null;
@@ -769,9 +892,8 @@ function scheduleAutosave() {
 }
 function markDirty() { scheduleAutosave(); }
 
-// ═══════════════ TOAST SYSTEM ═══════════════
 function toast(msg, duration) {
-  duration = duration || 3000; 
+  duration = duration || 3000;
   toastEl.textContent = msg;
   toastEl.classList.add('show');
   if (toastTimer) clearTimeout(toastTimer);
@@ -780,7 +902,12 @@ function toast(msg, duration) {
   }, duration);
 }
 
-// ═══════════════ COMPACT ENCODING ═══════════════
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
 function compactCommand(cmd) {
   switch (cmd.type) {
     case 'pen':
@@ -891,13 +1018,13 @@ async function decodeProject(hash) {
   return parsed;
 }
 
-// ═══════════════ PASTE SERVICE ═══════════════
 async function uploadToPaste(payload) {
   try {
     const res = await fetch('https://paste.rs', {
       method: 'POST',
       body: payload,
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      signal: AbortSignal.timeout(UPLOAD_TIMEOUT_MS)
     });
     if (res.ok) {
       const text = (await res.text()).trim();
@@ -909,7 +1036,8 @@ async function uploadToPaste(payload) {
     const res = await fetch('https://dpaste.com/api/v2/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'content=' + encodeURIComponent(payload) + '&syntax=text&expiry_days=7'
+      body: 'content=' + encodeURIComponent(payload) + '&syntax=text&expiry_days=7',
+      signal: AbortSignal.timeout(UPLOAD_TIMEOUT_MS)
     });
     if (res.ok) {
       const text = (await res.text()).trim();
@@ -920,9 +1048,7 @@ async function uploadToPaste(payload) {
   throw new Error('Both paste services are unreachable right now');
 }
 
-// ═══════════════ FIXED FETCH WITH CORS PROXY ═══════════════
 async function fetchFromPaste(url) {
-  // 1. Try direct fetch
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -938,7 +1064,6 @@ async function fetchFromPaste(url) {
     console.warn('Direct fetch failed, trying CORS proxy...', e);
   }
 
-  // 2. Fallback to a public CORS proxy
   const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
   const res = await fetch(proxyUrl);
   if (!res.ok) throw new Error('Proxy HTTP ' + res.status);
@@ -946,7 +1071,6 @@ async function fetchFromPaste(url) {
   return text.trim();
 }
 
-// ═══════════════ SHARE ═══════════════
 async function copyTextToClipboard(text) {
   try { await navigator.clipboard.writeText(text); toast('Link copied! Nice. 📋', 1800); return true; }
   catch (_) {
@@ -996,14 +1120,14 @@ async function shareCurrentProject() {
       urlInput.style.display = 'block';
       urlInput.value = directUrl;
       status.textContent = `✅ Link ready! ${kb} KB — anyone can open it`;
-      
+
       actionsEl.innerHTML = `
         <button id="copyShareUrlBtn" class="success">📋 Copy link</button>
         <button id="qrShareBtn">📱 Show QR code</button>
       `;
-      
+
       document.getElementById('copyShareUrlBtn').onclick = () => copyTextToClipboard(directUrl);
-      
+
       document.getElementById('qrShareBtn').onclick = () => {
         const box = document.getElementById('shareQrBox');
         if (box.style.display === 'flex') {
@@ -1017,7 +1141,7 @@ async function shareCurrentProject() {
     } else {
       status.textContent = `⚠️ Project is ${kb} KB — too big for a plain link. Upload it so anyone can open it (no download needed):`;
       actionsEl.innerHTML = '<button id="uploadPasteBtn" class="success">☁️ Upload & get shareable link</button><button id="manualCopyBtn">📝 Copy raw data manually</button>';
-      
+
       document.getElementById('uploadPasteBtn').onclick = async () => {
         const btn = document.getElementById('uploadPasteBtn');
         btn.disabled = true; btn.textContent = '☁️ Uploading…';
@@ -1053,7 +1177,7 @@ function showQr(text) {
     toast('Link is too long for a QR code — use Copy instead', 3000);
     return;
   }
-  
+
   qrBox.innerHTML = `<div id="qrcode-canvas"></div><small>Scan with phone camera → opens and imports automatically</small><button id="downloadQrBtn" class="success" style="margin-top:8px;width:100%;font-size:12px;padding:6px;">📥 Save QR as Image</button>`;
   qrBox.style.display = 'flex';
 
@@ -1089,37 +1213,116 @@ async function tryLoadFromShareHash() {
       return await importFromEncoded(text);
     } catch (e) {
       console.warn('[WAnis] Paste fetch failed:', e);
-      showManualImportPrompt(pasteUrl);
+      showManualImportPrompt(pasteUrl, e);
       return true;
     }
   }
   if (location.hash.startsWith('#share=')) {
     const hashVal = location.hash.slice(7);
     history.replaceState(null, '', location.pathname + location.search);
-    try { return await importFromEncoded(hashVal); }
-    catch (e) {
+    try {
+      return await importFromEncoded(hashVal);
+    } catch (e) {
       console.error('[WAnis] Share decode failed:', e);
-      toast('This share link is invalid 😕', 4000);
+      const modal = document.getElementById('modal');
+      document.getElementById('modalTitle').textContent = '❌ Share link failed';
+      document.getElementById('modalText').textContent = 'This share link could not be loaded. The details below will help debug:';
+      document.getElementById('modalPreview').innerHTML =
+        '<div class="import-error show" style="margin:0;">' +
+        '<span class="err-step">decode</span>' +
+        '<div>' + escapeHtml(e.message || String(e)) + '</div>' +
+        (e.name && e.name !== 'Error' ? '<code>' + escapeHtml(e.name) + ': ' + escapeHtml(e.message) + '</code>' : '') +
+        '</div>';
+      document.getElementById('modalFallbackHint').style.display = 'block';
+      document.getElementById('modalFallbackHint').textContent = 'Common causes: link was truncated when copied, generated by an older version, or the paste service returned an error page.';
+      document.getElementById('progressBar').style.display = 'none';
+      document.getElementById('modalButtons').style.display = 'none';
+      document.getElementById('modalButtons').innerHTML = '';
+      modal.classList.add('show');
       return false;
     }
   }
   return false;
 }
 
-async function importFromEncoded(encoded) {
-  const proj = await decodeProject(encoded);
-  if (!proj || !Array.isArray(proj.frames) || proj.frames.length === 0) throw new Error('Empty project');
-  const sanitized = proj.frames.map(f => ({
-    commands: (Array.isArray(f.commands) ? f.commands : []).filter(c => c && typeof c.type === 'string'),
-    holdDuration: Math.max(1, Math.min(MAX_HOLD, parseInt(f.holdDuration) || 1))
-  }));
+function safeHref(url) {
+  try {
+    const u = new URL(url, location.origin);
+    if (u.protocol === 'http:' || u.protocol === 'https:') return u.href;
+  } catch (_) {}
+  return null;
+}
+
+async function importFromEncoded(encoded, opts) {
+  opts = opts || {};
+  const onProgress = opts.onProgress || (() => {});
+
+  onProgress(5, 'Validating input…');
+  if (typeof encoded !== 'string' || !encoded.trim()) {
+    throw new Error('Input is empty. Paste encoded data, choose a file, or provide a URL.');
+  }
+  const trimmed = encoded.trim();
+  if (!trimmed.startsWith('gz.') && !trimmed.startsWith('raw.')) {
+    const preview = trimmed.slice(0, 40).replace(/\s+/g, ' ');
+    throw new Error('Data does not start with "gz." or "raw." — it may be corrupted or truncated. Preview: "' + preview + (trimmed.length > 40 ? '…' : '') + '"');
+  }
+
+  onProgress(15, 'Decoding base64…');
+  let proj;
+  try {
+    proj = await decodeProject(trimmed);
+  } catch (e) {
+    let hint = '';
+    if (e.name === 'InvalidCharacterError' || /atob/i.test(e.message)) {
+      hint = 'The encoded string contains invalid base64 characters. It may have been cut off when copying.';
+    } else if (e.name === 'TypeError' && /decompress|DecompressionStream/i.test(e.message)) {
+      hint = 'This browser does not support DecompressionStream. Try Chrome/Edge/Safari 16.4+.';
+    } else if (e.name === 'SyntaxError' || /JSON/i.test(e.message)) {
+      hint = 'The decoded data is not valid JSON. The project may be from a newer version.';
+    }
+    const err = new Error(e.message || 'Decode failed');
+    err.name = e.name || 'DecodeError';
+    err._hint = hint;
+    throw err;
+  }
+
+  onProgress(40, 'Validating project structure…');
+  if (!proj || typeof proj !== 'object') {
+    throw new Error('Decoded project is not an object (got ' + (proj === null ? 'null' : typeof proj) + ').');
+  }
+  if (!Array.isArray(proj.frames)) {
+    throw new Error('Project has no "frames" array. Got keys: ' + Object.keys(proj).join(', '));
+  }
+  if (proj.frames.length === 0) {
+    throw new Error('Project has 0 frames — nothing to import.');
+  }
+
+  onProgress(55, 'Sanitizing ' + proj.frames.length + ' frames…');
+  let skipped = 0;
+  const sanitized = proj.frames.map(f => {
+    if (!f || typeof f !== 'object') { skipped++; return { commands: [], holdDuration: 1 }; }
+    const cmds = Array.isArray(f.commands)
+      ? f.commands.filter(c => c && typeof c === 'object' && typeof c.type === 'string')
+      : [];
+    return {
+      commands: cmds,
+      holdDuration: Math.max(1, Math.min(MAX_HOLD, parseInt(f.holdDuration) || 1))
+    };
+  });
+  if (skipped > 0) console.warn('[WAnis] Import: skipped ' + skipped + ' malformed frame(s)');
+
+  onProgress(70, 'Resolving project name…');
   const id = 'shared_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
   let cleanName = (typeof proj.name === 'string' ? proj.name : 'Shared').slice(0, 60).trim() || 'Shared';
   let uniqueName = cleanName;
   let n = 2;
   while (nameExists(uniqueName, null)) { uniqueName = cleanName + ' (' + n + ')'; n++; }
+
+  onProgress(80, 'Applying canvas size…');
   const newW = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, parseInt(proj.canvasW) || CANVAS_W));
   const newH = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, parseInt(proj.canvasH) || CANVAS_H));
+
+  onProgress(90, 'Saving project…');
   projects[id] = {
     name: uniqueName, createdAt: Date.now(), updatedAt: Date.now(),
     frames: sanitized,
@@ -1129,17 +1332,40 @@ async function importFromEncoded(encoded) {
   };
   projectOrder.push(id);
   persistAll();
-  openProject(id);
+
+  onProgress(95, 'Opening project…');
+  try {
+    openProject(id);
+  } catch (e) {
+    try {
+      delete projects[id];
+      projectOrder = projectOrder.filter(x => x !== id);
+      persistAll();
+    } catch (_) {}
+    throw new Error('Project registered but could not be opened for rendering: ' + e.message);
+  }
+
+  onProgress(100, 'Done!');
   toast('Imported "' + uniqueName + '"! ✨', 3500);
   return true;
 }
 
-function showManualImportPrompt(pasteUrl) {
+function showManualImportPrompt(pasteUrl, cause) {
   const modal = document.getElementById('modal');
   document.getElementById('modalTitle').textContent = '📥 Manual Import';
   document.getElementById('modalText').textContent = 'Auto-fetch was blocked (CORS). Open the link below in a new tab, copy everything, then paste it here:';
+
+  const safe = safeHref(pasteUrl);
+  const linkHtml = safe
+    ? '<a href="' + safe.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener noreferrer" style="display:block; word-break:break-all; color:#58a6ff; margin:12px 0; font-size:13px;">' + safe.replace(/</g, '&lt;') + '</a>'
+    : '<div style="color:#f85149; font-size:13px; margin:12px 0;">⚠️ URL không hợp lệ (chỉ chấp nhận http/https)</div>';
+
+  const causeHtml = cause
+    ? '<div style="font-size:11px;color:#ff7b72;margin-bottom:8px;padding:6px 10px;background:rgba(218,54,51,0.1);border-radius:4px;">Auto-fetch failed: ' + escapeHtml(cause.message || String(cause)) + '</div>'
+    : '';
+
   document.getElementById('modalPreview').innerHTML =
-    '<a href="' + pasteUrl + '" target="_blank" style="display:block; word-break:break-all; color:#58a6ff; margin:12px 0; font-size:13px;">' + pasteUrl + '</a>' +
+    causeHtml + linkHtml +
     '<textarea id="manualImportText" style="width:100%; height:150px; background:#0d1117; color:#c9d1d9; border:1px solid #30363d; border-radius:8px; padding:10px; font-family:monospace; font-size:11px; margin-top:8px;" placeholder="Paste the encoded data here..."></textarea>';
   document.getElementById('modalFallbackHint').style.display = 'none';
   document.getElementById('progressBar').style.display = 'none';
@@ -1149,12 +1375,15 @@ function showManualImportPrompt(pasteUrl) {
     const text = document.getElementById('manualImportText').value.trim();
     if (!text) { toast('Paste the data first!', 2000); return; }
     try { await importFromEncoded(text); closeModal(); }
-    catch (e) { toast('Import failed: ' + e.message, 4000); }
+    catch (e) {
+      console.error('[WAnis] Manual import failed:', e);
+      document.getElementById('modalPreview').insertAdjacentHTML('afterbegin',
+        '<div class="import-error show" style="margin:0 0 8px 0;"><span class="err-step">decode</span><div>' + escapeHtml(e.message || String(e)) + '</div></div>');
+    }
   };
   modal.classList.add('show');
 }
 
-// ═══════════════ CANVAS SIZE ═══════════════
 function applyCanvasSize(w, h, opts) {
   opts = opts || {};
   w = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, Math.floor(w)));
@@ -1201,11 +1430,13 @@ function submitCanvasSize() {
   flashStatus('Canvas: ' + w + ' × ' + h);
 }
 
-// ═══════════════ PROJECTS ═══════════════
 function openProject(id) {
   if (!projects[id]) return;
   if (activeProjectId && projects[activeProjectId]) { try { saveCurrentProject(); } catch (_) {} }
   const p = projects[id];
+
+  activeProjectId = id;
+
   const w = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, parseInt(p.canvasW) || 800));
   const h = Math.max(MIN_CANVAS, Math.min(MAX_CANVAS, parseInt(p.canvasH) || 500));
   applyCanvasSize(w, h, { skipRender: true, skipSave: true });
@@ -1216,7 +1447,7 @@ function openProject(id) {
   redoStack = frames.map(() => []);
   trash = [];
   recentColors = Array.isArray(p.recentColors) ? p.recentColors.slice() : [];
-  activeProjectId = id;
+
   layoutCanvas();
   drawGrid();
   rebuildThumbnails();
@@ -1440,7 +1671,6 @@ function restoreFocus() {
   if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) active.blur();
 }
 
-// ═══════════════ RECENT COLORS ═══════════════
 let recentColorTimer = null;
 function scheduleAddRecentColor(hex) {
   if (recentColorTimer) clearTimeout(recentColorTimer);
@@ -1476,7 +1706,6 @@ function renderRecentColors() {
   });
 }
 
-// ═══════════════ STATUS FLASH ═══════════════
 let statusFlashTimer = null;
 function flashStatus(msg, duration) {
   duration = duration || 1500;
@@ -1489,14 +1718,14 @@ function cmdTypeLabel(type) {
   return ({ pen: 'stroke', eraser: 'eraser', line: 'line', rect: 'rectangle', circle: 'circle', fill: 'fill', text: 'text' }[type] || 'action');
 }
 
-// ═══════════════ FRAME CLASS ═══════════════
 class Frame {
   constructor(commands, holdDuration) {
     this.commands = commands || [];
     this.holdDuration = holdDuration || 1;
     this._raster = null;
+    this._ghost = null;
   }
-  invalidate() { this._raster = null; }
+  invalidate() { this._raster = null; this._ghost = null; }
   getRaster() {
     if (this._raster) return this._raster;
     const c = document.createElement('canvas');
@@ -1508,9 +1737,23 @@ class Frame {
     this._raster = c;
     return c;
   }
+  getGhost() {
+    if (this._ghost) return this._ghost;
+    const tmp = document.createElement('canvas');
+    tmp.width = CANVAS_W; tmp.height = CANVAS_H;
+    const tctx = tmp.getContext('2d', { willReadFrequently: true });
+    tctx.drawImage(this.getRaster(), 0, 0);
+    const img = tctx.getImageData(0, 0, CANVAS_W, CANVAS_H);
+    const d = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+      if (d[i] > WHITE_THRESHOLD && d[i+1] > WHITE_THRESHOLD && d[i+2] > WHITE_THRESHOLD) d[i+3] = 0;
+    }
+    tctx.putImageData(img, 0, 0);
+    this._ghost = tmp;
+    return tmp;
+  }
 }
 
-// ═══════════════ RUNTIME STATE ═══════════════
 let frames = [new Frame()];
 let currentFrame = 0;
 let undoStack = [[]];
@@ -1570,7 +1813,6 @@ function revokeAllUrls() {
   activeObjectUrls.clear();
 }
 
-// ═══════════════ DOWNLOAD (with TV fallbacks) ═══════════════
 async function saveBlob(blob, filename) {
   const file = new File([blob], filename, { type: blob.type });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -1651,7 +1893,6 @@ function showExportResult(blob, filename, ext, mediaType) {
   };
 }
 
-// ═══════════════ RENDERING ═══════════════
 function floodFillCtx(c, x, y, color) {
   const w = c.canvas.width, h = c.canvas.height;
   x = Math.floor(x); y = Math.floor(y);
@@ -1721,17 +1962,13 @@ function applyCommand(cmd, c) {
       break;
     case 'text':
       const fontFamily = cmd.font || 'Bangers';
-      // Increased font size for animation style
-      const actualSize = cmd.size * 1.2; 
+      const actualSize = cmd.size * 1.2;
       c.font = `normal ${actualSize}px "${fontFamily}", sans-serif`;
       c.textBaseline = 'top';
       c.lineJoin = 'round';
-      
-      // Softer, proportional outline
       c.strokeStyle = '#000000';
       c.lineWidth = Math.max(1, actualSize * 0.12);
       c.strokeText(cmd.text, cmd.x, cmd.y);
-      
       c.fillStyle = cmd.color;
       c.fillText(cmd.text, cmd.x, cmd.y);
       break;
@@ -1771,16 +2008,7 @@ function renderCurrentFrame() {
 }
 
 function renderGhost(frame, targetCtx) {
-  const tmp = makeTempCanvas();
-  const tctx = tmp.getContext('2d', { willReadFrequently: true });
-  tctx.drawImage(frame.getRaster(), 0, 0);
-  const img = tctx.getImageData(0, 0, CANVAS_W, CANVAS_H);
-  const data = img.data;
-  for (let i = 0; i < data.length; i += 4) {
-    if (data[i] > WHITE_THRESHOLD && data[i+1] > WHITE_THRESHOLD && data[i+2] > WHITE_THRESHOLD) data[i+3] = 0;
-  }
-  tctx.putImageData(img, 0, 0);
-  targetCtx.drawImage(tmp, 0, 0);
+  targetCtx.drawImage(frame.getGhost(), 0, 0);
 }
 
 function updateOnionSkin() {
@@ -1865,33 +2093,39 @@ function averagePoint(buf) {
   return { x: sx / buf.length, y: sy / buf.length };
 }
 
-// ═══════════════ CUSTOM TEXT TOOLBAR & FONT CHOOSER ═══════════════
 function startTextInput(pos) {
+  document.querySelectorAll('.text-toolbar').forEach(el => {
+    if (typeof el._commit === 'function') {
+      try { el._commit(); } catch (_) {}
+    } else {
+      el.remove();
+    }
+  });
+
   const rect = canvas.getBoundingClientRect();
   const scaleX = rect.width / CANVAS_W;
   const scaleY = rect.height / CANVAS_H;
   const fontSize = Math.max(12, Math.min(200, currentSize * 4));
-  
+
   const wrapper = document.createElement('div');
   wrapper.className = 'text-toolbar';
   wrapper.style.left = (rect.left + pos.x * scaleX) + 'px';
   wrapper.style.top = (rect.top + pos.y * scaleY) + 'px';
 
-  // Animation-style fonts
   const fontList = [
-    'Bangers', 
-    'Chewy', 
-    'Luckiest Guy', 
-    'Permanent Marker', 
-    'Fredoka One', 
-    'Bubblegum Sans', 
+    'Bangers',
+    'Chewy',
+    'Luckiest Guy',
+    'Permanent Marker',
+    'Fredoka One',
+    'Bubblegum Sans',
     'Shantell Sans'
   ];
   let selectedFont = 'Bangers';
 
   const customSelect = document.createElement('div');
   customSelect.className = 'custom-select';
-  
+
   const trigger = document.createElement('div');
   trigger.className = 'custom-select-trigger';
   trigger.innerHTML = `<span style="font-family:'${selectedFont}'">${selectedFont}</span> <span style="font-size:10px;">▼</span>`;
@@ -1905,7 +2139,7 @@ function startTextInput(pos) {
     opt.className = 'custom-option';
     opt.textContent = font;
     opt.style.fontFamily = `"${font}", sans-serif`;
-    
+
     opt.onclick = (e) => {
       e.stopPropagation();
       selectedFont = font;
@@ -1923,7 +2157,6 @@ function startTextInput(pos) {
     options.classList.toggle('show');
   };
 
-  // ═══ FIX: Only close dropdown when clicking OUTSIDE ═══
   const closeDropdown = (e) => {
     if (!customSelect.contains(e.target)) {
       options.classList.remove('show');
@@ -1942,12 +2175,12 @@ function startTextInput(pos) {
 
   const btnRow = document.createElement('div');
   btnRow.style.cssText = 'display:flex; gap:6px; justify-content:flex-end; margin-top:4px;';
-  
+
   const doneBtn = document.createElement('button');
   doneBtn.textContent = 'Done';
   doneBtn.className = 'success';
   doneBtn.style.cssText = 'padding:4px 12px; font-size:12px;';
-  
+
   btnRow.appendChild(doneBtn);
 
   wrapper.appendChild(customSelect);
@@ -1963,14 +2196,15 @@ function startTextInput(pos) {
     document.removeEventListener('pointerdown', closeDropdown);
     const val = input.value.trim();
     wrapper.remove();
+    wrapper._commit = null;
     if (!val) return;
     pushUndo();
-    frames[currentFrame].commands.push({ 
-      type: 'text', 
-      x: pos.x, 
-      y: pos.y, 
-      text: val, 
-      color: currentColor, 
+    frames[currentFrame].commands.push({
+      type: 'text',
+      x: pos.x,
+      y: pos.y,
+      text: val,
+      color: currentColor,
       size: fontSize,
       font: selectedFont
     });
@@ -1979,15 +2213,16 @@ function startTextInput(pos) {
     flashStatus('Text added');
   };
 
+  wrapper._commit = commit;
+
   doneBtn.onclick = commit;
   input.addEventListener('keydown', ev => {
     ev.stopPropagation();
     if (ev.key === 'Enter') { ev.preventDefault(); commit(); }
-    if (ev.key === 'Escape') { ev.preventDefault(); committed = true; wrapper.remove(); document.removeEventListener('pointerdown', closeDropdown); }
+    if (ev.key === 'Escape') { ev.preventDefault(); committed = true; wrapper.remove(); wrapper._commit = null; document.removeEventListener('pointerdown', closeDropdown); }
   });
 }
 
-// ═══════════════ DRAWING ═══════════════
 function startDraw(e) {
   if (isPlaying) return;
   if (e.button !== undefined && e.button !== 0) return;
@@ -2130,7 +2365,6 @@ function endDraw() {
   }
 }
 
-// ═══════════════ UNDO ═══════════════
 function pushUndo() {
   if (!undoStack[currentFrame]) undoStack[currentFrame] = [];
   if (!redoStack[currentFrame]) redoStack[currentFrame] = [];
@@ -2174,7 +2408,6 @@ function updateUndoRedoButtons() {
   document.getElementById('redoBtn').disabled = !redoStack[currentFrame] || redoStack[currentFrame].length === 0;
 }
 
-// ═══════════════ FRAMES ═══════════════
 function addFrame() {
   frames.splice(currentFrame + 1, 0, new Frame());
   undoStack.splice(currentFrame + 1, 0, []);
@@ -2237,6 +2470,9 @@ function updateTrashButton() {
 }
 function selectFrame(index) {
   if (index < 0 || index >= frames.length) return;
+  document.querySelectorAll('.text-toolbar').forEach(el => {
+    if (typeof el._commit === 'function') { try { el._commit(); } catch (_) {} }
+  });
   currentFrame = index;
   document.querySelectorAll('.frame').forEach((el, i) => el.classList.toggle('active', i === index));
   renderCurrentFrame(); updateStatus(); scrollFrameIntoView(index);
@@ -2296,7 +2532,6 @@ function rebuildThumbnails() {
   requestAnimationFrame(() => { updateFrameScrollIndicators(); scrollFrameIntoView(currentFrame); });
 }
 
-// ═══════════════ PLAYBACK ═══════════════
 function play() {
   if (isPlaying) return;
   const totalTicks = frames.reduce((s, f) => s + f.holdDuration, 0);
@@ -2337,7 +2572,6 @@ function stop() {
   renderCurrentFrame();
 }
 
-// ═══════════════ EXPORT ═══════════════
 function setExportBusy(busy) {
   exportInProgress = busy;
   ['exportGifBtn', 'exportMp4Btn', 'exportPngBtn'].forEach(id => { document.getElementById(id).disabled = busy; });
@@ -2546,7 +2780,6 @@ async function exportMP4(quick) {
   }
 }
 
-// ═══════════════ MISC UI ═══════════════
 let sizeIndicatorEl = null;
 let sizeIndicatorTimer = null;
 function showSizeIndicator(x, y, size) {
@@ -2568,7 +2801,6 @@ function updateSizeUI() {
   sizeSlider.value = currentSize;
 }
 
-// ═══════════════ TOOLTIP ═══════════════
 const tooltipEl = document.createElement('div');
 tooltipEl.className = 'tooltip';
 document.body.appendChild(tooltipEl);
@@ -2584,43 +2816,46 @@ function positionTooltip(x, y) {
 }
 
 document.addEventListener('mouseover', (e) => {
+  if (!HAS_HOVER) return;
   const target = e.target.closest('[data-tip]');
   if (!target || target.disabled) return;
-  
+
   const raw = target.getAttribute('data-tip') || '';
   const parts = raw.split('|');
   tooltipEl.innerHTML = '';
-  
+
   const nameEl = document.createElement('div');
   nameEl.className = 'tip-name';
   nameEl.textContent = parts[0] || '';
   tooltipEl.appendChild(nameEl);
-  
+
   if (parts[1]) {
     const descEl = document.createElement('div');
     descEl.className = 'tip-desc';
     descEl.textContent = parts[1];
     tooltipEl.appendChild(descEl);
   }
-  
+
   if (parts[2]) {
     const kbdEl = document.createElement('span');
     kbdEl.className = 'tip-kbd';
     kbdEl.textContent = parts[2];
     tooltipEl.appendChild(kbdEl);
   }
-  
+
   positionTooltip(e.clientX, e.clientY);
   tooltipEl.classList.add('show');
 });
 
 document.addEventListener('mousemove', (e) => {
+  if (!HAS_HOVER) return;
   if (tooltipEl.classList.contains('show')) {
     positionTooltip(e.clientX, e.clientY);
   }
 });
 
 document.addEventListener('mouseout', (e) => {
+  if (!HAS_HOVER) return;
   const target = e.target.closest('[data-tip]');
   if (target) {
     tooltipEl.classList.remove('show');
@@ -2630,7 +2865,6 @@ document.addEventListener('mouseout', (e) => {
 document.addEventListener('click', () => tooltipEl.classList.remove('show'), true);
 document.addEventListener('scroll', () => tooltipEl.classList.remove('show'), true);
 
-// ═══════════════ CANVAS INTERACTION ═══════════════
 canvas.addEventListener('pointerdown', (e) => {
   if (e.button !== 0) return;
   try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
@@ -2661,7 +2895,6 @@ canvas.addEventListener('mousemove', (e) => {
   }
 });
 
-// ═══════════════ TOOLS ═══════════════
 const toolButtons = document.querySelectorAll('.tool-btn');
 function switchTool(newTool) {
   if (newTool === currentTool) return;
@@ -2696,7 +2929,6 @@ sizeSlider.oninput = e => {
   updateSizeUI(); updateStatus();
 };
 
-// ═══════════════ BUTTON WIRING ═══════════════
 document.getElementById('addFrameBtn').onclick = addFrame;
 document.getElementById('playBtn').onclick = play;
 document.getElementById('stopBtn').onclick = stop;
@@ -2763,14 +2995,12 @@ document.getElementById('newProjectName').addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && !newProjectRequired) { e.preventDefault(); hideNewProjectModal(); }
 });
 
-// Share
 document.getElementById('shareBtn').onclick = shareCurrentProject;
 document.getElementById('closeShareBtn').onclick = () => {
   document.getElementById('shareModal').classList.remove('show');
   restoreFocus();
 };
 
-// Canvas size
 document.getElementById('sizeBtn').onclick = openCanvasSizeModal;
 document.getElementById('cancelCanvasSizeBtn').onclick = closeCanvasSizeModal;
 document.getElementById('canvasSizeModal').addEventListener('click', (e) => { if (e.target.id === 'canvasSizeModal') closeCanvasSizeModal(); });
@@ -2782,7 +3012,6 @@ document.querySelectorAll('.preset-grid button').forEach(btn => {
   };
 });
 
-// Confirm
 document.getElementById('confirmYes').onclick = () => {
   const cb = confirmYesCallback;
   hideConfirm();
@@ -2796,7 +3025,229 @@ document.getElementById('confirmThird').onclick = () => {
 document.getElementById('confirmNo').onclick = hideConfirm;
 document.getElementById('confirmModal').addEventListener('click', (e) => { if (e.target.id === 'confirmModal') hideConfirm(); });
 
-// ═══════════════ KEYBOARD ═══════════════
+const ImportTracker = {
+  el: null, labelEl: null, pctEl: null, fillEl: null, logEl: null,
+  init() {
+    this.el = document.getElementById('importProgress');
+    this.labelEl = document.getElementById('importStepLabel');
+    this.pctEl = document.getElementById('importStepPct');
+    this.fillEl = document.getElementById('importProgressFill');
+    this.logEl = document.getElementById('importStepsLog');
+  },
+  show() {
+    if (!this.el) this.init();
+    this.el.classList.add('show');
+    this.logEl.innerHTML = '';
+    this.set(0, 'Preparing…');
+  },
+  hide() {
+    if (this.el) this.el.classList.remove('show');
+  },
+  set(pct, label) {
+    if (!this.el) this.init();
+    const p = Math.max(0, Math.min(100, Math.round(pct)));
+    this.fillEl.style.width = p + '%';
+    this.pctEl.textContent = p + '%';
+    if (label) this.labelEl.textContent = label;
+  },
+  step(text, state) {
+    if (!this.el) this.init();
+    const div = document.createElement('div');
+    div.className = state || 'run';
+    div.textContent = text;
+    this.logEl.appendChild(div);
+    this.logEl.scrollTop = this.logEl.scrollHeight;
+    return div;
+  },
+  updateStep(div, state, text) {
+    if (!div) return;
+    div.className = state;
+    if (text) div.textContent = text;
+  }
+};
+
+function showImportError(step, err, extra) {
+  const el = document.getElementById('importError');
+  if (!el) return;
+  const name = err && err.name ? err.name : 'Error';
+  const msg = err && err.message ? err.message : String(err || 'Unknown error');
+  let html = '<strong>⚠️ Import failed</strong>';
+  html += '<span class="err-step">' + escapeHtml(step || 'unknown') + '</span>';
+  html += '<div>' + escapeHtml(msg) + '</div>';
+  if (name !== 'Error' && name !== 'TypeError') {
+    html += '<code>' + escapeHtml(name) + ': ' + escapeHtml(msg) + '</code>';
+  }
+  if (extra) {
+    html += '<div style="margin-top:6px;font-size:11px;color:var(--text-secondary);">' + escapeHtml(extra) + '</div>';
+  }
+  el.innerHTML = html;
+  el.classList.add('show');
+}
+function clearImportError() {
+  const el = document.getElementById('importError');
+  if (el) { el.innerHTML = ''; el.classList.remove('show'); }
+}
+
+let importState = { tab: 'file', file: null, fileText: null };
+
+function openImportModal() {
+  clearImportError();
+  ImportTracker.hide();
+  document.getElementById('importPasteText').value = '';
+  document.getElementById('importUrlInput').value = '';
+  document.getElementById('importFileName').style.display = 'none';
+  document.getElementById('importFileName').textContent = '';
+  importState = { tab: 'file', file: null, fileText: null };
+  setImportTab('file');
+  document.getElementById('importModal').classList.add('show');
+  setTimeout(() => {
+    const input = document.getElementById('importPasteText');
+    if (input) input.focus();
+  }, 100);
+}
+function closeImportModal() {
+  document.getElementById('importModal').classList.remove('show');
+  ImportTracker.hide();
+  clearImportError();
+  restoreFocus();
+}
+function setImportTab(tab) {
+  importState.tab = tab;
+  document.querySelectorAll('.import-tab').forEach(el => {
+    el.classList.toggle('active', el.dataset.importTab === tab);
+  });
+  document.querySelectorAll('.import-tab-panel').forEach(el => {
+    el.classList.toggle('active', el.dataset.importPanel === tab);
+  });
+}
+
+document.querySelectorAll('.import-tab').forEach(el => {
+  el.onclick = () => setImportTab(el.dataset.importTab);
+});
+
+const fileDrop = document.getElementById('importFileDrop');
+const fileInput = document.getElementById('importFileInput');
+
+fileDrop.onclick = () => fileInput.click();
+fileInput.onchange = () => {
+  if (fileInput.files && fileInput.files[0]) handleImportFile(fileInput.files[0]);
+};
+['dragenter', 'dragover'].forEach(ev => {
+  fileDrop.addEventListener(ev, (e) => {
+    e.preventDefault(); e.stopPropagation();
+    fileDrop.classList.add('dragover');
+  });
+});
+['dragleave', 'drop'].forEach(ev => {
+  fileDrop.addEventListener(ev, (e) => {
+    e.preventDefault(); e.stopPropagation();
+    fileDrop.classList.remove('dragover');
+  });
+});
+fileDrop.addEventListener('drop', (e) => {
+  const f = e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) handleImportFile(f);
+});
+
+function handleImportFile(file) {
+  clearImportError();
+  importState.file = file;
+  const fnEl = document.getElementById('importFileName');
+  fnEl.textContent = '📎 ' + file.name + ' (' + Math.round(file.size / 1024) + ' KB)';
+  fnEl.style.display = 'block';
+  const reader = new FileReader();
+  reader.onload = () => {
+    importState.fileText = String(reader.result || '');
+  };
+  reader.onerror = () => {
+    showImportError('read-file', new Error('Could not read file: ' + (reader.error ? reader.error.message : 'unknown')));
+  };
+  reader.readAsText(file);
+}
+
+document.getElementById('importSubmitBtn').onclick = async () => {
+  clearImportError();
+  ImportTracker.show();
+  ImportTracker.set(0, 'Starting…');
+  let stepDivs = {};
+
+  try {
+    let encoded = null;
+
+    if (importState.tab === 'file') {
+      if (!importState.file) {
+        throw new Error('No file selected. Click the drop zone to choose a .wanis file.');
+      }
+      if (!importState.fileText) {
+        stepDivs.read = ImportTracker.step('Reading file…', 'run');
+        throw new Error('File content not loaded yet — try again in a moment.');
+      }
+      stepDivs.read = ImportTracker.step('Read ' + importState.file.name, 'ok');
+      encoded = importState.fileText;
+    } else if (importState.tab === 'paste') {
+      encoded = document.getElementById('importPasteText').value;
+      if (!encoded.trim()) throw new Error('Paste area is empty. Copy the encoded data first.');
+      stepDivs.paste = ImportTracker.step('Got pasted data (' + encoded.length + ' chars)', 'ok');
+    } else if (importState.tab === 'url') {
+      let url = document.getElementById('importUrlInput').value.trim();
+      if (!url) throw new Error('URL field is empty.');
+      if (url.includes('#share=')) {
+        encoded = url.slice(url.indexOf('#share=') + 7);
+        stepDivs.url = ImportTracker.step('Extracted #share= from URL', 'ok');
+      } else if (url.includes('#paste=')) {
+        const pasteUrl = decodeURIComponent(url.slice(url.indexOf('#paste=') + 7));
+        stepDivs.url = ImportTracker.step('Fetching from paste URL…', 'run');
+        try {
+          encoded = await fetchFromPaste(pasteUrl);
+          ImportTracker.updateStep(stepDivs.url, 'ok', 'Fetched ' + encoded.length + ' chars from paste');
+        } catch (e) {
+          ImportTracker.updateStep(stepDivs.url, 'fail', 'Fetch failed: ' + e.message);
+          throw new Error('Could not fetch paste URL: ' + e.message);
+        }
+      } else if (/^https?:\/\//.test(url)) {
+        stepDivs.url = ImportTracker.step('Fetching raw URL…', 'run');
+        try {
+          encoded = await fetchFromPaste(url);
+          ImportTracker.updateStep(stepDivs.url, 'ok', 'Fetched ' + encoded.length + ' chars');
+        } catch (e) {
+          ImportTracker.updateStep(stepDivs.url, 'fail', 'Fetch failed: ' + e.message);
+          throw new Error('Could not fetch URL: ' + e.message);
+        }
+      } else {
+        encoded = url;
+        stepDivs.url = ImportTracker.step('Treated input as raw data', 'ok');
+      }
+    }
+
+    stepDivs.decode = ImportTracker.step('Decoding…', 'run');
+    await importFromEncoded(encoded, {
+      onProgress: (pct, label) => {
+        ImportTracker.set(pct, label);
+      }
+    });
+    if (stepDivs.decode) ImportTracker.updateStep(stepDivs.decode, 'ok', 'Decoded + sanitized');
+
+    ImportTracker.set(100, 'Import complete ✅');
+    setTimeout(() => { closeImportModal(); }, 500);
+  } catch (e) {
+    console.error('[WAnis] Import failed:', e);
+    ImportTracker.step('Failed: ' + (e.message || e), 'fail');
+    showImportError(
+      importState.tab === 'url' ? 'fetch-url' :
+      importState.tab === 'file' ? 'read-file' :
+      'decode',
+      e,
+      e._hint || ''
+    );
+    ImportTracker.set(0, 'Failed — see details below');
+  }
+};
+document.getElementById('importCancelBtn').onclick = closeImportModal;
+document.getElementById('importModal').addEventListener('click', (e) => {
+  if (e.target.id === 'importModal') closeImportModal();
+});
+document.getElementById('importBtn').onclick = openImportModal;
+
 document.addEventListener('keydown', e => {
   if (draggingText && e.key === 'Escape') { cancelTextDrag = true; return; }
   const inInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT';
@@ -2806,6 +3257,7 @@ document.addEventListener('keydown', e => {
     if (document.getElementById('confirmModal').classList.contains('show')) { e.preventDefault(); hideConfirm(); return; }
     if (document.getElementById('canvasSizeModal').classList.contains('show')) { e.preventDefault(); closeCanvasSizeModal(); return; }
     if (document.getElementById('shareModal').classList.contains('show')) { e.preventDefault(); document.getElementById('shareModal').classList.remove('show'); return; }
+    if (document.getElementById('importModal').classList.contains('show')) { e.preventDefault(); closeImportModal(); return; }
     if (document.getElementById('newProjectModal').classList.contains('show')) {
       if (!newProjectRequired) { e.preventDefault(); hideNewProjectModal(); }
       return;
@@ -2815,8 +3267,16 @@ document.addEventListener('keydown', e => {
     if (isPlaying) { e.preventDefault(); stop(); return; }
   }
 
-  const toolKeys = { b: 'pen', e: 'eraser', l: 'line', r: 'rect', c: 'circle', f: 'fill', t: 'text' };
   const lower = e.key.length === 1 ? e.key.toLowerCase() : '';
+
+  if (lower === 'i' && !mod(e) && !e.altKey &&
+      !document.getElementById('importModal').classList.contains('show')) {
+    e.preventDefault();
+    openImportModal();
+    return;
+  }
+
+  const toolKeys = { b: 'pen', e: 'eraser', l: 'line', r: 'rect', c: 'circle', f: 'fill', t: 'text' };
   if (toolKeys[lower] && !mod(e) && !e.altKey) {
     e.preventDefault();
     switchTool(toolKeys[lower]);
@@ -2829,11 +3289,18 @@ document.addEventListener('keydown', e => {
   if (mod(e) && e.key === 'v') { e.preventDefault(); pasteFrame(); return; }
   if (e.key === 'Delete') { e.preventDefault(); deleteFrame(currentFrame); return; }
   if (e.altKey && e.key === 'z') { e.preventDefault(); restoreFrame(); return; }
-  if (e.key === ' ' && !document.getElementById('modal').classList.contains('show')) {
-    e.preventDefault();
-    if (isPlaying) stop(); else play();
+
+  if (e.key === ' ') {
+    if (e.repeat) return;
+    const active = document.activeElement;
+    if (active && active.tagName === 'BUTTON') return;
+    if (!document.getElementById('modal').classList.contains('show')) {
+      e.preventDefault();
+      if (isPlaying) stop(); else play();
+    }
     return;
   }
+
   if (!isPlaying && e.key === 'ArrowRight' && currentFrame < frames.length - 1) { selectFrame(currentFrame + 1); return; }
   if (!isPlaying && e.key === 'ArrowLeft' && currentFrame > 0) { selectFrame(currentFrame - 1); return; }
 });
@@ -2854,7 +3321,6 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-// ═══════════════ STATUS ═══════════════
 function updateStatus() {
   const total = frames.reduce((s, f) => s + f.holdDuration, 0);
   const dur = (total / getFps()).toFixed(2);
@@ -2864,7 +3330,6 @@ function updateStatus() {
     dims + ' · Frame ' + (currentFrame + 1) + '/' + frames.length + ' · ' + currentTool + hint + ' · Size ' + currentSize + ' · ' + dur + 's';
 }
 
-// ═══════════════ INIT ═══════════════
 async function initProjectSystem() {
   try {
     await Storage.init();
@@ -2898,7 +3363,6 @@ async function initProjectSystem() {
 updateSizeUI();
 layoutCanvas();
 
-// Ensure both Onion and Grid are drawn on startup
 onionBtn.classList.add('active');
 gridBtn.classList.add('active');
 updateOnionSkin();
